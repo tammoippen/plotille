@@ -22,6 +22,7 @@ Similar to other libraries:
 * like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
 
 ```python
+# braille do not seem to be monospaced in this font...
 In [1]: import plotille
 
 In [2]: import numpy as np
@@ -141,7 +142,7 @@ In [5]: print(plotille.scatter(X, np.sin(X), height=50))
 -----------|-|---------|---------|---------|---------|---------|---------|---------|---------> (X)
            | -3.25364  -2.57209  -1.89055  -1.20900  -0.52746  0.15409   0.83564   1.51718
 
-# braille do not seem to be monospaced in this font...
+
 In [6]: print(plotille.hist(np.random.normal(size=10000)))
   bucket   | ________________________________________________________________________________ Total Counts
   -4.15638 | ⠂                                                                                1
