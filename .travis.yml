@@ -1,0 +1,40 @@
+language: python
+sudo: false
+
+notifications:
+  email: false
+
+python:
+  - "2.7"
+  - "3.5"
+  - "3.6"
+  - "nightly"
+  - "pypy2.7-5.8.0"
+  - "pypy3.5-5.8.0"
+
+addons:
+  apt:
+    packages:
+      - pandoc
+
+install:
+  - pip install -v -e .
+  - pip install -r tests/requirements.txt
+
+script: PYTHONPATH=$PWD pytest
+
+after_success:
+  - coveralls
+
+before_deploy:
+  - pip install pypandoc
+
+deploy:
+  provider: pypi
+  user: tammoippen
+  password:
+    secure: RRm/32GM4WLDSv3TEjca/giPOeh0F49omzeDOq690uBWtIiqUzBzp7eCCcWrw+6OdVttUHhwsn4KCDhJR9jIAuFraFF6+CmMq4iwsMmeAVL9kEWJRIN05cR5hKkn7Jn/WcH5XOE24/8/4h3B8dvA3R/KK3qejpw6VfPXSiltA9cuerc/FawyHtIdrWDP+fCNYPcR9FWcjwRzpL+Rtyt5ymgQGBDyoQIQkhQ2kE4h4QVj0PxloArCzr0GoyBFvYkhZsY26CloRZu8+ng/jEeu4VxMNrbxr5NaGs6YgXxN5+jxnRWeDRho842JYxc196xiIbzbWJhykCATZjw7H+cPsJARhoUzHfqRXHdcb98a+RWxX9sMlU9faEZFHDb/sUE7MynQL1ZyWiSWfsC4I2MUJDvt0h9skjqYt2j6kKN5u0qfNZiUwofNLz5YPysISH57d63PKD/BLfO+5oHhBSvruB1x9GwlbnqenIi2Vz0SRhbH9PEyAEDA3MZejeiJuj2RTxNqXMnbT9oo9OG4TJcgn+T8y4/aH+w1yrf94A0udgqYrddBcBpbMgho4ewo1jI9GQ0t0ihYfffvBMdGCHrLDMb+VQrHb4FCDTP3tXhpi/ZgxfoJGGpEKRrPSOqbMIupZiKKQ1F5RwQjFEbBJ03NopDdv8DlYbuZjQ69dau5hek=
+  on:
+    branch: master
+    tags: true
+    python: "3.6"

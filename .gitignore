@@ -1,0 +1,13 @@
+venv/
+data/
+build/
+*.egg-info
+.DS_Store
+.cache/
+.coverage
+*.so
+*.c
+*.html
+*.pyc
+__pycache__/
+dist/
