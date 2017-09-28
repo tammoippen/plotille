@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 try:
     import pypandoc
@@ -9,12 +9,12 @@ try:
 except(IOError, ImportError):
     long_description = open('README.md').read()
 
-version = '1.1'
+version = '1.2'
 
 setup(
     name='plotille',
     version=version,
-    packages=find_packages(),
+    py_modules=['plotille'],
     install_requires=[],
     author='Tammo Ippen',
     author_email='tammo.ippen@posteo.de',
