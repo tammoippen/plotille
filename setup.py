@@ -24,6 +24,7 @@ setup(
     url='https://github.com/tammoippen/plotille',
     download_url='https://github.com/tammoippen/plotille/archive/v{}.tar.gz'.format(version),
     keywords=['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode'],
+    include_package_data=True,
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
