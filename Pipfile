@@ -4,6 +4,16 @@ verify_ssl = true
 
 
 [packages]
-"-e ." = "*"
+
+"plotille" = {path = ".", editable = true}
+
 
 [dev-packages]
+
+"flake8-import-order" = "*"
+"pep8-naming" = "*"
+pytest = "*"
+"pytest-cov" = "*"
+"pytest-flake8" = "*"
+numpy = "*"
+"python-coveralls" = "*"

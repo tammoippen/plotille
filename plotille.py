@@ -49,12 +49,12 @@ def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
         str: histogram over `X` from left to right.
     '''
     def _scale(a):
-        if log_scale:
+        if log_scale and a > 0:
             return log(a)
         return a
 
     h, b = _hist(X, bins)
-    h_max = _scale(max(h))
+    h_max = _scale(max(h)) or 1
 
     canvas = ['  bucket   | {} {}'.format('_' * width, 'Total Counts')]
     lasts = ['', '⠂', '⠆', '⠇', '⡇', '⡗', '⡷', '⡿']
@@ -86,8 +86,10 @@ def scatter(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.line
     assert len(X) == len(Y)
     assert len(Y_label) <= 8
 
-    ymin, ymax = min(Y), max(Y)
-    xmin, xmax = min(X), max(X)
+    ymin = min(Y) if len(Y) > 0 else 0
+    ymax = max(Y) if len(Y) > 0 else 1
+    xmin = min(X) if len(X) > 0 else 0
+    xmax = max(X) if len(X) > 0 else 1
 
     xwidth = abs((xmax - xmin) / width)
     xwidth_p = xwidth / 2
@@ -111,8 +113,8 @@ def scatter(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.line
     canvas += [['{:10.5f} | '.format(height * ywidth + ymin)], [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
     # add X-axis
-    canvas = ([[' ' * 11 + '| '] + ['{:<10.5f}'.format(i * xwidth * 10 + xmin) for i in range(width // 10)]] +
-              [['-' * 11 + '|-' + '|---------' * (width // 10) + '> (' + X_label + ')']] +
+    canvas = ([[' ' * 11 + '| '] + ['{:<10.5f}'.format(i * xwidth * 10 + xmin) for i in range(width // 10 + 1)]] +
+              [['-' * 11 + '|-' + '|---------' * (width // 10) + '|-> (' + X_label + ')']] +
               canvas)
     return linesep.join([''.join(row) for row in reversed(canvas)])
 
@@ -131,8 +133,14 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
     Returns:
         str: plot over `X`, `Y`.
     '''
-    ymin, ymax = min(Y), max(Y)
-    xmin, xmax = min(X), max(X)
+    assert len(X) == len(Y)
+    assert len(Y_label) <= 8
+
+    ymin = min(Y) if len(Y) > 0 else 0
+    ymax = max(Y) if len(Y) > 0 else 1
+    xmin = min(X) if len(X) > 0 else 0
+    xmax = max(X) if len(X) > 0 else 1
+
     xwidth = abs((xmax - xmin) / width)
     xwidth_p = xwidth / 2
     ywidth = abs((ymax - ymin) / height)
@@ -143,13 +151,13 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
     # plot X,Y points
     # first point
     points = sorted(zip(X, Y))
-    x0, y0 = points[0]
-    x0_idx = min(width * 2 - 1, int(round((x0 - xmin) / xwidth_p)))
-    y0_idx = min(height * 4 - 1, int(round((y0 - ymin) / ywidth_p)))
-    _set(canvas, x0_idx, y0_idx)
 
     # subsequent points
-    for x, y in points[1:]:
+    for (x0, y0), (x, y) in zip(points[:-1], points[1:]):
+        x0_idx = min(width * 2 - 1, int(round((x0 - xmin) / xwidth_p)))
+        y0_idx = min(height * 4 - 1, int(round((y0 - ymin) / ywidth_p)))
+        _set(canvas, x0_idx, y0_idx)
+
         x_idx = min(width * 2 - 1, int(round((x - xmin) / xwidth_p)))
         y_idx = min(height * 4 - 1, int(round((y - ymin) / ywidth_p)))
         _set(canvas, x_idx, y_idx)
@@ -175,9 +183,6 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
                 xb = min(x_idx, x0_idx + int(abs(round(m_inv * i))))
                 _set(canvas, xb, yb)
 
-        # store last
-        x0_idx, y0_idx = x_idx, y_idx
-
     # add Y-axis
     for i in range(height):
         canvas[i] = ['{:10.5f} | '.format(i * ywidth + ymin)] + canvas[i]
@@ -187,8 +192,8 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
     canvas += [['{:10.5f} | '.format(height * ywidth + ymin)], [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
     # add X-axis
-    canvas = ([[' ' * 11 + '| '] + ['{:<10.5f}'.format(i * 10 * xwidth + xmin) for i in range(width // 10)]] +
-              [['-' * 11 + '|-' + '|---------' * (width // 10) + '> (' + X_label + ')']] +
+    canvas = ([[' ' * 11 + '| '] + ['{:<10.5f}'.format(i * 10 * xwidth + xmin) for i in range(width // 10 + 1)]] +
+              [['-' * 11 + '|-' + '|---------' * (width // 10) + '|-> (' + X_label + ')']] +
               canvas)
     return linesep.join([''.join(row) for row in reversed(canvas)])
 
@@ -217,7 +222,7 @@ def _hist(X, bins):  # noqa: N803
             counts: List[int]  The counts for all bins.
             bins: List[float]  The range for each bin: bin `i` is in [bins[i], bins[i+1])
     '''
-    xmin, xmax = min(X), max(X)
+    xmin, xmax = min([0] + X), max([1] + X)
     xwidth = abs((xmax - xmin) / bins)
 
     y = [0] * bins

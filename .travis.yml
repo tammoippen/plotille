@@ -18,10 +18,10 @@ addons:
       - pandoc
 
 install:
-  - pip install -v -e .
-  - pip install -r tests/requirements.txt
+  - pip install pipenv
+  - pipenv install --dev
 
-script: PYTHONPATH=$PWD pytest
+script: PYTHONPATH=$PWD pipenv run pytest
 
 after_success:
   - coveralls
