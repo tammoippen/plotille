@@ -6,7 +6,7 @@ import plotille
 
 
 def test_plot():
-    x = np.random.normal(size=1000)
+    x = sorted(np.random.normal(size=1000))
     print()
     print(plotille.plot(list(x), list(np.sin(x)), height=50))
 
@@ -24,7 +24,7 @@ def test_hist():
 
 
 def test_np_plot():
-    x = np.random.normal(size=1000)
+    x = sorted(np.random.normal(size=1000))
     print()
     print(plotille.plot(x, np.sin(x), height=50))
 

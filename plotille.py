@@ -83,58 +83,31 @@ def scatter(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.line
     Returns:
         str: scatter plot over `X`, `Y`.
     '''
-    assert len(X) == len(Y)
-    assert len(Y_label) <= 8
-
-    ymin = min(Y) if len(Y) > 0 else 0
-    ymax = max(Y) if len(Y) > 0 else 1
-    xmin = min(X) if len(X) > 0 else 0
-    xmax = max(X) if len(X) > 0 else 1
-
-    xwidth = abs((xmax - xmin) / width)
-    xwidth_p = xwidth / 2
-    ywidth = abs((ymax - ymin) / height)
-    ywidth_p = ywidth / 4
-
-    canvas = _init(width, height)
-
-    # plot X,Y points
-    for x, y in zip(X, Y):
-        x_idx = min(width * 2 - 1, int(round((x - xmin) / xwidth_p)))
-        y_idx = min(height * 4 - 1, int(round((y - ymin) / ywidth_p)))
-        _set(canvas, x_idx, y_idx)
-
-    # add Y-axis
-    for i in range(height):
-        canvas[i] = ['{:10.5f} | '.format(i * ywidth + ymin)] + canvas[i]
-    ylbl = '({})'.format(Y_label)
-    ylbl_left = (10 - len(ylbl)) // 2
-    ylbl_right = ylbl_left + len(ylbl) % 2
-    canvas += [['{:10.5f} | '.format(height * ywidth + ymin)], [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
-
-    # add X-axis
-    canvas = ([[' ' * 11 + '| '] + ['{:<10.5f}'.format(i * xwidth * 10 + xmin) for i in range(width // 10 + 1)]] +
-              [['-' * 11 + '|-' + '|---------' * (width // 10) + '|-> (' + X_label + ')']] +
-              canvas)
-    return linesep.join([''.join(row) for row in reversed(canvas)])
+    return plot(X, Y, width, height, X_label, Y_label, linesep, None)
 
 
-def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep):  # noqa: N803
+def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear'):  # noqa: N803
     '''Create plot with X , Y values and linear interpolation between points
 
     Parameters:
-        X: List[float]  X values.
-        Y: List[float]  Y values. X and Y must have the same number of entries.
-        width: int      The number of characters for the width (columns) of the canvas.
-        hight: int      The number of characters for the hight (rows) of the canvas.
-        X_label: str    Label for X-axis.
-        Y_label: str    Label for Y-axis. max 8 characters.
-
+        X: List[float]         X values.
+        Y: List[float]         Y values. X and Y must have the same number of entries.
+        width: int             The number of characters for the width (columns) of the canvas.
+        hight: int             The number of characters for the hight (rows) of the canvas.
+        X_label: str           Label for X-axis.
+        Y_label: str           Label for Y-axis. max 8 characters.
+        interp: Optional[str]  Specify interpolation; values None, 'linear'
     Returns:
         str: plot over `X`, `Y`.
     '''
     assert len(X) == len(Y)
     assert len(Y_label) <= 8
+    assert interp in ('linear', None)
+
+    # select interpolation
+    interp_fktn = _interp_none
+    if interp == 'linear':
+        interp_fktn = _interp_lin
 
     ymin = min(Y) if len(Y) > 0 else 0
     ymax = max(Y) if len(Y) > 0 else 1
@@ -150,7 +123,7 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
 
     # plot X,Y points
     # first point
-    points = sorted(zip(X, Y))
+    points = list(zip(X, Y))
 
     # subsequent points
     for (x0, y0), (x, y) in zip(points[:-1], points[1:]):
@@ -163,25 +136,8 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
         _set(canvas, x_idx, y_idx)
 
         # plot between points
-        m = 0
-        if x_idx - x0_idx:
-            m = (y_idx - y0_idx) / (x_idx - x0_idx)
-
-        m_inv = 0
-        if y_idx - y0_idx:
-            m_inv = (x_idx - x0_idx) / (y_idx - y0_idx)
-
-        # left/right
-        if -0.5 < m < 0.5:
-            for i in range(1, x_idx - x0_idx):
-                yb = min(y_idx, y0_idx + int(round(m * i)))
-                xb = x0_idx + i
-                _set(canvas, xb, yb)
-        else:
-            for i in range(1, abs(y_idx - y0_idx)):
-                yb = y0_idx + _sign(m) * i
-                xb = min(x_idx, x0_idx + int(abs(round(m_inv * i))))
-                _set(canvas, xb, yb)
+        for xb, yb in interp_fktn(x0_idx, y0_idx, x_idx, y_idx):
+            _set(canvas, xb, yb)
 
     # add Y-axis
     for i in range(height):
@@ -208,6 +164,38 @@ def _sign(a):
         int: 1 if `a` is positive, -1 otherwise
     '''
     return int(a > 0) - int(a < 0)
+
+
+def _interp_lin(x0, y0, x1, y1):
+    '''Linear interpolation between the points.
+
+    Parameters:
+        x0, y0: int  Point 0
+        x1, y1: int  Point 1
+
+    Returns:
+        iterator: linear points between Point0 and Point1
+    '''
+    x_diff = x1 - x0
+    y_diff = y1 - y0
+    steps = max(abs(x_diff), abs(y_diff))
+    for i in range(1, steps):
+        xb = x0 + int(round(x_diff / steps * i))
+        yb = y0 + int(round(y_diff / steps * i))
+        yield xb, yb
+
+
+def _interp_none(x0, y0, x1, y1):
+    '''Do not interpolate between the points.
+
+    Parameters:
+        x0, y0: int  Point 0
+        x1, y1: int  Point 1
+
+    Returns:
+        empty list
+    '''
+    return []
 
 
 def _hist(X, bins):  # noqa: N803

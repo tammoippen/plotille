@@ -27,24 +27,24 @@ Similar to other libraries:
 ```python
 In [1]: import plotille
 In [2]: import numpy as np
-In [3]: X = np.random.normal(size=100)
+In [3]: X = sorted(np.random.normal(size=1000))
 ```
 
 **Plot:**
 ```python
 In [4]: plotille.plot?
-Signature: plotille.plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep='\n')
+Signature: plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep='\n', interp='linear')
 Docstring:
 Create plot with X , Y values and linear interpolation between points
 
 Parameters:
-    X: List[float]  X values.
-    Y: List[float]  Y values. X and Y must have the same number of entries.
-    width: int      The number of characters for the width (columns) of the canvas.
-    hight: int      The number of characters for the hight (rows) of the canvas.
-    X_label: str    Label for X-axis.
-    Y_label: str    Label for Y-axis. max 8 characters.
-
+    X: List[float]         X values.
+    Y: List[float]         Y values. X and Y must have the same number of entries.
+    width: int             The number of characters for the width (columns) of the canvas.
+    hight: int             The number of characters for the hight (rows) of the canvas.
+    X_label: str           Label for X-axis.
+    Y_label: str           Label for Y-axis. max 8 characters.
+    interp: Optional[str]  Specify interpolation; values None, 'linear'
 Returns:
     str: plot over `X`, `Y`.
 
@@ -69,8 +69,6 @@ Parameters:
 
 Returns:
     str: scatter plot over `X`, `Y`.
-File:      ~/repositories/plotille/plotille.py
-Type:      function
 
 In [7]: print(plotille.scatter(X, np.sin(X), height=50))
 ```
@@ -93,8 +91,6 @@ Parameters:
 
 Returns:
     str: histogram over `X` from left to right.
-File:      ~/repositories/plotille/plotille.py
-Type:      function
 
 In [9]: print(plotille.hist(np.random.normal(size=10000)))
 ```
