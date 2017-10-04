@@ -6,8 +6,6 @@ verify_ssl = true
 [packages]
 plotille = {path = ".", editable = true}
 
-
-
 [dev-packages]
 
 "flake8-import-order" = "*"
@@ -17,4 +15,3 @@ pytest = "*"
 "pytest-flake8" = "*"
 numpy = "*"
 "python-coveralls" = "*"
-ipython = "*"
