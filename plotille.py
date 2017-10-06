@@ -100,6 +100,7 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
         X_label: str           Label for X-axis.
         Y_label: str           Label for Y-axis. max 8 characters.
         interp: Optional[str]  Specify interpolation; values None, 'linear'
+
     Returns:
         str: plot over `X`, `Y`.
     '''
