@@ -215,7 +215,8 @@ def _hist(X, bins):  # noqa: N803
             counts: List[int]  The counts for all bins.
             bins: List[float]  The range for each bin: bin `i` is in [bins[i], bins[i+1])
     '''
-    xmin, xmax = min([0] + X), max([1] + X)
+    xmin = min(X) if len(X) > 0 else 0
+    xmax = max(X) if len(X) > 0 else 1
     xwidth = abs((xmax - xmin) / bins)
 
     y = [0] * bins
