@@ -67,7 +67,7 @@ def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
     for i in range(bins):
         hight = int(width * 8 * _scale(h[i]) / h_max)
         canvas += ['{:10.5f} | {:{width}s} {}'.format(
-            (b[i] + b[i+1]) / 2,  # use bucket center as representation
+            (b[i] + b[i + 1]) / 2,  # use bucket center as representation
             '⣿' * (hight // 8) + lasts[hight % 8],
             h[i],
             width=width)]
@@ -134,8 +134,12 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
     # make point iterators
     from_points = izip(X, Y)
     to_points = izip(X, Y)
-    # remove first point of to_points
-    next(to_points)
+    try:
+        # remove first point of to_points
+        next(to_points)
+    except StopIteration:
+        # empty X, Y
+        pass
 
     # subsequent points
     for (x0, y0), (x, y) in izip(from_points, to_points):
