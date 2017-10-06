@@ -34,6 +34,9 @@ IS_PY3 = version_info[0] == 3
 if IS_PY3:
     unichr = chr
     unicode = str
+    izip = zip
+else:
+    from itertools import izip
 
 
 def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N803
@@ -121,12 +124,14 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
 
     canvas = _init(width, height)
 
-    # plot X,Y points
-    # first point
-    points = list(zip(X, Y))
+    # make point iterators
+    from_points = izip(X, Y)
+    to_points = izip(X, Y)
+    # remove first point of to_points
+    next(to_points)
 
     # subsequent points
-    for (x0, y0), (x, y) in zip(points[:-1], points[1:]):
+    for (x0, y0), (x, y) in izip(from_points, to_points):
         x0_idx = min(width * 2 - 1, int(round((x0 - xmin) / xwidth_p)))
         y0_idx = min(height * 4 - 1, int(round((y0 - ymin) / ywidth_p)))
         _set(canvas, x0_idx, y0_idx)
