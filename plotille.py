@@ -42,6 +42,9 @@ else:
 def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N803
     '''Create histogram over `X`
 
+    The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
+    The values on the right are the total counts of this bucket.
+
     Parameters:
         X: List[float]  The items to count over.
         bins: int       The number of bins to put X entries in (rows).
@@ -74,6 +77,9 @@ def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
 
 def scatter(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep):  # noqa: N803
     '''Create scatter plot with X , Y values
+
+    Basically plotting without interpolation:
+        `plot(X, Y, ... , interp=None)`
 
     Parameters:
         X: List[float]  X values.

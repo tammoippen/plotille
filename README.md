@@ -33,7 +33,7 @@ In [3]: X = sorted(np.random.normal(size=1000))
 **Plot:**
 ```python
 In [4]: plotille.plot?
-Signature: plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep='\n', interp='linear')
+Signature: plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear')
 Docstring:
 Create plot with X , Y values and linear interpolation between points
 
@@ -56,9 +56,12 @@ In [5]: print(plotille.plot(X, np.sin(X), height=50))
 **Scatter:**
 ```python
 In [6]: plotille.scatter?
-Signature: plotille.scatter(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep='\n')
+Signature: scatter(X, Y, width=80, height=50, X_label=u'X', Y_label=u'Y', linesep=os.linesep)
 Docstring:
 Create scatter plot with X , Y values
+
+Basically plotting without interpolation:
+    `plot(X, Y, ... , interp=None)`
 
 Parameters:
     X: List[float]  X values.
@@ -80,9 +83,12 @@ In [7]: print(plotille.scatter(X, np.sin(X), height=50))
 Inspired by [crappyhist](http://kevinastraight.x10host.com/2013/12/28/python-histograms-from-the-console/).
 ```python
 In [8]: plotille.hist?
-Signature: plotille.hist(X, bins=50, width=80, log_scale=False, linesep='\n')
+Signature: hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep)
 Docstring:
 Create histogram over `X`
+
+The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
+The values on the right are the total counts of this bucket.
 
 Parameters:
     X: List[float]  The items to count over.
