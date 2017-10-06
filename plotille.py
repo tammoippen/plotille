@@ -64,11 +64,11 @@ def hist(X, bins=50, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
     for i in range(bins):
         hight = int(width * 8 * _scale(h[i]) / h_max)
         canvas += ['{:10.5f} | {:{width}s} {}'.format(
-            b[i],
+            (b[i] + b[i+1]) / 2,  # use bucket center as representation
             '⣿' * (hight // 8) + lasts[hight % 8],
             h[i],
             width=width)]
-    canvas += ['{:10.5f} | {}'.format(b[bins], '‾' * width)]
+    canvas += ['‾' * (10 + 3 + width + 12)]
     return linesep.join(canvas)
 
 
