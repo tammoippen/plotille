@@ -119,15 +119,31 @@ def plot(X, Y, width=80, height=50, X_label='X', Y_label='Y', linesep=os.linesep
     if interp == 'linear':
         interp_fktn = _interp_lin
 
-    ymin = min(Y) if len(Y) > 0 else 0
-    ymax = max(Y) if len(Y) > 0 else 1
-    xmin = min(X) if len(X) > 0 else 0
-    xmax = max(X) if len(X) > 0 else 1
+    ymin = 0
+    ymax = 1
+    if len(Y) > 0:
+        ymin = min(Y)
+        ymax = max(Y)
+        # have some space above and below the plot
+        offset = max(abs(ymax), abs(ymin)) / 10
+        ymin -= offset
+        ymax += offset
+
+    xmin = 0
+    xmax = 1
+    if len(X) > 0:
+        xmin = min(X)
+        xmax = max(X)
+        # have some space above and below the plot
+        offset = max(abs(xmax), abs(xmin)) / 10
+        xmin -= offset
+        xmax += offset
 
     xwidth = abs((xmax - xmin) / width)
-    xwidth_p = xwidth / 2
     ywidth = abs((ymax - ymin) / height)
-    ywidth_p = ywidth / 4
+    # no devision by zero
+    xwidth_p = xwidth / 2 or 1
+    ywidth_p = ywidth / 4 or 1
 
     canvas = _init(width, height)
 
