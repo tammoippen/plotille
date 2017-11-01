@@ -9,7 +9,7 @@ try:
 except(IOError, ImportError):
     long_description = open('README.md').read()
 
-version = '1.4'
+version = '1.5'
 
 setup(
     name='plotille',
