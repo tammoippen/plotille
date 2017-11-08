@@ -76,7 +76,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
     return linesep.join(canvas)
 
 
-def histogram(X, bins=100, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
+def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
               x_min=None, x_max=None, y_min=None, y_max=None):
     '''Create histogram over `X`
 
