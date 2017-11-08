@@ -76,7 +76,8 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
     return linesep.join(canvas)
 
 
-def histogram(X, bins=10, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep):  # noqa: N803
+def histogram(X, bins=100, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
+              x_min=None, x_max=None, y_min=None, y_max=None):
     '''Create histogram over `X`
 
     In contrast to `hist`, this is the more `usual` histogram from bottom
@@ -90,13 +91,39 @@ def histogram(X, bins=10, width=80, height=40, X_label='X', Y_label='Counts', li
         X_label: str    Label for X-axis.
         Y_label: str    Label for Y-axis. max 8 characters.
         linesep: str    The requested line seperator. default: os.linesep
+        x_min, x_max: float  Limits for the displayed X values.
+        y_min, y_max: float  Limits for the displayed Y values.
 
     Returns:
         str: histogram over `X`.
     '''
     h, b = _hist(X, bins)
 
-    canvas = Canvas(width, height, xmin=min(X), ymin=0, xmax=max(X), ymax=max(h))
+    ymax = 1
+    ymin = 0
+    if len(h) > 0:
+        ymax = max(h) or 1
+        # have some space above the plot
+        offset = abs(ymax) / 10
+        ymax += offset
+
+    ymin = _set_limit(y_min, ymin)
+    ymax = _set_limit(y_max, ymax)
+
+    xmin = 0
+    xmax = 1
+    if len(X) > 0:
+        xmin = min(X)
+        xmax = max(X)
+        # have some space left and right of the plot
+        offset = max(abs(xmax), abs(xmin)) / 10
+        xmin -= offset
+        xmax += offset
+
+    xmin = _set_limit(x_min, xmin)
+    xmax = _set_limit(x_max, xmax)
+
+    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
     # how fat will one bar of the histogram be
     x_diff = canvas.dots_between(b[0], 0, b[1], 0)[0] or 1
@@ -157,12 +184,6 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     assert len(X) == len(Y)
     assert len(Y_label) <= 8
     assert interp in ('linear', None)
-
-    def _set_limit(limit, orig):
-        if limit is not None:
-            assert isinstance(limit, (int, float))
-            return limit
-        return orig
 
     ymin = 0
     ymax = 1
@@ -450,6 +471,13 @@ class Canvas(object):
                    [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
                    res)
         return linesep.join([''.join(row) for row in reversed(res)])
+
+
+def _set_limit(limit, orig):
+    if limit is not None:
+        assert isinstance(limit, (int, float))
+        return limit
+    return orig
 
 
 def _braille_from(dots):
