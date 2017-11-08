@@ -4,7 +4,8 @@ verify_ssl = true
 
 
 [packages]
-plotille = {path = ".", editable = true}
+"e1839a8" = {path = ".", editable = true}
+
 
 [dev-packages]
 
