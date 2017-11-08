@@ -23,6 +23,12 @@ def test_hist():
     print(plotille.hist(list(x)))
 
 
+def test_histogram():
+    x = np.random.normal(size=10000)
+    print()
+    print(plotille.histogram(list(x)))
+
+
 def test_np_plot():
     x = sorted(np.random.normal(size=1000))
     print()
@@ -39,6 +45,12 @@ def test_np_hist():
     x = np.random.normal(size=10000)
     print()
     print(plotille.hist(x))
+
+
+def test_np_histogram():
+    x = np.random.normal(size=10000)
+    print()
+    print(plotille.histogram(x))
 
 
 def test_hist_log():
@@ -60,3 +72,8 @@ def test_empty_scatter():
 def test_empty_hist():
     print()
     print(plotille.hist([]))
+
+
+def test_empty_histogram():
+    print()
+    print(plotille.histogram([]))
