@@ -97,11 +97,12 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     Returns:
         str: histogram over `X`.
     '''
+    assert bins > 0
     h, b = _hist(X, bins)
 
     ymax = 1
     ymin = 0
-    if len(h) > 0:
+    if max(h) > 0:
         ymax = max(h) or 1
         # have some space above the plot
         offset = abs(ymax) / 10
@@ -458,7 +459,7 @@ class Canvas(object):
             ylbl = '({})'.format(y_label)
             ylbl_left = (10 - len(ylbl)) // 2
             ylbl_right = ylbl_left + len(ylbl) % 2
-            res += [['{:10.5f} | '.format(self.height * self._y_delta + self._ymin)],
+            res += [['{:10.5f} |'.format(self.height * self._y_delta + self._ymin)],
                     [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
         if x_axis:
