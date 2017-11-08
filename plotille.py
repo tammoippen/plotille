@@ -35,8 +35,15 @@ if IS_PY3:
     unichr = chr
     unicode = str
     izip = zip
+    roundeven = round
 else:
     from itertools import izip
+
+    def roundeven(x):
+        x_r = round(x)
+        if abs(x_r - x) == 0.5:
+            return 2.0 * round(x / 2)
+        return x_r
 
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N803
@@ -330,10 +337,10 @@ class Canvas(object):
         return self._ymax
 
     def _transform_x(self, x):
-        return int(round((x - self.xmin) / self._x_delta_pt))
+        return int(roundeven((x - self.xmin) / self._x_delta_pt))
 
     def _transform_y(self, y):
-        return int(round((y - self.ymin) / self._y_delta_pt))
+        return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
     def _set(self, x_idx, y_idx, set_=True):
         '''Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
@@ -419,8 +426,8 @@ class Canvas(object):
         y_diff = y1_idx - y0_idx
         steps = max(abs(x_diff), abs(y_diff))
         for i in range(1, steps):
-            xb = x0_idx + int(round(x_diff / steps * i))
-            yb = y0_idx + int(round(y_diff / steps * i))
+            xb = x0_idx + int(roundeven(x_diff / steps * i))
+            yb = y0_idx + int(roundeven(y_diff / steps * i))
             self._set(xb, yb, set_)
 
     def rect(self, xmin, ymin, xmax, ymax, set_=True):
