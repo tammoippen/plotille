@@ -292,8 +292,8 @@ class Canvas(object):
         self._canvas = [['\u2800'] * width for i_ in range(height)]
 
     def __str__(self):
-        return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={}, x-delta={}, y-delta={})'.format(
-            self.width, self.height, self.xmin, self.ymin, self.xmax, self.ymax, self._x_delta_pt, self._y_delta_pt
+        return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
+            self.width, self.height, self.xmin, self.ymin, self.xmax, self.ymax
         )
 
     def __repr__(self):
