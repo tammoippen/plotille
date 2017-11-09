@@ -4,9 +4,8 @@ from __future__ import absolute_import, division, print_function
 from setuptools import setup
 
 try:
-    import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
+    long_description = open('README.rst').read()
+except IOError:
     long_description = open('README.md').read()
 
 version = '2.0'

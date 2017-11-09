@@ -11,3 +11,4 @@ build/
 *.pyc
 __pycache__/
 dist/
+README.rst

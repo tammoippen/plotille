@@ -27,7 +27,7 @@ after_success:
   - coveralls
 
 before_deploy:
-  - pip install pypandoc
+  - pandoc --from=markdown --to=rst --output=README.rst README.md
 
 deploy:
   provider: pypi
