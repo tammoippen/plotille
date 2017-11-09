@@ -8,7 +8,7 @@ try:
 except IOError:
     long_description = open('README.md').read()
 
-version = '2.0.3'
+version = '2.1'
 
 setup(
     name='plotille',
