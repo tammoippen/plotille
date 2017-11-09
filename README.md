@@ -11,7 +11,7 @@ Plot, scatter plots and histograms in the terminal using braille dots, with no e
 
 Install:
 
-```
+```sh
 pipenv install plotille
 ```
 
@@ -54,7 +54,7 @@ Returns:
 
 In [5]: print(plotille.plot(X, np.sin(X), height=50))
 ```
-![Plot example](https://github.com/tammoippen/plotille/blob/master/imgs/plot.png)
+![](https://github.com/tammoippen/plotille/blob/master/imgs/plot.png)
 
 **Scatter:**
 ```python
@@ -82,7 +82,7 @@ Returns:
 
 In [7]: print(plotille.scatter(X, np.sin(X), height=50))
 ```
-![Plot example](https://github.com/tammoippen/plotille/blob/master/imgs/scatter.png)
+![](https://github.com/tammoippen/plotille/blob/master/imgs/scatter.png)
 
 **Hist:**
 
@@ -108,7 +108,7 @@ Returns:
 
 In [9]: print(plotille.hist(np.random.normal(size=10000)))
 ```
-![Hist example](https://github.com/tammoippen/plotille/blob/master/imgs/hist.png)
+![](https://github.com/tammoippen/plotille/blob/master/imgs/hist.png)
 
 **Histogram:**
 
@@ -138,7 +138,7 @@ Returns:
 
 In [11]: print(plotille.histogram(np.random.normal(size=10000)))
 ```
-![Histogram example](https://github.com/tammoippen/plotille/blob/master/imgs/histogram.png)
+![](https://github.com/tammoippen/plotille/blob/master/imgs/histogram.png)
 
 **Canvas:**
 
@@ -242,4 +242,4 @@ In [21]: c.line(0.1, 0.6, 0.35, 0.8)
 In [22]: c.line(0.35, 0.8, 0.6, 0.6)
 In [23]: print(c.plot())
 ```
-![House example](https://github.com/tammoippen/plotille/blob/master/imgs/house.png)
+![](https://github.com/tammoippen/plotille/blob/master/imgs/house.png)
