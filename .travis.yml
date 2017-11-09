@@ -27,11 +27,13 @@ after_success:
   - coveralls
 
 before_deploy:
+  - git stash --all
   - pandoc --from=markdown --to=rst --output=README.rst README.md
 
 deploy:
   provider: pypi
   user: tammoippen
+  skip_cleanup: true
   password:
     secure: RRm/32GM4WLDSv3TEjca/giPOeh0F49omzeDOq690uBWtIiqUzBzp7eCCcWrw+6OdVttUHhwsn4KCDhJR9jIAuFraFF6+CmMq4iwsMmeAVL9kEWJRIN05cR5hKkn7Jn/WcH5XOE24/8/4h3B8dvA3R/KK3qejpw6VfPXSiltA9cuerc/FawyHtIdrWDP+fCNYPcR9FWcjwRzpL+Rtyt5ymgQGBDyoQIQkhQ2kE4h4QVj0PxloArCzr0GoyBFvYkhZsY26CloRZu8+ng/jEeu4VxMNrbxr5NaGs6YgXxN5+jxnRWeDRho842JYxc196xiIbzbWJhykCATZjw7H+cPsJARhoUzHfqRXHdcb98a+RWxX9sMlU9faEZFHDb/sUE7MynQL1ZyWiSWfsC4I2MUJDvt0h9skjqYt2j6kKN5u0qfNZiUwofNLz5YPysISH57d63PKD/BLfO+5oHhBSvruB1x9GwlbnqenIi2Vz0SRhbH9PEyAEDA3MZejeiJuj2RTxNqXMnbT9oo9OG4TJcgn+T8y4/aH+w1yrf94A0udgqYrddBcBpbMgho4ewo1jI9GQ0t0ihYfffvBMdGCHrLDMb+VQrHb4FCDTP3tXhpi/ZgxfoJGGpEKRrPSOqbMIupZiKKQ1F5RwQjFEbBJ03NopDdv8DlYbuZjQ69dau5hek=
   on:
