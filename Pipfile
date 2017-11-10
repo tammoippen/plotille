@@ -1,6 +1,7 @@
 [[source]]
 url = "https://pypi.python.org/simple"
 verify_ssl = true
+name = "pypi"
 
 
 [packages]
@@ -10,10 +11,10 @@ verify_ssl = true
 [dev-packages]
 
 "flake8-import-order" = "*"
+"numpy" = "*"
 "pep8-naming" = "*"
-pytest = "*"
+"pytest" = "*"
 "pytest-cov" = "*"
 "pytest-flake8" = "*"
-numpy = "*"
+"pytest-mccabe" = "*"
 "python-coveralls" = "*"
-pytest-mccabe = "*"
