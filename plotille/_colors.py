@@ -39,6 +39,16 @@ def color(text, fg=None, bg=None, kind='names'):
         - `rgb`: corresponds to 24-bit encoding; provide colors either in 3- or 6-character
                  hex encoding or provide as a list / tuple with three ints (\in [0, 255] each)
 
+    With `fg` you can specify the foreground, i.e. text color, and with `bg` you
+    specify the background color. The resulting `text` also gets the `RESET` signal
+    at the end, s.t. no coloring swaps over to following text!
+
+    Make sure to set the colors corresponding to the `mode`, otherwise you get
+    `ValueErrors`.
+
+    If you do not want a foreground or background color, leave the corresponding
+    paramter `None`. If both are `None`, you get `text` directly.
+
     Parameters:
         text: str        Some text to surround.
         fg: multiple     Specify the foreground / text color.
@@ -48,6 +58,9 @@ def color(text, fg=None, bg=None, kind='names'):
     Returns:
         str: `text` enclosed with corresponding coloring controls
     '''
+    if fg is None and bg is None:
+        return text
+
     start = ''
     if kind == 'names':
         start = _names(fg, bg)
@@ -65,7 +78,8 @@ def color(text, fg=None, bg=None, kind='names'):
 
     if start:
         return start + text + '\x1b[0m'
-    return text
+
+    # should not be reachable
 
 
 def _names(fg, bg):

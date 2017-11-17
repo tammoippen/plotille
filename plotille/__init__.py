@@ -24,11 +24,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from ._canvas import Canvas
+from ._colors import color
 from ._graphs import hist, histogram, plot, scatter
 
 
 __all__ = [
     'Canvas',
+    'color',
     'hist',
     'histogram',
     'plot',
