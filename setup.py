@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 try:
     long_description = open('README.rst').read()
@@ -13,8 +13,10 @@ version = '2.1'
 setup(
     name='plotille',
     version=version,
-    py_modules=['plotille'],
-    install_requires=[],
+    py_modules=find_packages(),
+    install_requires=[
+        'six',
+    ],
     author='Tammo Ippen',
     author_email='tammo.ippen@posteo.de',
     description='Plot in the terminal using braille dots.',
