@@ -48,7 +48,8 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
         linesep: str    The requested line seperator. default: os.linesep
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                             see plotille.color.__docs__
 
     Returns:
         str: histogram over `X` from left to right.
@@ -95,7 +96,8 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                             see plotille.color.__docs__
 
     Returns:
         str: histogram over `X`.
@@ -163,7 +165,8 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                             see plotille.color.__docs__
 
     Returns:
         str: scatter plot over `X`, `Y`.
@@ -191,7 +194,8 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         y_min, y_max: float    Limits for the displayed Y values.
         lc: multiple           Give the line color.
         bg: multiple           Give the background color.
-        color_mode: str        Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                               see plotille.color.__docs__
 
     Returns:
         str: plot over `X`, `Y`.

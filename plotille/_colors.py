@@ -31,7 +31,7 @@ def color(text, fg=None, bg=None, mode='names'):
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
 
-    There are 3 color modes enabled:
+    There are 3 color modes possible:
         - `names`:  corresponds to 3/4 bit encoding; provide colors as lower case
                     with underscore names, e.g. 'red', 'bright_green'
         - `byte`: corresponds to 8-bit encoding; provide colors as int \in [0, 255];
@@ -49,11 +49,24 @@ def color(text, fg=None, bg=None, mode='names'):
     If you do not want a foreground or background color, leave the corresponding
     paramter `None`. If both are `None`, you get `text` directly.
 
+    When you stick to mode `names` and only use the none `bright_` versions,
+    the color control characters conform to ISO 6429 and the ANSI Escape sequences
+    as defined in http://ascii-table.com/ansi-escape-sequences.php.
+
+    Color names for mode `names` are:
+        black red green yellow blue magenta cyan white     <- ISO 6429
+        bright_black bright_red bright_green bright_yellow
+        bright_blue bright_magenta bright_cyan bright_white
+    (trying other names will raise ValueError)
+
+    If you want to use colorama (https://pypi.python.org/pypi/colorama), you should
+    also stick to the ISO 6429 colors.
+
     Parameters:
         text: str        Some text to surround.
         fg: multiple     Specify the foreground / text color.
         bg: multiple     Specify the background color.
-        color_mode: str  Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str  Specify color input mode; 'names' (default), 'byte' or 'rgb'
 
     Returns:
         str: `text` enclosed with corresponding coloring controls
