@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from copy import copy
 from os import linesep
 
+import six
+
 from ._dots import Dots
 from ._util import roundeven
 
@@ -266,4 +268,4 @@ class Canvas(object):
                                    for i in range(self.width // 10 + 1)]] +
                    [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
                    res)
-        return linesep.join([''.join(map(str, row)) for row in reversed(res)])
+        return linesep.join([''.join(map(six.text_type, row)) for row in reversed(res)])
