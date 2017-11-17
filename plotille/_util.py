@@ -122,28 +122,3 @@ def _dots_from(braille):
             dots += [8 - i]
 
     return sorted(dots)
-
-
-def _braille(b, x, y, set_=True):
-    '''Set dot at position x, y, with (0, 0) is top left corner.
-
-    Parameters:
-        b: unicode  Braille character in \u2800 - \u28ff
-        x: int      x-coordinate \in [0, 1]
-        y: int      y-coordinate \in [0, 1, 2, 3]
-
-    Returns:
-        unicode: braille sign with given dot set (other dots are unchanged).
-    '''
-    dots = _dots_from(b)
-    xy2dot = [[7, 8],  # I plot upside down, hence the different order
-              [3, 6],
-              [2, 5],
-              [1, 4]]
-    if set_:
-        dots.append(xy2dot[y][x])
-    else:
-        idx = xy2dot[y][x]
-        if idx in dots:
-            dots.remove(idx)
-    return _braille_from(dots)

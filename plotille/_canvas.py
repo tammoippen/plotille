@@ -26,7 +26,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from copy import copy
 from os import linesep
 
-from ._util import _braille, roundeven
+from ._dots import Dots
+from ._util import roundeven
 
 
 class Canvas(object):
@@ -44,7 +45,7 @@ class Canvas(object):
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
     '''
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1):
+    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_kind='names'):
         '''Initiate a Canvas object
 
         Parameters:
@@ -83,7 +84,7 @@ class Canvas(object):
         self._x_delta_pt = self._x_delta / 2
         self._y_delta_pt = self._y_delta / 4
         # the canvas to print in
-        self._canvas = [['\u2800'] * width for i_ in range(height)]
+        self._canvas = [[Dots(bg=background, color_kind=color_kind) for j_ in range(width)] for i_ in range(height)]
 
     def __str__(self):
         return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
@@ -129,7 +130,7 @@ class Canvas(object):
     def _transform_y(self, y):
         return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
-    def _set(self, x_idx, y_idx, set_=True):
+    def _set(self, x_idx, y_idx, set_=True, color=None):
         '''Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
@@ -141,9 +142,9 @@ class Canvas(object):
         y_c, y_p = y_idx // 4, y_idx % 4
 
         if 0 <= x_c < self.width and 0 <= y_c < self.height:
-            b = self._canvas[y_c][x_c]
-            b = _braille(b, x_p, y_p, set_)
-            self._canvas[y_c][x_c] = b
+            self._canvas[y_c][x_c].update(x_p, y_p, set_)
+            if color:
+                self._canvas[y_c][x_c].fg = color
 
     def dots_between(self, x0, y0, x1, y1):
         '''Number of dots between (x0, y0) and (x1, y1).
@@ -162,7 +163,7 @@ class Canvas(object):
 
         return x1_idx - x0_idx, y1_idx - y0_idx
 
-    def point(self, x, y, set_=True):
+    def point(self, x, y, set_=True, color=None):
         '''Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
@@ -172,7 +173,7 @@ class Canvas(object):
         '''
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
-        self._set(x_idx, y_idx, set_)
+        self._set(x_idx, y_idx, set_, color)
 
     def fill_char(self, x, y, set_=True):
         '''Fill the complete character at the point (x, y) [reference coordinate system]
@@ -189,11 +190,11 @@ class Canvas(object):
         y_c = y_idx // 4
 
         if set_:
-            self._canvas[y_c][x_c] = '⣿'
+            self._canvas[y_c][x_c].fill()
         else:
-            self._canvas[y_c][x_c] = '\u2800'
+            self._canvas[y_c][x_c].clear()
 
-    def line(self, x0, y0, x1, y1, set_=True):
+    def line(self, x0, y0, x1, y1, set_=True, color=None):
         '''Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
 
         Parameters:
@@ -203,11 +204,11 @@ class Canvas(object):
         '''
         x0_idx = self._transform_x(x0)
         y0_idx = self._transform_y(y0)
-        self._set(x0_idx, y0_idx, set_)
+        self._set(x0_idx, y0_idx, set_, color)
 
         x1_idx = self._transform_x(x1)
         y1_idx = self._transform_y(y1)
-        self._set(x1_idx, y1_idx, set_)
+        self._set(x1_idx, y1_idx, set_, color)
 
         x_diff = x1_idx - x0_idx
         y_diff = y1_idx - y0_idx
@@ -215,7 +216,7 @@ class Canvas(object):
         for i in range(1, steps):
             xb = x0_idx + int(roundeven(x_diff / steps * i))
             yb = y0_idx + int(roundeven(y_diff / steps * i))
-            self._set(xb, yb, set_)
+            self._set(xb, yb, set_, color)
 
     def rect(self, xmin, ymin, xmax, ymax, set_=True):
         '''Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
@@ -265,4 +266,4 @@ class Canvas(object):
                                    for i in range(self.width // 10 + 1)]] +
                    [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
                    res)
-        return linesep.join([''.join(row) for row in reversed(res)])
+        return linesep.join([''.join(map(str, row)) for row in reversed(res)])

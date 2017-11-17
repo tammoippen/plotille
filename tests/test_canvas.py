@@ -4,6 +4,7 @@ from __future__ import division, print_function, unicode_literals
 import numpy as np
 from plotille import Canvas
 import pytest
+import six
 
 
 def test_invalids():
@@ -22,7 +23,7 @@ def test_invalids():
 
 def test_str():
     c = Canvas(40, 20)
-    assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == str(c)
+    assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == six.text_type(c)
     assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == repr(c)
 
 
@@ -55,50 +56,50 @@ def test_transform():
 def test_set():
     c = Canvas(1, 1)
     c._set(0, 0)
-    assert '⡀' == c._canvas[0][0]
+    assert '⡀' == six.text_type(c._canvas[0][0])
     c._set(0, 0, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(0, 1)
-    assert '⠄' == c._canvas[0][0]
+    assert '⠄' == six.text_type(c._canvas[0][0])
     c._set(0, 1, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(0, 2)
-    assert '⠂' == c._canvas[0][0]
+    assert '⠂' == six.text_type(c._canvas[0][0])
     c._set(0, 2, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(0, 3)
-    assert '⠁' == c._canvas[0][0]
+    assert '⠁' == six.text_type(c._canvas[0][0])
     c._set(0, 3, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(1, 0)
-    assert '⢀' == c._canvas[0][0]
+    assert '⢀' == six.text_type(c._canvas[0][0])
     c._set(1, 0, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(1, 1)
-    assert '⠠' == c._canvas[0][0]
+    assert '⠠' == six.text_type(c._canvas[0][0])
     c._set(1, 1, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(1, 2)
-    assert '⠐' == c._canvas[0][0]
+    assert '⠐' == six.text_type(c._canvas[0][0])
     c._set(1, 2, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
     c._set(1, 3)
-    assert '⠈' == c._canvas[0][0]
+    assert '⠈' == six.text_type(c._canvas[0][0])
     c._set(1, 3, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
 
 
 def test_fill_char():
     c = Canvas(1, 1)
 
     c.fill_char(0.5, 0.5)
-    assert '⣿' == c._canvas[0][0]
+    assert '⣿' == six.text_type(c._canvas[0][0])
     c.fill_char(0.5, 0.5, False)
-    assert '⠀' == c._canvas[0][0]
+    assert '⠀' == six.text_type(c._canvas[0][0])
