@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import six
 
 
-def color(text, fg=None, bg=None, kind='names'):
+def color(text, fg=None, bg=None, mode='names'):
     '''Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -53,7 +53,7 @@ def color(text, fg=None, bg=None, kind='names'):
         text: str        Some text to surround.
         fg: multiple     Specify the foreground / text color.
         bg: multiple     Specify the background color.
-        color_kind: str  Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str  Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: `text` enclosed with corresponding coloring controls
@@ -62,11 +62,11 @@ def color(text, fg=None, bg=None, kind='names'):
         return text
 
     start = ''
-    if kind == 'names':
+    if mode == 'names':
         start = _names(fg, bg)
-    elif kind == 'byte':
+    elif mode == 'byte':
         start = _byte(fg, bg)
-    elif kind == 'rgb':
+    elif mode == 'rgb':
         if isinstance(fg, six.string_types):
             fg = _hex2rgb(fg)
         if isinstance(bg, six.string_types):
@@ -74,7 +74,7 @@ def color(text, fg=None, bg=None, kind='names'):
 
         start = _rgb(fg, bg)
     else:
-        raise ValueError('Invalid kind "{}". Use one of "names", "byte" or "rgb".'.format(kind))
+        raise ValueError('Invalid mode "{}". Use one of "names", "byte" or "rgb".'.format(mode))
 
     if start:
         return start + text + '\x1b[0m'

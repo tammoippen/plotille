@@ -34,7 +34,7 @@ from ._util import _hist, _set_limit
 
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
-         lc=None, bg=None, color_kind='names'):
+         lc=None, bg=None, color_mode='names'):
     '''Create histogram over `X` from left to right
 
     The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
@@ -48,7 +48,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
         linesep: str    The requested line seperator. default: os.linesep
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: histogram over `X` from left to right.
@@ -67,8 +67,8 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
         hight = int(width * 8 * _scale(h[i]) / h_max)
         canvas += ['[{:8.3f}, {:8.3f}) | {} {}'.format(
             b[i], b[i + 1],
-            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, kind=color_kind) +
-            color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, kind=color_kind),
+            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode) +
+            color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
             h[i],
             width=width)]
     canvas += ['‾' * (2*8 + 2 + 3 + width + 12)]
@@ -77,7 +77,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
 
 def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
               x_min=None, x_max=None, y_min=None, y_max=None,
-              lc=None, bg=None, color_kind='names'):
+              lc=None, bg=None, color_mode='names'):
     '''Create histogram over `X`
 
     In contrast to `hist`, this is the more `usual` histogram from bottom
@@ -95,7 +95,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: histogram over `X`.
@@ -127,7 +127,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     xmin = _set_limit(x_min, xmin)
     xmax = _set_limit(x_max, xmax)
 
-    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, background=bg, color_kind=color_kind)
+    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, background=bg, color_mode=color_mode)
 
     # how fat will one bar of the histogram be
     x_diff = canvas.dots_between(b[0], 0, b[1], 0)[0] or 1
@@ -144,7 +144,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
 
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
             x_min=None, x_max=None, y_min=None, y_max=None,
-            lc=None, bg=None, color_kind='names',
+            lc=None, bg=None, color_mode='names',
             canvas=None):
     '''Create scatter plot with X , Y values
 
@@ -163,18 +163,18 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
-        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: scatter plot over `X`, `Y`.
     '''
     return plot(X, Y, width, height, X_label, Y_label, linesep, None,
-                x_min, x_max, y_min, y_max, lc, bg, color_kind, canvas)
+                x_min, x_max, y_min, y_max, lc, bg, color_mode, canvas)
 
 
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
          x_min=None, x_max=None, y_min=None, y_max=None,
-         lc=None, bg=None, color_kind='names',
+         lc=None, bg=None, color_mode='names',
          canvas=None):
     '''Create plot with X , Y values and linear interpolation between points
 
@@ -191,7 +191,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         y_min, y_max: float    Limits for the displayed Y values.
         lc: multiple           Give the line color.
         bg: multiple           Give the background color.
-        color_kind: str        Specify color input mode; 'names'(default), 'byte' or 'rgb'
+        color_mode: str        Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: plot over `X`, `Y`.
@@ -228,7 +228,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         xmin = _set_limit(x_min, xmin)
         xmax = _set_limit(x_max, xmax)
 
-        canvas = Canvas(width, height, xmin, ymin, xmax, ymax, background=bg, color_kind=color_kind)
+        canvas = Canvas(width, height, xmin, ymin, xmax, ymax, background=bg, color_mode=color_mode)
     else:
         xmin = canvas.xmin
         xmax = canvas.xmax

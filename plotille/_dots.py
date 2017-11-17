@@ -30,7 +30,7 @@ from ._util import _braille_from
 class Dots(object):
     '''A Dots object is responsible for printing requested braille dots and colors
     '''
-    def __init__(self, dots=None, fg=None, bg=None, color_kind='names'):
+    def __init__(self, dots=None, fg=None, bg=None, color_mode='names'):
         '''Create a Dots object
 
         Parameters:
@@ -46,11 +46,11 @@ class Dots(object):
         self.dots = dots
         self.fg = fg
         self.bg = bg
-        self._kind = color_kind
+        self._mode = color_mode
 
     @property
-    def kind(self):
-        return self._kind
+    def mode(self):
+        return self._mode
 
     @property
     def dots(self):
@@ -63,12 +63,12 @@ class Dots(object):
         self._dots = list(value)
 
     def __repr__(self):
-        return 'Dots(dots={}, fg={}, bg={}, color_kind={})'.format(self.dots, self.fg, self.bg, self.kind)
+        return 'Dots(dots={}, fg={}, bg={}, color_mode={})'.format(self.dots, self.fg, self.bg, self.mode)
 
     def __str__(self):
         res = _braille_from(self.dots)
 
-        return color(res, fg=self.fg, bg=self.bg, kind=self.kind)
+        return color(res, fg=self.fg, bg=self.bg, mode=self.mode)
 
     def fill(self):
         self.dots = [1, 2, 3, 4, 5, 6, 7, 8]

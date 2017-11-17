@@ -47,7 +47,7 @@ class Canvas(object):
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
     '''
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_kind='names'):
+    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names'):
         '''Initiate a Canvas object
 
         Parameters:
@@ -86,7 +86,7 @@ class Canvas(object):
         self._x_delta_pt = self._x_delta / 2
         self._y_delta_pt = self._y_delta / 4
         # the canvas to print in
-        self._canvas = [[Dots(bg=background, color_kind=color_kind) for j_ in range(width)] for i_ in range(height)]
+        self._canvas = [[Dots(bg=background, color_mode=color_mode) for j_ in range(width)] for i_ in range(height)]
 
     def __str__(self):
         return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
