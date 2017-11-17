@@ -29,10 +29,12 @@ import os
 from six.moves import zip
 
 from ._canvas import Canvas
+from ._colors import color
 from ._util import _hist, _set_limit
 
 
-def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N803
+def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
+         lc=None, bg=None, color_kind='names'):
     '''Create histogram over `X` from left to right
 
     The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
@@ -44,6 +46,9 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
         width: int      The number of characters for the width (columns).
         log_scale: bool Scale the histogram with `log` function.
         linesep: str    The requested line seperator. default: os.linesep
+        lc: multiple         Give the line color.
+        bg: multiple         Give the background color.
+        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: histogram over `X` from left to right.
@@ -56,21 +61,23 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep):  # noqa: N8
     h, b = _hist(X, bins)
     h_max = _scale(max(h)) or 1
 
-    canvas = ['  bucket   | {} {}'.format('_' * width, 'Total Counts')]
+    canvas = ['        bucket       | {} {}'.format('_' * width, 'Total Counts')]
     lasts = ['', '⠂', '⠆', '⠇', '⡇', '⡗', '⡷', '⡿']
     for i in range(bins):
         hight = int(width * 8 * _scale(h[i]) / h_max)
-        canvas += ['{:10.5f} | {:{width}s} {}'.format(
-            (b[i] + b[i + 1]) / 2,  # use bucket center as representation
-            '⣿' * (hight // 8) + lasts[hight % 8],
+        canvas += ['[{:8.3f}, {:8.3f}) | {} {}'.format(
+            b[i], b[i + 1],
+            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, kind=color_kind) +
+            color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, kind=color_kind),
             h[i],
             width=width)]
-    canvas += ['‾' * (10 + 3 + width + 12)]
+    canvas += ['‾' * (2*8 + 2 + 3 + width + 12)]
     return linesep.join(canvas)
 
 
 def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
-              x_min=None, x_max=None, y_min=None, y_max=None):
+              x_min=None, x_max=None, y_min=None, y_max=None,
+              lc=None, bg=None, color_kind='names'):
     '''Create histogram over `X`
 
     In contrast to `hist`, this is the more `usual` histogram from bottom
@@ -86,6 +93,9 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
         linesep: str    The requested line seperator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
+        lc: multiple         Give the line color.
+        bg: multiple         Give the background color.
+        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: histogram over `X`.
@@ -117,7 +127,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     xmin = _set_limit(x_min, xmin)
     xmax = _set_limit(x_max, xmax)
 
-    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
+    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, background=bg, color_kind=color_kind)
 
     # how fat will one bar of the histogram be
     x_diff = canvas.dots_between(b[0], 0, b[1], 0)[0] or 1
@@ -127,13 +137,15 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
         if h[i] > 0:
             for j in range(x_diff):
                 x_ = b[i] + j * bin_size
-                canvas.line(x_, 0, x_, h[i])
+                canvas.line(x_, 0, x_, h[i], color=lc)
 
     return canvas.plot(x_axis=True, x_label=X_label, y_axis=True, y_label=Y_label, linesep=linesep)
 
 
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
-            x_min=None, x_max=None, y_min=None, y_max=None):
+            x_min=None, x_max=None, y_min=None, y_max=None,
+            lc=None, bg=None, color_kind='names',
+            canvas=None):
     '''Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
@@ -149,15 +161,21 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         linesep: str         The requested line seperator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
+        lc: multiple         Give the line color.
+        bg: multiple         Give the background color.
+        color_kind: str      Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: scatter plot over `X`, `Y`.
     '''
-    return plot(X, Y, width, height, X_label, Y_label, linesep, None, x_min, x_max, y_min, y_max)
+    return plot(X, Y, width, height, X_label, Y_label, linesep, None,
+                x_min, x_max, y_min, y_max, lc, bg, color_kind, canvas)
 
 
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
-         x_min=None, x_max=None, y_min=None, y_max=None):
+         x_min=None, x_max=None, y_min=None, y_max=None,
+         lc=None, bg=None, color_kind='names',
+         canvas=None):
     '''Create plot with X , Y values and linear interpolation between points
 
     Parameters:
@@ -171,6 +189,9 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         interp: Optional[str]  Specify interpolation; values None, 'linear'
         x_min, x_max: float    Limits for the displayed X values.
         y_min, y_max: float    Limits for the displayed Y values.
+        lc: multiple           Give the line color.
+        bg: multiple           Give the background color.
+        color_kind: str        Specify color input mode; 'names'(default), 'byte' or 'rgb'
 
     Returns:
         str: plot over `X`, `Y`.
@@ -178,34 +199,41 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     assert len(X) == len(Y)
     assert len(Y_label) <= 8
     assert interp in ('linear', None)
+    assert canvas is None or isinstance(canvas, Canvas)
 
-    ymin = 0
-    ymax = 1
-    if len(Y) > 0:
-        ymin = min(Y)
-        ymax = max(Y)
-        # have some space above and below the plot
-        offset = max(abs(ymax), abs(ymin)) / 10
-        ymin -= offset
-        ymax += offset
+    if canvas is None:
+        ymin = 0
+        ymax = 1
+        if len(Y) > 0:
+            ymin = min(Y)
+            ymax = max(Y)
+            # have some space above and below the plot
+            offset = max(abs(ymax), abs(ymin)) / 10
+            ymin -= offset
+            ymax += offset
 
-    ymin = _set_limit(y_min, ymin)
-    ymax = _set_limit(y_max, ymax)
+        ymin = _set_limit(y_min, ymin)
+        ymax = _set_limit(y_max, ymax)
 
-    xmin = 0
-    xmax = 1
-    if len(X) > 0:
-        xmin = min(X)
-        xmax = max(X)
-        # have some space above and below the plot
-        offset = max(abs(xmax), abs(xmin)) / 10
-        xmin -= offset
-        xmax += offset
+        xmin = 0
+        xmax = 1
+        if len(X) > 0:
+            xmin = min(X)
+            xmax = max(X)
+            # have some space above and below the plot
+            offset = max(abs(xmax), abs(xmin)) / 10
+            xmin -= offset
+            xmax += offset
 
-    xmin = _set_limit(x_min, xmin)
-    xmax = _set_limit(x_max, xmax)
+        xmin = _set_limit(x_min, xmin)
+        xmax = _set_limit(x_max, xmax)
 
-    canvas = Canvas(width, height, xmin, ymin, xmax, ymax)
+        canvas = Canvas(width, height, xmin, ymin, xmax, ymax, background=bg, color_kind=color_kind)
+    else:
+        xmin = canvas.xmin
+        xmax = canvas.xmax
+        ymin = canvas.ymin
+        ymax = canvas.ymax
 
     # make point iterators
     from_points = zip(X, Y)
@@ -219,10 +247,13 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
 
     # plot points
     for (x0, y0), (x, y) in zip(from_points, to_points):
-        canvas.point(x0, y0)
+        canvas.point(x0, y0, color=lc)
 
-        canvas.point(x, y)
+        canvas.point(x, y, color=lc)
         if interp == 'linear':
-            canvas.line(x0, y0, x, y)
+            canvas.line(x0, y0, x, y, color=lc)
+
+    canvas.line(xmin, 0, xmax, 0)
+    canvas.line(0, ymin, 0, ymax)
 
     return canvas.plot(x_axis=True, x_label=X_label, y_axis=True, y_label=Y_label, linesep=linesep)
