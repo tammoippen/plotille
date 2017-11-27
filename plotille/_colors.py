@@ -23,6 +23,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import sys
+
 import six
 
 
@@ -72,6 +74,10 @@ def color(text, fg=None, bg=None, mode='names'):
         str: `text` enclosed with corresponding coloring controls
     '''
     if fg is None and bg is None:
+        return text
+
+    if not sys.stdout.isatty():
+        # only color if tty (not a redirect / pipe)
         return text
 
     start = ''
