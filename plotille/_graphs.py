@@ -26,11 +26,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from math import log
 import os
 
-from six.moves import zip
-
-from ._canvas import Canvas
 from ._colors import color
-from ._util import _hist, _set_limit
+from ._figure import Figure
+from ._util import _hist
 
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
@@ -102,52 +100,27 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     Returns:
         str: histogram over `X`.
     '''
-    assert bins > 0
-    h, b = _hist(X, bins)
+    fig = Figure()
+    fig.width = width
+    fig.height = height
+    fig.x_label = X_label
+    fig.y_label = Y_label
+    fig.linesep = linesep
+    if x_min is not None and x_max is not None:
+        fig.x_limits = (x_min, x_max)  # TODO: no individual assignment of min/max
+    if y_min is not None and y_max is not None:
+        fig.y_limits = (y_min, y_max)  # TODO: no individual assignment of min/max
+    fig.background = bg
+    fig.color_mode = color_mode
 
-    ymax = 1
-    ymin = 0
-    if max(h) > 0:
-        ymax = max(h) or 1
-        # have some space above the plot
-        offset = abs(ymax) / 10
-        ymax += offset
+    fig.histogram(X, bins, lc)
 
-    ymin = _set_limit(y_min, ymin)
-    ymax = _set_limit(y_max, ymax)
-
-    xmin = 0
-    xmax = 1
-    if len(X) > 0:
-        xmin = min(X)
-        xmax = max(X)
-        # have some space left and right of the plot
-        offset = max(abs(xmax), abs(xmin)) / 10
-        xmin -= offset
-        xmax += offset
-
-    xmin = _set_limit(x_min, xmin)
-    xmax = _set_limit(x_max, xmax)
-
-    canvas = Canvas(width, height, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax, background=bg, color_mode=color_mode)
-
-    # how fat will one bar of the histogram be
-    x_diff = canvas.dots_between(b[0], 0, b[1], 0)[0] or 1
-    bin_size = (b[1] - b[0]) / x_diff
-
-    for i in range(bins):
-        if h[i] > 0:
-            for j in range(x_diff):
-                x_ = b[i] + j * bin_size
-                canvas.line(x_, 0, x_, h[i], color=lc)
-
-    return canvas.plot(x_axis=True, x_label=X_label, y_axis=True, y_label=Y_label, linesep=linesep)
+    return fig.show()
 
 
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
             x_min=None, x_max=None, y_min=None, y_max=None,
-            lc=None, bg=None, color_mode='names',
-            canvas=None):
+            lc=None, bg=None, color_mode='names'):
     '''Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
@@ -172,13 +145,12 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         str: scatter plot over `X`, `Y`.
     '''
     return plot(X, Y, width, height, X_label, Y_label, linesep, None,
-                x_min, x_max, y_min, y_max, lc, bg, color_mode, canvas)
+                x_min, x_max, y_min, y_max, lc, bg, color_mode)
 
 
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
          x_min=None, x_max=None, y_min=None, y_max=None,
-         lc=None, bg=None, color_mode='names',
-         canvas=None):
+         lc=None, bg=None, color_mode='names'):
     '''Create plot with X , Y values and linear interpolation between points
 
     Parameters:
@@ -200,64 +172,19 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     Returns:
         str: plot over `X`, `Y`.
     '''
-    assert len(X) == len(Y)
-    assert len(Y_label) <= 8
-    assert interp in ('linear', None)
-    assert canvas is None or isinstance(canvas, Canvas)
+    fig = Figure()
+    fig.width = width
+    fig.height = height
+    fig.x_label = X_label
+    fig.y_label = Y_label
+    fig.linesep = linesep
+    if x_min is not None and x_max is not None:
+        fig.x_limits = (x_min, x_max)  # TODO: no individual assignment of min/max
+    if y_min is not None and y_max is not None:
+        fig.y_limits = (y_min, y_max)  # TODO: no individual assignment of min/max
+    fig.background = bg
+    fig.color_mode = color_mode
 
-    if canvas is None:
-        ymin = 0
-        ymax = 1
-        if len(Y) > 0:
-            ymin = min(Y)
-            ymax = max(Y)
-            # have some space above and below the plot
-            offset = max(abs(ymax), abs(ymin)) / 10
-            ymin -= offset
-            ymax += offset
+    fig.plot(X, Y, lc, interp)
 
-        ymin = _set_limit(y_min, ymin)
-        ymax = _set_limit(y_max, ymax)
-
-        xmin = 0
-        xmax = 1
-        if len(X) > 0:
-            xmin = min(X)
-            xmax = max(X)
-            # have some space above and below the plot
-            offset = max(abs(xmax), abs(xmin)) / 10
-            xmin -= offset
-            xmax += offset
-
-        xmin = _set_limit(x_min, xmin)
-        xmax = _set_limit(x_max, xmax)
-
-        canvas = Canvas(width, height, xmin, ymin, xmax, ymax, background=bg, color_mode=color_mode)
-    else:
-        xmin = canvas.xmin
-        xmax = canvas.xmax
-        ymin = canvas.ymin
-        ymax = canvas.ymax
-
-    # make point iterators
-    from_points = zip(X, Y)
-    to_points = zip(X, Y)
-    try:
-        # remove first point of to_points
-        next(to_points)
-    except StopIteration:
-        # empty X, Y
-        pass
-
-    # plot points
-    for (x0, y0), (x, y) in zip(from_points, to_points):
-        canvas.point(x0, y0, color=lc)
-
-        canvas.point(x, y, color=lc)
-        if interp == 'linear':
-            canvas.line(x0, y0, x, y, color=lc)
-
-    canvas.line(xmin, 0, xmax, 0)
-    canvas.line(0, ymin, 0, ymax)
-
-    return canvas.plot(x_axis=True, x_label=X_label, y_axis=True, y_label=Y_label, linesep=linesep)
+    return fig.show()
