@@ -1,20 +1,23 @@
 [[source]]
+
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
 
 [packages]
+
 "e1839a8" = {path = ".", editable = true}
 
 
 [dev-packages]
 
 "flake8-import-order" = "*"
-"numpy" = "*"
+numpy = "*"
 "pep8-naming" = "*"
-"pytest" = "*"
-"pytest-cov" = "*"
+pytest = "*"
+pytest-cov = "*"
 "pytest-flake8" = "*"
-"pytest-mccabe" = "*"
-"python-coveralls" = "*"
+pytest-mccabe = "*"
+python-coveralls = "*"
+pytest-mock = "*"
