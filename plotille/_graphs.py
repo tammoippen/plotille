@@ -106,12 +106,19 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     fig.x_label = X_label
     fig.y_label = Y_label
     fig.linesep = linesep
-    if x_min is not None and x_max is not None:
-        fig.x_limits = (x_min, x_max)  # TODO: no individual assignment of min/max
-    if y_min is not None and y_max is not None:
-        fig.y_limits = (y_min, y_max)  # TODO: no individual assignment of min/max
+    if x_min is not None:
+        fig.set_x_limits(min_=x_min)
+    if x_max is not None:
+        fig.set_x_limits(max_=x_max)
+    if y_min is not None:
+        fig.set_y_limits(min_=y_min)
+    if y_max is not None:
+        fig.set_y_limits(max_=y_max)
     fig.background = bg
     fig.color_mode = color_mode
+
+    if lc is None and bg is None:
+        fig.with_colors = False
 
     fig.histogram(X, bins, lc)
 
@@ -178,12 +185,19 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     fig.x_label = X_label
     fig.y_label = Y_label
     fig.linesep = linesep
-    if x_min is not None and x_max is not None:
-        fig.x_limits = (x_min, x_max)  # TODO: no individual assignment of min/max
-    if y_min is not None and y_max is not None:
-        fig.y_limits = (y_min, y_max)  # TODO: no individual assignment of min/max
+    if x_min is not None:
+        fig.set_x_limits(min_=x_min)
+    if x_max is not None:
+        fig.set_x_limits(max_=x_max)
+    if y_min is not None:
+        fig.set_y_limits(min_=y_min)
+    if y_max is not None:
+        fig.set_y_limits(max_=y_max)
     fig.background = bg
     fig.color_mode = color_mode
+
+    if lc is None and bg is None:
+        fig.with_colors = False
 
     fig.plot(X, Y, lc, interp)
 
