@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from ._colors import color
-from ._util import _braille_from
+from ._util import braille_from
 
 
 class Dots(object):
@@ -66,7 +66,7 @@ class Dots(object):
         return 'Dots(dots={}, fg={}, bg={}, color_mode={})'.format(self.dots, self.fg, self.bg, self.mode)
 
     def __str__(self):
-        res = _braille_from(self.dots)
+        res = braille_from(self.dots)
 
         return color(res, fg=self.fg, bg=self.bg, mode=self.mode)
 

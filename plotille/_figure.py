@@ -31,7 +31,7 @@ from six.moves import zip
 
 from ._canvas import Canvas
 from ._colors import color
-from ._util import _hist
+from ._util import hist
 
 # TODO documentation!!!
 # TODO tests

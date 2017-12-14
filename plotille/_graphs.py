@@ -28,7 +28,7 @@ import os
 
 from ._colors import color
 from ._figure import Figure
-from ._util import _hist
+from ._util import hist as compute_hist
 
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
@@ -57,7 +57,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
             return log(a)
         return a
 
-    h, b = _hist(X, bins)
+    h, b = compute_hist(X, bins)
     h_max = _scale(max(h)) or 1
 
     canvas = ['        bucket       | {} {}'.format('_' * width, 'Total Counts')]

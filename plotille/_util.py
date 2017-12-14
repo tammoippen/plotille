@@ -48,14 +48,7 @@ def roundeven(x):
     return x_r
 
 
-def _set_limit(limit, orig):
-    if limit is not None:
-        assert isinstance(limit, (int, float))
-        return limit
-    return orig
-
-
-def _hist(X, bins):  # noqa: N803
+def hist(X, bins):  # noqa: N803
     '''Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -80,7 +73,7 @@ def _hist(X, bins):  # noqa: N803
     return y, [i * xwidth + xmin for i in range(bins + 1)]
 
 
-def _braille_from(dots):
+def braille_from(dots):
     '''Unicode character for braille with given dots set
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
@@ -101,7 +94,7 @@ def _braille_from(dots):
     return six.unichr(code)
 
 
-def _dots_from(braille):
+def dots_from(braille):
     '''Get set dots from given
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
