@@ -28,7 +28,7 @@ import sys
 import six
 
 
-def color(text, fg=None, bg=None, mode='names'):
+def color(text, fg=None, bg=None, mode='names', no_color=False):
     '''Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -69,6 +69,7 @@ def color(text, fg=None, bg=None, mode='names'):
         fg: multiple     Specify the foreground / text color.
         bg: multiple     Specify the background color.
         color_mode: str  Specify color input mode; 'names' (default), 'byte' or 'rgb'
+        no_color: bool   Remove color optionally. default=False
 
     Returns:
         str: `text` enclosed with corresponding coloring controls
@@ -76,7 +77,7 @@ def color(text, fg=None, bg=None, mode='names'):
     if fg is None and bg is None:
         return text
 
-    if not sys.stdout.isatty():
+    if not sys.stdout.isatty() or no_color:
         # only color if tty (not a redirect / pipe)
         return text
 
