@@ -53,9 +53,12 @@ class Figure(object):
         self._color_seq = iter(cycle(Figure._COLOR_SEQ))
         self._width = None
         self._height = None
-        self._x_limit = None
-        self._y_limit = None
+        self._x_min = None
+        self._x_max = None
+        self._y_min = None
+        self._y_max = None
         self._color_mode = None
+        self._with_colors = True
         self.linesep = os.linesep
         self.background = None
         self.x_label = 'X'
@@ -70,7 +73,8 @@ class Figure(object):
 
     @width.setter
     def width(self, value):
-        assert isinstance(value, int) and value > 0
+        if not (isinstance(value, int) and value > 0):
+            raise ValueError('Invalid width: {}'.format(value))
         self._width = value
 
     @property
@@ -81,7 +85,8 @@ class Figure(object):
 
     @height.setter
     def height(self, value):
-        assert isinstance(value, int) and value > 0
+        if not (isinstance(value, int) and value > 0):
+            raise ValueError('Invalid height: {}'.format(value))
         self._height = value
 
     @property
@@ -92,49 +97,74 @@ class Figure(object):
 
     @color_mode.setter
     def color_mode(self, value):
-        assert value in ('names', 'byte', 'rgb'), 'Only supports: names, byte, rgb!'
-        assert self._plots == [], 'Change color mode only, when no plots are prepared.'
+        if value not in ('names', 'byte', 'rgb'):
+            raise ValueError('Only supports: names, byte, rgb!')
+        if self._plots != []:
+            raise RuntimeError('Change color mode only, when no plots are prepared.')
         self._color_mode = value
 
-    # X limits
     @property
+    def with_colors(self):
+        return self._with_colors
+
+    @with_colors.setter
+    def with_colors(self, value):
+        if not isinstance(value, bool):
+            raise ValueError('Only bool allowed: "{}"'.format(value))
+        self._with_colors = value
+
     def x_limits(self):
-        if self._x_limit is not None:
-            return self._x_limit
+        return self._limits(self._x_min, self._x_max, False)
 
-        if not self._plots:
-            return 0.0, 1.0
+    def set_x_limits(self, min_=None, max_=None):
+        if min_ is not None and max_ is not None:
+            if min_ >= max_:
+                raise ValueError('min_ is larger or equal than max_.')
+            self._x_min = min_
+            self._x_max = max_
+        elif min_ is not None:
+            if self._x_max is not None and min_ >= self._x_max:
+                raise ValueError('Previous max is smaller or equal to new min_.')
+            self._x_min = min_
+        elif max_ is not None:
+            if self._x_min is not None and self._x_min >= max_:
+                raise ValueError('Previous min is larger or equal to new max_.')
+            self._x_max = max_
+        else:
+            self._x_min = None
+            self._x_max = None
 
-        low, high = None, None
-        for p in self._plots:
-            _min, _max = Figure._limit(p.width_vals())
-            if low is None:
-                low = _min
-                high = _max
-
-            low = min(_min, low)
-            high = max(_max, high)
-
-        return low, high
-
-    @x_limits.setter
-    def x_limits(self, value):
-        assert isinstance(value, (list, tuple))
-        assert value[0] < value[1]
-        self._x_limit = value
-
-    # Y limits
-    @property
     def y_limits(self):
-        if self._y_limit is not None:
-            return self._y_limit
+        return self._limits(self._y_min, self._y_max, True)
 
-        if not self._plots:
-            return 0.0, 1.0
+    def set_y_limits(self, min_=None, max_=None):
+        if min_ is not None and max_ is not None:
+            if min_ >= max_:
+                raise ValueError('min_ is larger or equal than max_.')
+            self._y_min = min_
+            self._y_max = max_
+        elif min_ is not None:
+            if self._y_max is not None and min_ >= self._y_max:
+                raise ValueError('Previous max is smaller or equal to new min_.')
+            self._y_min = min_
+        elif max_ is not None:
+            if self._y_min is not None and self._y_min >= max_:
+                raise ValueError('Previous min is larger or equal to new max_.')
+            self._y_max = max_
+        else:
+            self._y_min = None
+            self._y_max = None
+
+    def _limits(self, low_set, high_set, is_height):
+        if low_set is not None and high_set is not None:
+            return low_set, high_set
 
         low, high = None, None
         for p in self._plots:
-            _min, _max = Figure._limit(p.height_vals())
+            if is_height:
+                _min, _max = _limit(p.height_vals())
+            else:
+                _min, _max = _limit(p.width_vals())
             if low is None:
                 low = _min
                 high = _max
@@ -142,45 +172,34 @@ class Figure(object):
             low = min(_min, low)
             high = max(_max, high)
 
-        return low, high
-
-    @y_limits.setter
-    def y_limits(self, value):
-        assert isinstance(value, (list, tuple))
-        assert value[0] < value[1]
-        self._y_limit = value
-
-    @staticmethod
-    def _limit(values):
-        _min = 0
-        _max = 1
-        if len(values) > 0:
-            _min = min(values)
-            _max = max(values)
-
-        return (_min, _max)
+        return _choose(low, high, low_set, high_set)
 
     def clear(self):
         self._plots.clear()
 
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
-        if lc is None:
-            lc = next(self._color_seq)[self.color_mode]
-        self._plots += [Plot(X, Y, lc, interp, label)]
+        if len(X) > 0:
+            if lc is None:
+                lc = next(self._color_seq)[self.color_mode]
+            self._plots += [Plot(X, Y, lc, interp, label)]
 
     def scatter(self, X, Y, lc=None, label=None):  # noqa: N803
-        if lc is None:
-            lc = next(self._color_seq)[self.color_mode]
-        self._plots += [Plot(X, Y, lc, None, label)]
+        if len(X) > 0:
+            if lc is None:
+                lc = next(self._color_seq)[self.color_mode]
+            self._plots += [Plot(X, Y, lc, None, label)]
 
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
-        if lc is None:
-            lc = next(Figure._COLOR_SEQ)[self.color_mode]
-        self._plots += [Histogram(X, bins, lc)]
+        if len(X) > 0:
+            if lc is None:
+                lc = next(self._color_seq)[self.color_mode]
+            self._plots += [Histogram(X, bins, lc)]
 
     def show(self, legend=False):
-        xmin, xmax = self.x_limits
-        ymin, ymax = self.y_limits
+        xmin, xmax = self.x_limits()
+        ymin, ymax = self.y_limits()
+        if all(isinstance(p, Histogram) for p in self._plots):
+            ymin = 0
         # create canvas
         canvas = Canvas(self.width, self.height,
                         xmin, ymin, xmax, ymax,
@@ -188,7 +207,7 @@ class Figure(object):
 
         plot_origin = False
         for p in self._plots:
-            p.write(canvas)
+            p.write(canvas, self.with_colors)
             if isinstance(p, Plot):
                 plot_origin = True
 
@@ -205,7 +224,7 @@ class Figure(object):
             plt += '\n'.join([
                 color('⠤⠤ {}'.format(p.label if p.label is not None
                                      else 'Label {}'.format(i)),
-                      fg=p.lc, mode=self.color_mode)
+                      fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)
                 for i, p in enumerate(self._plots)
                 if isinstance(p, Plot)
             ])
@@ -215,8 +234,10 @@ class Figure(object):
 class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
     def __init__(self, *args, **kwargs):
         super(Plot, self).__init__()
-        assert len(self.X) == len(self.Y)
-        assert self.interp in ('linear', None)
+        if len(self.X) != len(self.Y):
+            raise ValueError('X and Y dim have to be the same.')
+        if self.interp not in ('linear', None):
+            raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
     def width_vals(self):
         return self.X
@@ -224,30 +245,28 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
     def height_vals(self):
         return self.Y
 
-    def write(self, canvas):
+    def write(self, canvas, with_colors):
         # make point iterators
         from_points = zip(self.X, self.Y)
         to_points = zip(self.X, self.Y)
-        try:
-            # remove first point of to_points
-            next(to_points)
-        except StopIteration:
-            # empty X, Y
-            pass
 
+        # remove first point of to_points
+        next(to_points)
+
+        color = self.lc if with_colors else None
         # plot points
         for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x0, y0, color=self.lc)
+            canvas.point(x0, y0, color=color)
 
-            canvas.point(x, y, color=self.lc)
+            canvas.point(x, y, color=color)
             if self.interp == 'linear':
-                canvas.line(x0, y0, x, y, color=self.lc)
+                canvas.line(x0, y0, x, y, color=color)
 
 
 class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
     def __init__(self, *args, **kwargs):
         super(Histogram, self).__init__()
-        self.frequencies, self.buckets = _hist(self.X, self.bins)
+        self.frequencies, self.buckets = hist(self.X, self.bins)
 
     def width_vals(self):
         return self.X
@@ -255,11 +274,12 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
     def height_vals(self):
         return self.frequencies
 
-    def write(self, canvas):
+    def write(self, canvas, with_colors):
         # how fat will one bar of the histogram be
         x_diff = canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
         bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
 
+        color = self.lc if with_colors else None
         for i in range(self.bins):
             # for each bucket
             if self.frequencies[i] > 0:
@@ -270,4 +290,75 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
                     if canvas.xmin <= x_ <= canvas.xmax:
                         canvas.line(x_, 0,
                                     x_, self.frequencies[i],
-                                    color=self.lc)
+                                    color=color)
+
+
+def _limit(values):
+    _min = 0
+    _max = 1
+    if len(values) > 0:
+        _min = min(values)
+        _max = max(values)
+
+    return (_min, _max)
+
+
+def _diff(low, high):
+    if low == high:
+        if low == 0:
+            return 0.5
+        else:
+            return abs(low * 0.1)
+    else:
+        return abs(high - low) * 0.1
+
+
+def _default(low_set, high_set):
+    if low_set is None and high_set is None:
+        return 0.0, 1.0  # defaults
+
+    if low_set is None and high_set is not None:
+        if high_set <= 0:
+            return high_set - 1, high_set
+        else:
+            return 0.0, high_set
+
+    if low_set is not None and high_set is None:
+        if low_set >= 1:
+            return low_set, low_set + 1
+        else:
+            return low_set, 1.0
+
+    # Should never get here! => checked in function before
+
+
+def _choose(low, high, low_set, high_set):
+    no_data = low is None and high is None
+    if no_data:
+        return _default(low_set, high_set)
+
+    else:  # some data
+        if low_set is None and high_set is None:
+            # no restrictions from user, use low & high
+            diff = _diff(low, high)
+            return low - diff, high + diff
+
+        if low_set is None and high_set is not None:
+            # user sets high end
+            if high_set < low:
+                # high is smaller than lowest value
+                return high_set - 1, high_set
+
+            diff = _diff(low, high_set)
+            return low - diff, high_set
+
+        if low_set is not None and high_set is None:
+            # user sets low end
+            if low_set > high:
+                # low is larger than highest value
+                return low_set, low_set + 1
+
+            diff = _diff(low_set, high)
+            return low_set, high + diff
+
+        # Should never get here! => checked in function before
