@@ -39,6 +39,23 @@ from ._util import hist
 
 
 class Figure(object):
+    '''Figure class to compose multiple plots.
+
+    Within a Figure you can easily compose many plots, assign labels to plots
+    and define the properties of the underlying Canvas. Possible properties that
+    can be defined are:
+
+        width, height: int    Define the number of characters in X / Y direction
+                              which are used for plotting.
+        x_limits: float       Define the X limits of the reference coordinate system,
+                              that will be plottered.
+        y_limits: float       Define the Y limits of the reference coordinate system,
+                              that will be plottered.
+        color_mode: str       Define the used color mode. See `plotille.color()`.
+        with_colors: bool     Define, whether to use colors at all.
+        background: multiple  Define the background color.
+        x_label, y_label: str Define the X / Y axis label.
+    '''
     _COLOR_SEQ = [
         {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
         {'names': 'red', 'rgb': (255, 0, 0), 'byte': 0x1},
