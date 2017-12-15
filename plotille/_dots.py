@@ -23,12 +23,28 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import six
+
 from ._colors import color
-from ._util import braille_from
 
 
 class Dots(object):
     '''A Dots object is responsible for printing requested braille dots and colors
+
+    Dot ordering: \u2800 '⠀' - \u28FF '⣿'' Coding according to ISO/TR 11548-1
+
+        Hence, each dot on or off is 8bit, i.e. 256 posibilities. With dot number
+        one being the msb and 8 is lsb:
+
+        idx:  1 2 3 4 5 6 7 8
+        bits: 0 0 0 0 0 0 0 0
+
+        Ordering of dots:
+
+        1  4
+        2  5
+        3  6
+        7  8
     '''
     def __init__(self, dots=None, fg=None, bg=None, color_mode='names'):
         '''Create a Dots object
@@ -94,3 +110,48 @@ class Dots(object):
             idx = xy2dot[y][x]
             if idx in self._dots:
                 self._dots.remove(idx)
+
+
+def braille_from(dots):
+    '''Unicode character for braille with given dots set
+
+    See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
+    for dot to braille encoding.
+
+    Parameters:
+        dots: List[int]  All dots that should be set. Allowed dots are 1,2,3,4,5,6,7,8
+
+    Returns:
+        unicode: braille sign with given dots set. \u2800 - \u28ff
+    '''
+    bin_code = ['0'] * 8
+    for i in dots:
+        bin_code[8 - i] = '1'
+
+    code = 0x2800 + int(''.join(bin_code), 2)
+
+    return six.unichr(code)
+
+
+def dots_from(braille):
+    '''Get set dots from given
+
+    See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
+    for braille to dot decoding.
+
+    Parameters:
+        braille: unicode  Braille character in \u2800 - \u28ff
+
+    Returns:
+        List[int]: dots that are set in braille sign
+    '''
+    assert 0x2800 <= ord(braille) <= 0x28ff
+
+    code = six.text_type(bin(ord(braille) - 0x2800))[2:].rjust(8, '0')
+
+    dots = []
+    for i, c in enumerate(code):
+        if c == '1':
+            dots += [8 - i]
+
+    return sorted(dots)
