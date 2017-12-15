@@ -2,7 +2,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from mock import call
-
 from plotille import Figure
 from plotille._figure import Histogram, Plot
 import pytest
