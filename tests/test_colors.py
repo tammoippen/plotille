@@ -94,9 +94,9 @@ def test_hex2rgb():
         r, g, b = choice(good), choice(good), choice(good)
 
         h = '{}{}{}'.format(
-            hex(r)[2:].rjust(2, '0'),
-            hex(g)[2:].rjust(2, '0'),
-            hex(b)[2:].rjust(2, '0'),
+            hex(r)[2:].rjust(2, str('0')),
+            hex(g)[2:].rjust(2, str('0')),
+            hex(b)[2:].rjust(2, str('0')),
         )
 
         assert (r, g, b) == clr._hex2rgb(h)
@@ -122,7 +122,7 @@ def test_rgb(tty):
         assert '\x1b[38;2;{};{};{}m'.format(fg, fg, fg) == clr._rgb((fg, fg, fg), None)
         assert '\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) == clr.color(' ', (fg, fg, fg), None, mode='rgb')
 
-        fgh = hex(fg)[2:].rjust(2, '0')
+        fgh = hex(fg)[2:].rjust(2, str('0'))
         assert '\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) == clr.color(' ', fgh + fgh + fgh, None, mode='rgb')
         assert ('\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) ==
                 clr.color(' ', '0x' + fgh + fgh + fgh, None, mode='rgb'))
@@ -131,7 +131,7 @@ def test_rgb(tty):
             assert '\x1b[48;2;{};{};{}m'.format(bg, bg, bg) == clr._rgb(None, (bg, bg, bg))
             assert '\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) == clr.color(' ', None, (bg, bg, bg), mode='rgb')
 
-            bgh = hex(bg)[2:].rjust(2, '0')
+            bgh = hex(bg)[2:].rjust(2, str('0'))
             assert '\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) == clr.color(' ', None, bgh + bgh + bgh, mode='rgb')
             assert ('\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) ==
                     clr.color(' ', None, '0x' + bgh + bgh + bgh, mode='rgb'))
