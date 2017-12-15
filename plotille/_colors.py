@@ -159,8 +159,11 @@ def _rgb(fg, bg):
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
     '''
-    assert fg is None or (isinstance(fg, (list, tuple)) and len(fg) == 3)
-    assert bg is None or (isinstance(bg, (list, tuple)) and len(bg) == 3)
+    if not (fg is None or (isinstance(fg, (list, tuple)) and len(fg) == 3) and all(0 <= f <= 255 for f in fg)):
+        raise ValueError('Foreground fg either None or 3-tuple: {}'.format(fg))
+    if not (bg is None or (isinstance(bg, (list, tuple)) and len(bg) == 3) and all(0 <= b <= 255 for b in bg)):
+        raise ValueError('Foreground fg either None or 3-tuple: {}'.format(bg))
+
     fg_ = ''
     if fg is not None:
         fg_ = '38;2;' + ';'.join(map(six.text_type, fg))
