@@ -51,12 +51,15 @@ class Canvas(object):
         '''Initiate a Canvas object
 
         Parameters:
-            width: int         The number of characters for the width (columns) of the canvas.
-            hight: int         The number of characters for the hight (rows) of the canvas.
-            xmin, ymin: float  Lower left corner of reference system.
-            xmax, ymax: float  Upper right corner of reference system.
+            width: int            The number of characters for the width (columns) of the canvas.
+            hight: int            The number of characters for the hight (rows) of the canvas.
+            xmin, ymin: float     Lower left corner of reference system.
+            xmax, ymax: float     Upper right corner of reference system.
+            background: multiple  Background color of the canvas.
+            color_mode: str       The color-mode for all colors of this canvas; either 'names' (default)
+                                  'rgb' or 'byte'. See `plotille.color()`.
 
-        Reurns:
+        Returns:
             Canvas object
         '''
         assert isinstance(width, int), '`width` has to be of type `int`'
@@ -136,9 +139,10 @@ class Canvas(object):
         '''Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
-            x: int      x-coordinate on canvas.
-            y: int      y-coordinate on canvas.
-            set_: bool  Whether to plot or remove the point.
+            x: int           x-coordinate on canvas.
+            y: int           y-coordinate on canvas.
+            set_: bool       Whether to plot or remove the point.
+            color: multiple  Color of the point.
         '''
         x_c, x_p = x_idx // 2, x_idx % 2
         y_c, y_p = y_idx // 4, y_idx % 4
@@ -169,9 +173,10 @@ class Canvas(object):
         '''Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
-            x: float    x-coordinate on reference system.
-            y: float    y-coordinate on reference system.
-            set_: bool  Whether to plot or remove the point.
+            x: float         x-coordinate on reference system.
+            y: float         y-coordinate on reference system.
+            set_: bool       Whether to plot or remove the point.
+            color: multiple  Color of the point.
         '''
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
@@ -200,9 +205,10 @@ class Canvas(object):
         '''Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
 
         Parameters:
-            x0, y0: float  Point 0
-            x1, y1: float  Point 1
-            set_: bool     Whether to plot or remove the line.
+            x0, y0: float    Point 0
+            x1, y1: float    Point 1
+            set_: bool       Whether to plot or remove the line.
+            color: multiple  Color of the line.
         '''
         x0_idx = self._transform_x(x0)
         y0_idx = self._transform_y(y0)
@@ -220,20 +226,21 @@ class Canvas(object):
             yb = y0_idx + int(roundeven(y_diff / steps * i))
             self._set(xb, yb, set_, color)
 
-    def rect(self, xmin, ymin, xmax, ymax, set_=True):
+    def rect(self, xmin, ymin, xmax, ymax, set_=True, color=None):
         '''Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
 
         Parameters:
             xmin, ymin: float  Lower left corner of rectangle.
             xmax, ymax: float  Upper right corner of rectangle.
             set_: bool         Whether to plot or remove the rect.
+            color: multiple    Color of the rect.
         '''
         assert xmin <= xmax
         assert ymin <= ymax
-        self.line(xmin, ymin, xmin, ymax, set_)
-        self.line(xmin, ymax, xmax, ymax, set_)
-        self.line(xmax, ymax, xmax, ymin, set_)
-        self.line(xmax, ymin, xmin, ymin, set_)
+        self.line(xmin, ymin, xmin, ymax, set_, color)
+        self.line(xmin, ymax, xmax, ymax, set_, color)
+        self.line(xmax, ymax, xmax, ymin, set_, color)
+        self.line(xmax, ymin, xmin, ymin, set_, color)
 
     def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep):
         '''Transform canvas into `print`-able string
