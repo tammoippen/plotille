@@ -192,7 +192,7 @@ class Figure(object):
         return _choose(low, high, low_set, high_set)
 
     def clear(self):
-        self._plots.clear()
+        self._plots = []
 
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
         if len(X) > 0:
