@@ -11,3 +11,13 @@ def get_canvas(mocker):
         return canvas
 
     return get
+
+
+@pytest.fixture()
+def tty(mocker):
+    mocker.patch('sys.stdout.isatty', return_value=True)
+
+
+@pytest.fixture()
+def notty(mocker):
+    mocker.patch('sys.stdout.isatty', return_value=False)
