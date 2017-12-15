@@ -239,8 +239,7 @@ class Figure(object):
         if legend:
             plt += '\n\nLegend:\n-------\n'
             plt += '\n'.join([
-                color('⠤⠤ {}'.format(p.label if p.label is not None
-                                     else 'Label {}'.format(i)),
+                color('⠤⠤ {}'.format(p.label if p.label is not None else 'Label {}'.format(i)),
                       fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)
                 for i, p in enumerate(self._plots)
                 if isinstance(p, Plot)
