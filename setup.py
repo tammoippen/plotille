@@ -13,7 +13,7 @@ version = '3.0'
 setup(
     name='plotille',
     version=version,
-    py_modules=find_packages(),
+    packages=find_packages(),
     install_requires=[
         'six',
     ],
