@@ -35,7 +35,6 @@ from ._util import hist
 
 # TODO documentation!!!
 # TODO tests
-# TODO individuel limits
 
 
 class Figure(object):
@@ -191,6 +190,33 @@ class Figure(object):
 
         return _choose(low, high, low_set, high_set)
 
+    def _y_axis(self, ymin, ymax, label='Y'):
+        y_delta = abs((ymax - ymin) / self.height)
+
+        res = ['{:10.5f} | '.format(i * y_delta + ymin)
+               for i in range(self.height)]
+        # add max separately
+        res += ['{:10.5f} |'.format(self.height * y_delta + ymin)]
+
+        ylbl = '({})'.format(label)
+        ylbl_left = (10 - len(ylbl)) // 2
+        ylbl_right = ylbl_left + len(ylbl) % 2
+
+        res += [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']
+        return list(reversed(res))
+
+    def _x_axis(self, xmin, xmax, label='X', with_y_axis=False):
+        x_delta = abs((xmax - xmin) / self.width)
+        starts = ['', '']
+        if with_y_axis:
+            starts = ['-' * 11 + '|-', ' ' * 11 + '| ']
+        res = []
+
+        res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
+        res += [starts[1] + ''.join('{:<10.5f}'.format(i * 10 * x_delta + xmin)
+                                    for i in range(self.width // 10 + 1))]
+        return res
+
     def clear(self):
         self._plots = []
 
@@ -233,18 +259,32 @@ class Figure(object):
             canvas.line(xmin, 0, xmax, 0)
             canvas.line(0, ymin, 0, ymax)
 
-        plt = canvas.plot(x_axis=True, x_label=self.x_label, y_axis=True,
-                          y_label=self.y_label, linesep=self.linesep)
+        res = canvas.plot(linesep=self.linesep)
+
+        # add y axis
+        yaxis = self._y_axis(ymin, ymax, label=self.y_label)
+        res = (
+            yaxis[0] + self.linesep +  # up arrow
+            yaxis[1] + self.linesep +  # maximum
+            self.linesep.join(lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep)))
+        )
+
+        # add x axis
+        xaxis = self._x_axis(xmin, xmax, label=self.x_label, with_y_axis=True)
+        res = (
+            res + self.linesep +  # plot
+            self.linesep.join(xaxis)
+        )
 
         if legend:
-            plt += '\n\nLegend:\n-------\n'
-            plt += '\n'.join([
+            res += '\n\nLegend:\n-------\n'
+            res += '\n'.join([
                 color('⠤⠤ {}'.format(p.label if p.label is not None else 'Label {}'.format(i)),
                       fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)
                 for i, p in enumerate(self._plots)
                 if isinstance(p, Plot)
             ])
-        return plt
+        return res
 
 
 class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):

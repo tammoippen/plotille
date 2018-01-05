@@ -23,7 +23,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from copy import copy
+# from copy import copy
 from os import linesep
 
 import six
@@ -242,37 +242,15 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep):
+    def plot(self, linesep=linesep):
         '''Transform canvas into `print`-able string
 
         Parameters:
-            x_axis: bool  Add a X-axis at the bottom.
-            y_axis: bool  Add a Y-axis to the left.
-            y_label: str  Label for Y-axis. max 8 characters.
-            x_label: str  Label for X-axis.
             linesep: str  The requested line seperator. default: os.linesep
 
         Returns:
-            unicode: The cancas as a string.
+            unicode: The canvas as a string.
         '''
-        res = copy(self._canvas)
-        if y_axis:
-            # add Y-axis
-            for i in range(self.height):
-                res[i] = ['{:10.5f} | '.format(i * self._y_delta + self._ymin)] + res[i]
-            ylbl = '({})'.format(y_label)
-            ylbl_left = (10 - len(ylbl)) // 2
-            ylbl_right = ylbl_left + len(ylbl) % 2
-            res += [['{:10.5f} |'.format(self.height * self._y_delta + self._ymin)],
-                    [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
-        if x_axis:
-            # add X-axis
-            starts = ['', '']
-            if y_axis:
-                starts = [' ' * 11 + '| ', '-' * 11 + '|-']
-            res = ([[starts[0]] + ['{:<10.5f}'.format(i * 10 * self._x_delta + self._xmin)
-                                   for i in range(self.width // 10 + 1)]] +
-                   [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
-                   res)
-        return linesep.join([''.join(map(six.text_type, row)) for row in reversed(res)])
+        return linesep.join(''.join(map(six.text_type, row))
+                            for row in reversed(self._canvas))
