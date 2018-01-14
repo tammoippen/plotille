@@ -55,6 +55,9 @@ class Figure(object):
         with_colors: bool     Define, whether to use colors at all.
         background: multiple  Define the background color.
         x_label, y_label: str Define the X / Y axis label.
+        axis_round: int       Define the number of digits to round axes to. Must be
+                              greater > 0, large values can cause readibility issues
+                              on the x-axis, default is 5
     '''
     _COLOR_SEQ = [
         {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
@@ -80,6 +83,7 @@ class Figure(object):
         self.background = None
         self.x_label = 'X'
         self.y_label = 'Y'
+        self._axis_round = None
         self._plots = list()
 
     @property
@@ -93,6 +97,18 @@ class Figure(object):
         if not (isinstance(value, int) and value > 0):
             raise ValueError('Invalid width: {}'.format(value))
         self._width = value
+
+    @property
+    def axis_round(self):
+        if self._axis_round is not None:
+            return self._axis_round
+        return 5
+
+    @axis_round.setter
+    def axis_round(self, value):
+        if not (isinstance(value, int) and value > 0):
+            raise ValueError('Invalid axis_round: {}'.format(value))
+        self._axis_round = value
 
     @property
     def height(self):
@@ -234,7 +250,7 @@ class Figure(object):
             canvas.line(0, ymin, 0, ymax)
 
         plt = canvas.plot(x_axis=True, x_label=self.x_label, y_axis=True,
-                          y_label=self.y_label, linesep=self.linesep)
+                          y_label=self.y_label, linesep=self.linesep, axis_round=self.axis_round)
 
         if legend:
             plt += '\n\nLegend:\n-------\n'

@@ -54,6 +54,9 @@ can be defined are:
     with_colors: bool     Define, whether to use colors at all.
     background: multiple  Define the background color.
     x_label, y_label: str Define the X / Y axis label.
+    axis_round: int       Define the number of digits to round axes to. Must be
+                          greater > 0, large values can cause readibility issues
+                          on the x-axis, default is 5
 ```
 
 Basically, you create a `Figure`, define the properties and add your plots. Using the `show()` function, the `Figure` generates the plot using a new canvas:
