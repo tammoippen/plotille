@@ -242,7 +242,8 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep):
+    def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep, axis_round=5,
+             y_axis_transform=lambda x: "{:.5f}".format(x), x_axis_transform=lambda x: "{:.5f}".format(x)):
         '''Transform canvas into `print`-able string
 
         Parameters:
@@ -251,19 +252,30 @@ class Canvas(object):
             y_label: str  Label for Y-axis. max 8 characters.
             x_label: str  Label for X-axis.
             linesep: str  The requested line seperator. default: os.linesep
+            x_axis_transform: func A function that modifies the generated
+                          x_axis values. This can be any function that
+                          returns a string but is recommended to not be more
+                          than 10 characters and have no line breaks.
+            y_axis_transform: func A function that modifies the generated
+                          y_axis values. This can be any function that
+                          returns a string but is recommended to not be more
+                          than 10 characters and have no line breaks.
+
 
         Returns:
-            unicode: The cancas as a string.
+            unicode: The canvas as a string.
         '''
         res = copy(self._canvas)
         if y_axis:
             # add Y-axis
             for i in range(self.height):
-                res[i] = ['{:10.5f} | '.format(i * self._y_delta + self._ymin)] + res[i]
+                res[i] = ['{:>10} | '.format(
+                    y_axis_transform(i * self._y_delta + self._ymin))] + res[i]
             ylbl = '({})'.format(y_label)
             ylbl_left = (10 - len(ylbl)) // 2
             ylbl_right = ylbl_left + len(ylbl) % 2
-            res += [['{:10.5f} |'.format(self.height * self._y_delta + self._ymin)],
+            res += [['{:>10} |'.format(
+                y_axis_transform(self.height * self._y_delta + self._ymin))],
                     [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
         if x_axis:
@@ -271,7 +283,8 @@ class Canvas(object):
             starts = ['', '']
             if y_axis:
                 starts = [' ' * 11 + '| ', '-' * 11 + '|-']
-            res = ([[starts[0]] + ['{:<10.5f}'.format(i * 10 * self._x_delta + self._xmin)
+            res = ([[starts[0]] + ['{:<10}'.format(
+                x_axis_transform(i * 10 * self._x_delta + self._xmin))
                                    for i in range(self.width // 10 + 1)]] +
                    [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
                    res)
