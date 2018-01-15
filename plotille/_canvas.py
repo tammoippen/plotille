@@ -242,7 +242,7 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep):
+    def plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep=linesep, axis_round=5):
         '''Transform canvas into `print`-able string
 
         Parameters:
@@ -250,6 +250,7 @@ class Canvas(object):
             y_axis: bool  Add a Y-axis to the left.
             y_label: str  Label for Y-axis. max 8 characters.
             x_label: str  Label for X-axis.
+            axis_round: int Number of decimals to round the x axis values to.
             linesep: str  The requested line seperator. default: os.linesep
 
         Returns:
@@ -259,11 +260,11 @@ class Canvas(object):
         if y_axis:
             # add Y-axis
             for i in range(self.height):
-                res[i] = ['{:10.5f} | '.format(i * self._y_delta + self._ymin)] + res[i]
+                res[i] = ['{:10.{decimals}f} | '.format(i * self._y_delta + self._ymin, decimals=axis_round)] + res[i]
             ylbl = '({})'.format(y_label)
             ylbl_left = (10 - len(ylbl)) // 2
             ylbl_right = ylbl_left + len(ylbl) % 2
-            res += [['{:10.5f} |'.format(self.height * self._y_delta + self._ymin)],
+            res += [['{:10.{decimals}f} |'.format(self.height * self._y_delta + self._ymin, decimals=axis_round)],
                     [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']]
 
         if x_axis:
@@ -271,7 +272,7 @@ class Canvas(object):
             starts = ['', '']
             if y_axis:
                 starts = [' ' * 11 + '| ', '-' * 11 + '|-']
-            res = ([[starts[0]] + ['{:<10.5f}'.format(i * 10 * self._x_delta + self._xmin)
+            res = ([[starts[0]] + ['{:<10.{decimals}f}'.format(i * 10 * self._x_delta + self._xmin, decimals=axis_round)
                                    for i in range(self.width // 10 + 1)]] +
                    [[starts[1] + '|---------' * (self.width // 10) + '|-> (' + x_label + ')']] +
                    res)
