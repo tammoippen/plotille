@@ -28,6 +28,7 @@ import os
 
 from ._colors import color
 from ._figure import Figure
+from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
 
@@ -57,15 +58,18 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
             return log(a)
         return a
 
+    ipf = InputFormatter()
     h, b = compute_hist(X, bins)
     h_max = _scale(max(h)) or 1
+    delta = b[-1] - b[0]
 
     canvas = ['        bucket       | {} {}'.format('_' * width, 'Total Counts')]
     lasts = ['', '⠂', '⠆', '⠇', '⡇', '⡗', '⡷', '⡿']
     for i in range(bins):
         hight = int(width * 8 * _scale(h[i]) / h_max)
-        canvas += ['[{:8.3f}, {:8.3f}) | {} {}'.format(
-            b[i], b[i + 1],
+        canvas += ['[{}, {}) | {} {}'.format(
+            ipf.fmt(b[i], delta=delta, chars=8, left=True),
+            ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
             color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode) +
             color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
             h[i],
