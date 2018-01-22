@@ -26,6 +26,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from collections import OrderedDict
 from datetime import datetime, timedelta
 import math
+import time
 
 import six
 
@@ -116,9 +117,9 @@ def _num_formatter(val, chars, delta, left=False):
 
 def _float_formatter(val, chars, left=False):
     assert isinstance(val, float)
-    if abs(val) == math.inf:
+    if math.isinf(val):
         return str(val).ljust(chars) if left else str(val).rjust(chars)
-    sign = int(val < 0)
+    sign = 1 if val < 0 else 0
     order = math.log10(abs(val))
     align = '<' if left else ''
 
@@ -146,7 +147,7 @@ def _float_formatter(val, chars, left=False):
 def _int_formatter(val, chars, left=False):
     assert isinstance(val, six.integer_types)
     if val != 0:
-        sign = int(val < 0)
+        sign = 1 if val < 0 else 0
         digits = math.ceil(math.log10(abs(val)))
         if digits + sign > chars:
             return _large_pos(val, chars, left, digits, sign)
@@ -173,4 +174,6 @@ def _convert_numbers(v):
 
 def _convert_datetime(v):
     assert isinstance(v, datetime)
-    return v.timestamp()
+    return time.mktime(v.timetuple()) + v.microsecond / 1e6
+    # python2 does not have datetime.datetime.timestamp
+    # return v.timestamp()
