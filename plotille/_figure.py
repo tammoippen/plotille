@@ -31,6 +31,7 @@ from six.moves import zip
 
 from ._canvas import Canvas
 from ._colors import color
+from ._input_formatter import InputFormatter
 from ._util import hist
 
 # TODO documentation!!!
@@ -80,6 +81,7 @@ class Figure(object):
         self.x_label = 'X'
         self.y_label = 'Y'
         self._plots = list()
+        self._in_fmt = InputFormatter()
 
     @property
     def width(self):
@@ -128,6 +130,12 @@ class Figure(object):
         if not isinstance(value, bool):
             raise ValueError('Only bool allowed: "{}"'.format(value))
         self._with_colors = value
+
+    def register_label_formatter(self, type_, formatter):
+        self._in_fmt.register_formatter(type_, formatter)
+
+    def register_float_converter(self, type_, converter):
+        self._in_fmt.register_converter(type_, converter)
 
     def x_limits(self):
         return self._limits(self._x_min, self._x_max, False)
@@ -193,10 +201,10 @@ class Figure(object):
     def _y_axis(self, ymin, ymax, label='Y'):
         y_delta = abs((ymax - ymin) / self.height)
 
-        res = ['{:10.5f} | '.format(i * y_delta + ymin)
+        res = [self._in_fmt.fmt(i * y_delta + ymin, y_delta, chars=10) + ' | '
                for i in range(self.height)]
         # add max separately
-        res += ['{:10.5f} |'.format(self.height * y_delta + ymin)]
+        res += [self._in_fmt.fmt(self.height * y_delta + ymin, abs(ymax - ymin), chars=10) + ' |']
 
         ylbl = '({})'.format(label)
         ylbl_left = (10 - len(ylbl)) // 2
@@ -213,8 +221,8 @@ class Figure(object):
         res = []
 
         res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
-        res += [starts[1] + ''.join('{:<10.5f}'.format(i * 10 * x_delta + xmin)
-                                    for i in range(self.width // 10 + 1))]
+        res += [starts[1] + ' '.join(self._in_fmt.fmt(i * 10 * x_delta + xmin, abs(xmax - xmin), left=True, chars=9)
+                                     for i in range(self.width // 10 + 1))]
         return res
 
     def clear(self):
@@ -245,19 +253,20 @@ class Figure(object):
             ymin = 0
         # create canvas
         canvas = Canvas(self.width, self.height,
-                        xmin, ymin, xmax, ymax,
+                        self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
+                        self._in_fmt.convert(xmax), self._in_fmt.convert(ymax),
                         self.background, self.color_mode)
 
         plot_origin = False
         for p in self._plots:
-            p.write(canvas, self.with_colors)
+            p.write(canvas, self.with_colors, self._in_fmt)
             if isinstance(p, Plot):
                 plot_origin = True
 
         if plot_origin:
             # print X / Y origin axis
-            canvas.line(xmin, 0, xmax, 0)
-            canvas.line(0, ymin, 0, ymax)
+            canvas.line(self._in_fmt.convert(xmin), 0, self._in_fmt.convert(xmax), 0)
+            canvas.line(0, self._in_fmt.convert(ymin), 0, self._in_fmt.convert(ymax))
 
         res = canvas.plot(linesep=self.linesep)
 
@@ -301,10 +310,10 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
     def height_vals(self):
         return self.Y
 
-    def write(self, canvas, with_colors):
+    def write(self, canvas, with_colors, in_fmt):
         # make point iterators
-        from_points = zip(self.X, self.Y)
-        to_points = zip(self.X, self.Y)
+        from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
+        to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
         # remove first point of to_points
         next(to_points)
@@ -330,10 +339,11 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
     def height_vals(self):
         return self.frequencies
 
-    def write(self, canvas, with_colors):
+    def write(self, canvas, with_colors, in_fmt):
         # how fat will one bar of the histogram be
-        x_diff = canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
-        bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
+        x_diff = (canvas.dots_between(in_fmt.convert(self.buckets[0]), 0,
+                                      in_fmt.convert(self.buckets[1]), 0)[0] or 1)
+        bin_size = (in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])) / x_diff
 
         color = self.lc if with_colors else None
         for i in range(self.bins):
@@ -341,7 +351,7 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
             if self.frequencies[i] > 0:
                 for j in range(x_diff):
                     # print bar
-                    x_ = self.buckets[i] + j * bin_size
+                    x_ = in_fmt.convert(self.buckets[i]) + j * bin_size
 
                     if canvas.xmin <= x_ <= canvas.xmax:
                         canvas.line(x_, 0,
