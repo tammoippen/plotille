@@ -18,9 +18,9 @@ def get_canvas(mocker):
 
 @pytest.fixture()
 def tty(mocker):
-    mocker.patch('sys.stdout.isatty', return_value=True)
+    mocker.patch('plotille._colors._isatty', return_value=True)
 
 
 @pytest.fixture()
 def notty(mocker):
-    mocker.patch('sys.stdout.isatty', return_value=False)
+    mocker.patch('plotille._colors._isatty', return_value=False)

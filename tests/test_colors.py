@@ -14,7 +14,7 @@ def test_color_edges(mocker, tty):
     with pytest.raises(ValueError):
         clr.color('', 'black', 'red', mode='NAME')  # wrong mode
 
-    mocker.patch('sys.stdout.isatty', return_value=False)
+    mocker.patch('plotille._colors._isatty', return_value=False)
     assert '' == clr.color('', 'black', 'red')
 
 
