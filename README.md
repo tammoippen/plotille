@@ -22,6 +22,8 @@ Similar to other libraries:
 * like [termgraph](https://github.com/sgeisler/termgraph) (not on pypi), but very different style.
 * like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
 
+Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime` or `pendulum.datetime` values (internally I work with `pendulum.datetime`, as the python 2/3 consistency is much better). Labels are generated respecting the difference of of `x_limits` and `y_limits`.
+
 ## Documentation
 
 ```python
@@ -32,7 +34,7 @@ In [3]: X = np.sort(np.random.normal(size=1000))
 
 ### Figure
 
-To make construct plots the recomended way is tu use a `Figure`:
+To construct plots the recomended way is to use a `Figure`:
 
 ```python
 In [12]: plotille.Figure?

@@ -8,7 +8,7 @@ try:
 except IOError:
     long_description = open('README.md').read()
 
-version = '3.1'
+version = '3.2'
 
 setup(
     name='plotille',
@@ -25,7 +25,7 @@ setup(
     license='MIT',
     url='https://github.com/tammoippen/plotille',
     download_url='https://github.com/tammoippen/plotille/archive/v{}.tar.gz'.format(version),
-    keywords=['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode'],
+    keywords=['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode', 'timeseries'],
     include_package_data=True,
     classifiers=[
         # Trove classifiers
