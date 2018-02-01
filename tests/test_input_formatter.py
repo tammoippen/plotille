@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from datetime import datetime, timedelta
-
+from pendulum import datetime, interval
 from plotille._input_formatter import InputFormatter
 
 
@@ -15,12 +14,12 @@ def test_defaults():
     assert 1.0 == ipf.convert(1)
 
     d = datetime(2018, 1, 21, 15, 3, 12, 1234)
-    t = timedelta(hours=1)
+    t = interval(hours=1)
 
     assert ' 15:03:12' == ipf.fmt(d, t)
     assert '15:03:12 ' == ipf.fmt(d, t, left=True)
 
-    assert d.timestamp() == ipf.convert(d)
+    assert 1516546992.001234 == ipf.convert(d)
 
     # no formatter available
     assert 'None' == ipf.fmt(None, 0)

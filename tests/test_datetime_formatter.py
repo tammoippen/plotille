@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from datetime import datetime, timedelta
-
+from pendulum import datetime, interval
 from plotille._input_formatter import _convert_datetime, _datetime_formatter
 import pytest
 
@@ -14,12 +13,12 @@ def date():
 
 @pytest.fixture()
 def day():
-    return timedelta(days=1)
+    return interval(days=1)
 
 
 @pytest.fixture()
 def hour():
-    return timedelta(hours=1)
+    return interval(hours=1)
 
 
 def test_days(date, day):

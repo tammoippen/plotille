@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from datetime import datetime, timedelta
-
 from mock import call
+from pendulum import datetime, interval
 from plotille import Figure
 from plotille._figure import Histogram, Plot
 import pytest
@@ -423,7 +422,7 @@ def test_timeseries():
     fig = Figure()
     fig.with_colors = False
 
-    day = timedelta(days=1)
+    day = interval(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
     x = list(reversed(x))
@@ -483,7 +482,7 @@ def test_timehist():
     fig = Figure()
     fig.with_colors = False
 
-    day = timedelta(days=1)
+    day = interval(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
 
