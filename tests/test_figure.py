@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import datetime as orig_datetime
+
 from mock import call
 from pendulum import datetime, interval
 from plotille import Figure
@@ -418,19 +420,7 @@ def test_show():
     assert fig.show(legend=True) == expected + '\n\nLegend:\n-------\n⠤⠤ Label 0'  # no label for histograms
 
 
-def test_timeseries():
-    fig = Figure()
-    fig.with_colors = False
-
-    day = interval(days=1)
-    now = datetime(2018, 1, 16, 11, 9, 42, 100)
-    x = [now - i * day for i in range(10)]
-    x = list(reversed(x))
-    y = [0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5]
-
-    fig.plot(x, y)
-
-    expected = '''   (Y)     ^
+_timeseries = '''   (Y)     ^
 0.60000000 |
 0.57000000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 0.54000000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -474,21 +464,41 @@ def test_timeseries():
 -0.6000000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
            | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 '''
-    print(fig.show())
-    assert expected == fig.show()
 
 
-def test_timehist():
+def test_timeseries():
     fig = Figure()
     fig.with_colors = False
 
     day = interval(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
+    x = list(reversed(x))
+    y = [0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5]
 
-    fig.histogram(x, bins=8)
+    fig.plot(x, y)
 
-    expected = '''   (Y)     ^
+    print(fig.show())
+    assert _timeseries == fig.show()
+
+
+def test_timeseries_orig_dt():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+    x = list(reversed(x))
+    y = [0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5]
+
+    fig.plot(x, y)
+
+    print(fig.show())
+    assert _timeseries == fig.show()
+
+
+_histogram = '''   (Y)     ^
 2.10000000 |
 2.04750000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 1.99500000 | ⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⣀⣀⡀⠀⠀⠀⠀⠀⠀
@@ -532,5 +542,31 @@ def test_timehist():
          0 | ⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀
 -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
            | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 '''
+
+
+def test_timehistogram():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = interval(days=1)
+    now = datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+
+    fig.histogram(x, bins=8)
+
     print(fig.show())
-    assert expected == fig.show()
+    assert _histogram == fig.show()
+
+
+def test_timehistogram_orig_dt():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+
+    fig.histogram(x, bins=8)
+
+    print(fig.show())
+    assert _histogram == fig.show()
