@@ -23,7 +23,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from math import floor
+import datetime
+
+import pendulum
 
 
 def roundeven(x):
@@ -50,8 +52,8 @@ def hist(X, bins):  # noqa: N803
     '''Create histogram similar to `numpy.hist()`
 
     Parameters:
-        X: List[float]  The items to count over.
-        bins: int       The number of bins to put X entries in.
+        X: List[float|datetime]  The items to count over.
+        bins: int                The number of bins to put X entries in.
 
     Returns:
         (counts, bins):
@@ -59,13 +61,33 @@ def hist(X, bins):  # noqa: N803
             bins: List[float]  The range for each bin: bin `i` is in [bins[i], bins[i+1])
     '''
     assert bins > 0
-    xmin = min(X) if len(X) > 0 else 0
-    xmax = max(X) if len(X) > 0 else 1
-    xwidth = abs((xmax - xmin) / bins)
+
+    if is_datetimes(X):
+        X = make_datetimes(X)  # noqa: N806
+
+    xmin = min(X) if len(X) > 0 else 0.0
+    xmax = max(X) if len(X) > 0 else 1.0
+    xwidth = (xmax - xmin) / bins
 
     y = [0] * bins
     for x in X:
-        x_idx = min(bins - 1, int(floor((x - xmin) / xwidth)))
+        x_idx = min(bins - 1, int((x - xmin) // xwidth))
         y[x_idx] += 1
 
     return y, [i * xwidth + xmin for i in range(bins + 1)]
+
+
+def make_datetimes(l):
+    return [_dt2pendulum_dt(dt) for dt in l]
+
+
+def is_datetimes(l):
+    return (
+        all(isinstance(x, datetime.datetime) for x in l) and  # all are datetimes,
+        any(not isinstance(x, pendulum.datetime) for x in l)  # but at least one is not pendulum datetime
+    )
+
+
+def _dt2pendulum_dt(dt):
+    assert isinstance(dt, datetime.datetime)  # also works on pendulum datetimes
+    return pendulum.create(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)

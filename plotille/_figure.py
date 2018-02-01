@@ -32,7 +32,7 @@ from six.moves import zip
 from ._canvas import Canvas
 from ._colors import color
 from ._input_formatter import InputFormatter
-from ._util import hist
+from ._util import hist, is_datetimes, make_datetimes
 
 # TODO documentation!!!
 # TODO tests
@@ -232,19 +232,19 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot(X, Y, lc, interp, label)]
+            self._plots += [Plot.create(X, Y, lc, interp, label)]
 
     def scatter(self, X, Y, lc=None, label=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot(X, Y, lc, None, label)]
+            self._plots += [Plot.create(X, Y, lc, None, label)]
 
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Histogram(X, bins, lc)]
+            self._plots += [Histogram.create(X, bins, lc)]
 
     def show(self, legend=False):
         xmin, xmax = self.x_limits()
@@ -297,12 +297,21 @@ class Figure(object):
 
 
 class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
-    def __init__(self, *args, **kwargs):
-        super(Plot, self).__init__()
-        if len(self.X) != len(self.Y):
+
+    @classmethod
+    def create(cls, X, Y, lc, interp, label):  # noqa: N803
+        if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
-        if self.interp not in ('linear', None):
+        if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
+
+        if is_datetimes(X):
+            X = make_datetimes(X)  # noqa: N806
+
+        if is_datetimes(Y):
+            Y = make_datetimes(Y)  # noqa: N806
+
+        return cls(X, Y, lc, interp, label)
 
     def width_vals(self):
         return self.X
@@ -328,10 +337,15 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
                 canvas.line(x0, y0, x, y, color=color)
 
 
-class Histogram(namedtuple('Histogram', ['X', 'bins', 'lc'])):
-    def __init__(self, *args, **kwargs):
-        super(Histogram, self).__init__()
-        self.frequencies, self.buckets = hist(self.X, self.bins)
+class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+    @classmethod
+    def create(cls, X, bins, lc):  # noqa: N803
+        if is_datetimes(X):
+            X = make_datetimes(X)  # noqa: N806
+
+        frequencies, buckets = hist(X, bins)
+
+        return cls(X, bins, frequencies, buckets, lc)
 
     def width_vals(self):
         return self.X

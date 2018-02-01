@@ -24,10 +24,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import OrderedDict
-from datetime import datetime, timedelta
 import math
-import time
 
+from pendulum import datetime, interval, period
 import six
 
 
@@ -71,7 +70,7 @@ class InputFormatter(object):
 
 def _datetime_formatter(val, chars, delta, left=False):
     assert isinstance(val, datetime)
-    assert isinstance(delta, timedelta)
+    assert isinstance(delta, (interval, period))
 
     if chars < 8:
         raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
@@ -126,7 +125,7 @@ def _float_formatter(val, chars, left=False):
     if order >= 0:
         # larger than 1 values or smaller than -1
         digits = math.ceil(order)
-        fractionals = max(0, chars - 1 - digits - sign)
+        fractionals = int(max(0, chars - 1 - digits - sign))
         if digits + sign > chars:
             return _large_pos(val, chars, left, digits, sign)
 
@@ -136,7 +135,7 @@ def _float_formatter(val, chars, left=False):
         order = abs(math.floor(order))
 
         if order > 4:  # e-04  4 digits
-            exp_digits = max(2, math.ceil(math.log10(order)))
+            exp_digits = int(max(2, math.ceil(math.log10(order))))
             exp_digits += 2  # the - sign and the e
 
             return '{:{}{}.{}e}'.format(val, align, chars, chars - exp_digits - 2 - sign)
@@ -161,7 +160,7 @@ def _large_pos(val, chars, left, digits, sign):
     exp_digits = max(2, math.ceil(math.log10(digits)))
     exp_digits += 2  # the + sign and the e
     front_digits = chars - exp_digits - sign
-    residual_digits = max(0, front_digits - 2)
+    residual_digits = int(max(0, front_digits - 2))
     if front_digits < 1:
         raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
     return '{:{}{}.{}e}'.format(val, align, chars, residual_digits)
@@ -174,6 +173,4 @@ def _convert_numbers(v):
 
 def _convert_datetime(v):
     assert isinstance(v, datetime)
-    return time.mktime(v.timetuple()) + v.microsecond / 1e6
-    # python2 does not have datetime.datetime.timestamp
-    # return v.timestamp()
+    return v.timestamp()
