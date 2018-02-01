@@ -77,7 +77,7 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
     if fg is None and bg is None:
         return text
 
-    if not sys.stdout.isatty() or no_color:
+    if not _isatty() or no_color:
         # only color if tty (not a redirect / pipe)
         return text
 
@@ -100,6 +100,10 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
         return start + text + '\x1b[0m'
 
     # should not be reachable
+
+
+def _isatty():
+    return sys.stdout.isatty()
 
 
 def _names(fg, bg):
