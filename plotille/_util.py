@@ -81,7 +81,7 @@ def hist(X, bins):  # noqa: N803
 
 
 def make_datetimes(l):
-    return [_dt2pendulum_dt(dt) for dt in l]
+    return [dt2pendulum_dt(dt) for dt in l]
 
 
 def is_datetimes(l):
@@ -91,6 +91,6 @@ def is_datetimes(l):
     )
 
 
-def _dt2pendulum_dt(dt):
+def dt2pendulum_dt(dt):
     assert isinstance(dt, datetime.datetime)  # also works on pendulum datetimes
     return pendulum.create(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
