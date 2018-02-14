@@ -201,7 +201,7 @@ class Figure(object):
     def _y_axis(self, ymin, ymax, label='Y'):
         y_delta = abs((ymax - ymin) / self.height)
 
-        res = [self._in_fmt.fmt(i * y_delta + ymin, y_delta, chars=10) + ' | '
+        res = [self._in_fmt.fmt(i * y_delta + ymin, abs(ymax - ymin), chars=10) + ' | '
                for i in range(self.height)]
         # add max separately
         res += [self._in_fmt.fmt(self.height * y_delta + ymin, abs(ymax - ymin), chars=10) + ' |']
