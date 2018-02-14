@@ -122,7 +122,7 @@ def _float_formatter(val, chars, left=False):
     if math.isinf(val):
         return str(val).ljust(chars) if left else str(val).rjust(chars)
     sign = 1 if val < 0 else 0
-    order = math.log10(abs(val))
+    order = 0 if val == 0 else math.log10(abs(val))
     align = '<' if left else ''
 
     if order >= 0:
