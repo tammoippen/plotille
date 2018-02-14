@@ -570,3 +570,197 @@ def test_timehistogram_orig_dt():
 
     print(fig.show())
     assert _histogram == fig.show()
+
+
+def test_min_x():
+    fig = Figure()
+    fig.with_colors = False
+    fig.set_x_limits(min_=0)
+
+    fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | 0         0.2062500 0.4125000 0.6187500 0.8250000 1.0312500 1.2375000 1.4437500 1.6500000'
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_max_x():
+    fig = Figure()
+    fig.with_colors = False
+    fig.set_x_limits(max_=1)
+
+    fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | -1.200000 -0.925000 -0.650000 -0.375000 -0.100000 0.1750000 0.4500000 0.7250000 1        '
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_min_max_x():
+    fig = Figure()
+    fig.with_colors = False
+    fig.set_x_limits(min_=0, max_=1)
+
+    fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        '
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_min_max_y():
+    fig = Figure()
+    fig.with_colors = False
+    fig.set_y_limits(min_=0, max_=1)
+
+    fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    res = fig.show()
+    print(res)
+    assert res.split('\n')[1].startswith('         1 |')
+    assert res.split('\n')[-3].startswith('         0 |')
+
+
+def test_date_min_x():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now + i * day for i in range(6)]
+
+    fig.set_x_limits(min_=x[0])
+
+    fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | 16T11:09  17T03:39  17T20:09  18T12:39  19T05:09  19T21:39  20T14:09  21T06:39  21T23:09 '
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_date_max_x():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now + i * day for i in range(6)]
+
+    fig.set_x_limits(max_=x[-1])
+
+    fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | 15T23:09  16T15:39  17T08:09  18T00:39  18T17:09  19T09:39  20T02:09  20T18:39  21T11:09 '
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_date_min_max_x():
+    fig = Figure()
+    fig.with_colors = False
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now + i * day for i in range(6)]
+
+    fig.set_x_limits(min_=x[0], max_=x[-1])
+
+    fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
+
+    print(fig.show())
+    expected = '           | 16T11:09  17T02:09  17T17:09  18T08:09  18T23:09  19T14:09  20T05:09  20T20:09  21T11:09 '
+    assert expected == fig.show().split('\n')[-1]
+
+
+def test_date_min_max_y():
+    fig = Figure()
+    fig.with_colors = False
+    day = orig_datetime.timedelta(days=1)
+    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    y = [now + i * day for i in range(6)]
+
+    fig.set_y_limits(min_=y[0], max_=y[-1])
+
+    fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], y)
+
+    res = fig.show()
+    print(res)
+    assert res.split('\n')[1].startswith('  21T11:09 |')
+    assert res.split('\n')[-3].startswith('  16T11:09 |')
+
+
+def test_lbl_formatter():
+    fig = Figure()
+    fig.with_colors = False
+    fig.width = 30
+    fig.height = 15
+
+    def _num_formatter(val, chars, delta, left=False):
+        align = '<' if left else ''
+        return '{:{}{}d}'.format(int(val), align, chars)
+
+    fig.register_label_formatter(float, _num_formatter)
+    fig.register_label_formatter(int, _num_formatter)
+
+    fig.plot(list(range(100)), [i % 20 for i in range(100)])
+
+    expected = '''\
+   (Y)     ^
+        20 |
+        19 | ⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        17 | ⠀⠀⢸⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⡜⠀⠀
+        16 | ⠀⠀⢸⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⠇⠀⠀
+        14 | ⠀⠀⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⠀⠀⠀
+        13 | ⠀⠀⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⠀⠀⠀
+        11 | ⠀⠀⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⠀⠀⠀
+        10 | ⠀⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⠀⠀⠀
+         8 | ⠀⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⠀⠀⠀
+         7 | ⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⠀⠀⠀
+         5 | ⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⠀⠀⠀
+         4 | ⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⠀⠀⠀
+         2 | ⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⠀⠀⠀
+         1 | ⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀
+         0 | ⠤⠤⢼⠥⠤⠤⠤⠼⠥⠤⠤⠤⠼⠥⠤⠤⠤⠼⠥⠤⠤⠤⠼⠥⠤⠤⠤⠤⠤⠤
+        -1 | ⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+-----------|-|---------|---------|---------|-> (X)
+           | -9        29        69        108      '''
+    print(fig.show())
+    assert expected == fig.show()
+
+
+def test_float_converter():
+    fig = Figure()
+    fig.with_colors = False
+    fig.width = 30
+    fig.height = 15
+
+    def _converter(v):
+        return float(v) - 1
+
+    fig.register_float_converter(float, _converter)
+    fig.register_float_converter(int, _converter)
+
+    fig.plot(list(range(100)), [i % 20 for i in range(100)])
+
+    # axis are at the wrong position
+    expected = '''\
+   (Y)     ^
+20.9000000 |
+19.3800000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+17.8600000 | ⠀⠀⠀⡇⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⡜⠀⠀
+16.3400000 | ⠀⠀⠀⡇⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⠇⠀⠀
+14.8200000 | ⠀⠀⠀⡇⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⠀⠀⠀
+13.3000000 | ⠀⠀⠀⡇⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⠀⠀⠀
+11.7800000 | ⠀⠀⠀⡇⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⠀⠀⠀
+10.2600000 | ⠀⠀⠀⡇⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⠀⠀⠀
+8.74000000 | ⠀⠀⠀⡇⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⠀⠀⠀
+7.22000000 | ⠀⠀⠀⡇⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⠀⠀⠀
+5.70000000 | ⠀⠀⠀⡇⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⠀⠀⠀
+4.18000000 | ⠀⠀⠀⣧⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⠀⠀⠀
+2.66000000 | ⠀⠀⠀⣿⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⠀⠀⠀
+1.14000000 | ⣀⣀⣀⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣀⣀⣀
+-0.3800000 | ⠀⠀⠰⡇⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠀⠀⠀
+-1.9000000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+-----------|-|---------|---------|---------|-> (X)
+           | -9.900000 29.700000 69.300000 108.90000'''
+    print(fig.show())
+    assert expected == fig.show()
