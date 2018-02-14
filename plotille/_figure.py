@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import namedtuple
+from datetime import datetime
 from itertools import cycle
 import os
 
@@ -32,7 +33,7 @@ from six.moves import zip
 from ._canvas import Canvas
 from ._colors import color
 from ._input_formatter import InputFormatter
-from ._util import hist, is_datetimes, make_datetimes
+from ._util import dt2pendulum_dt, hist, is_datetimes, make_datetimes
 
 # TODO documentation!!!
 # TODO tests
@@ -141,6 +142,12 @@ class Figure(object):
         return self._limits(self._x_min, self._x_max, False)
 
     def set_x_limits(self, min_=None, max_=None):
+        if isinstance(min_, datetime):
+            min_ = dt2pendulum_dt(min_)
+
+        if isinstance(max_, datetime):
+            max_ = dt2pendulum_dt(max_)
+
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError('min_ is larger or equal than max_.')
@@ -162,6 +169,12 @@ class Figure(object):
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(self, min_=None, max_=None):
+        if isinstance(min_, datetime):
+            min_ = dt2pendulum_dt(min_)
+
+        if isinstance(max_, datetime):
+            max_ = dt2pendulum_dt(max_)
+
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError('min_ is larger or equal than max_.')
