@@ -29,6 +29,8 @@ import math
 from pendulum import datetime, interval, period
 import six
 
+from ._util import roundeven
+
 
 class InputFormatter(object):
     def __init__(self):
@@ -103,15 +105,16 @@ def _datetime_formatter(val, chars, delta, left=False):
 
 
 def _num_formatter(val, chars, delta, left=False):
-    if isinstance(val, float) and val.is_integer():
-        val = int(val)
+    if not (isinstance(val, six.integer_types) or isinstance(val, float)):
+        raise ValueError('Only accepting numeric (int/long/float) types, not "{}" of type: {}'.format(val, type(val)))
+
+    if abs(val - roundeven(val)) < 1e-8:  # about float (f32) machine precision
+        val = int(roundeven(val))
 
     if isinstance(val, six.integer_types):
         return _int_formatter(val, chars, left)
     elif isinstance(val, float):
         return _float_formatter(val, chars, left)
-    else:
-        raise ValueError('Only accepting numeric (int/long/float) types, not "{}" of type: {}'.format(val, type(val)))
 
 
 def _float_formatter(val, chars, left=False):
