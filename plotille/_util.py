@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 import datetime
+import math
 
 import pendulum
 
@@ -42,6 +43,8 @@ def roundeven(x):
              ceil(x)        if x - floor(x) > 0.5
              next even of x if x - floor(x) == 0.5
     '''
+    if math.isinf(x) or math.isnan(x):
+        return x  # same behaviour as in python2
     x_r = round(x)
     if abs(x_r - x) == 0.5:
         return int(2.0 * round(x / 2))
