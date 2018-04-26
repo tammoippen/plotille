@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'six',
-        'pendulum',
+        'pendulum<1.5',
     ],
     author='Tammo Ippen',
     author_email='tammo.ippen@posteo.de',
