@@ -25,6 +25,7 @@ addons:
 install:
   - pip install pipenv
   - pipenv install --dev
+  - pip install pytest-flake8 # in python 2.7 need to reinstall...
 
 script: PYTHONPATH=$PWD pipenv run pytest
 
