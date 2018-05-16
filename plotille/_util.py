@@ -87,10 +87,10 @@ def make_datetimes(l):
 def is_datetimes(l):
     return (
         all(isinstance(x, datetime.datetime) for x in l) and  # all are datetimes,
-        any(not isinstance(x, pendulum.datetime) for x in l)  # but at least one is not pendulum datetime
+        any(not isinstance(x, pendulum.DateTime) for x in l)  # but at least one is not pendulum datetime
     )
 
 
 def dt2pendulum_dt(dt):
     assert isinstance(dt, datetime.datetime)  # also works on pendulum datetimes
-    return pendulum.create(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
+    return pendulum.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)

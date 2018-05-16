@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from pendulum import datetime, interval
+from pendulum import datetime, duration
 from plotille._input_formatter import _convert_datetime, _datetime_formatter
 import pytest
 
@@ -13,12 +13,12 @@ def date():
 
 @pytest.fixture()
 def day():
-    return interval(days=1)
+    return duration(days=1)
 
 
 @pytest.fixture()
 def hour():
-    return interval(hours=1)
+    return duration(hours=1)
 
 
 def test_days(date, day):

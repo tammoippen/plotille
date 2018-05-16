@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import datetime as orig_datetime
 
-from pendulum import datetime, interval
+from pendulum import datetime, duration
 from plotille import hist
 
 
@@ -21,7 +21,7 @@ _hist = '''\
 
 
 def test_timehist():
-    day = interval(days=1)
+    day = duration(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
 
