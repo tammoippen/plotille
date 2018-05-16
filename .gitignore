@@ -13,3 +13,4 @@ __pycache__/
 dist/
 README.rst
 .pytest_cache/
+Pipfile.lock
