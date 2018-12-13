@@ -1,11 +1,12 @@
 venv/
 .venv/
+.vscode/
 data/
 build/
 *.egg-info
 .DS_Store
 .cache/
-.coverage
+.coverage*
 *.so
 *.c
 *.html
