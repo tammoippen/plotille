@@ -72,8 +72,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
             ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
             color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode) +
             color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
-            h[i],
-            width=width)]
+            h[i])]
     canvas += ['‾' * (2*8 + 2 + 3 + width + 12)]
     return linesep.join(canvas)
 
