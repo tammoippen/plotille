@@ -40,7 +40,7 @@ from ._util import dt2pendulum_dt, hist, is_datetimes, make_datetimes
 
 
 class Figure(object):
-    '''Figure class to compose multiple plots.
+    """Figure class to compose multiple plots.
 
     Within a Figure you can easily compose many plots, assign labels to plots
     and define the properties of the underlying Canvas. Possible properties that
@@ -56,7 +56,7 @@ class Figure(object):
         with_colors: bool     Define, whether to use colors at all.
         background: multiple  Define the background color.
         x_label, y_label: str Define the X / Y axis label.
-    '''
+    """
     _COLOR_SEQ = [
         {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
         {'names': 'red', 'rgb': (255, 0, 0), 'byte': 0x1},
@@ -81,7 +81,7 @@ class Figure(object):
         self.background = None
         self.x_label = 'X'
         self.y_label = 'Y'
-        self._plots = list()
+        self._plots = []
         self._in_fmt = InputFormatter()
 
     @property

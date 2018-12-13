@@ -32,7 +32,7 @@ from ._util import roundeven
 
 
 class Canvas(object):
-    '''A canvas object for plotting braille dots
+    """A canvas object for plotting braille dots
 
     A Canvas object has a `width` x `height` characters large canvas, in which it
     can plot indivitual braille point, lines out of braille points, rectangles,...
@@ -45,9 +45,9 @@ class Canvas(object):
     It does so transparently to clients of the Canvas, i.e. all plotting functions
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
-    '''
+    """
     def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names'):
-        '''Initiate a Canvas object
+        """Initiate a Canvas object
 
         Parameters:
             width: int            The number of characters for the width (columns) of the canvas.
@@ -60,7 +60,7 @@ class Canvas(object):
 
         Returns:
             Canvas object
-        '''
+        """
         assert isinstance(width, int), '`width` has to be of type `int`'
         assert isinstance(height, int), '`height` has to be of type `int`'
         assert width > 0, '`width` has to be greater than 0'
@@ -92,7 +92,7 @@ class Canvas(object):
 
     def __str__(self):
         return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
-            self.width, self.height, self.xmin, self.ymin, self.xmax, self.ymax
+            self.width, self.height, self.xmin, self.ymin, self.xmax, self.ymax,
         )
 
     def __repr__(self):
@@ -100,32 +100,32 @@ class Canvas(object):
 
     @property
     def width(self):
-        '''Number of characters in X direction'''
+        """Number of characters in X direction"""
         return self._width
 
     @property
     def height(self):
-        '''Number of characters in Y direction'''
+        """Number of characters in Y direction"""
         return self._height
 
     @property
     def xmin(self):
-        '''Get xmin coordinate of reference coordinate system.'''
+        """Get xmin coordinate of reference coordinate system."""
         return self._xmin
 
     @property
     def ymin(self):
-        '''Get ymin coordinate of reference coordinate system.'''
+        """Get ymin coordinate of reference coordinate system."""
         return self._ymin
 
     @property
     def xmax(self):
-        '''Get xmax coordinate of reference coordinate system.'''
+        """Get xmax coordinate of reference coordinate system."""
         return self._xmax
 
     @property
     def ymax(self):
-        '''Get ymax coordinate of reference coordinate system.'''
+        """Get ymax coordinate of reference coordinate system."""
         return self._ymax
 
     def _transform_x(self, x):
@@ -135,14 +135,14 @@ class Canvas(object):
         return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
     def _set(self, x_idx, y_idx, set_=True, color=None):
-        '''Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
+        """Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
             x: int           x-coordinate on canvas.
             y: int           y-coordinate on canvas.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
-        '''
+        """
         x_c, x_p = x_idx // 2, x_idx % 2
         y_c, y_p = y_idx // 4, y_idx % 4
 
@@ -152,7 +152,7 @@ class Canvas(object):
                 self._canvas[y_c][x_c].fg = color
 
     def dots_between(self, x0, y0, x1, y1):
-        '''Number of dots between (x0, y0) and (x1, y1).
+        """Number of dots between (x0, y0) and (x1, y1).
 
         Parameters:
             x0, y0: float  Point 0
@@ -160,7 +160,7 @@ class Canvas(object):
 
         Returns:
             (int, int): dots in (x, y) direction
-        '''
+        """
         x0_idx = self._transform_x(x0)
         y0_idx = self._transform_y(y0)
         x1_idx = self._transform_x(x1)
@@ -169,26 +169,26 @@ class Canvas(object):
         return x1_idx - x0_idx, y1_idx - y0_idx
 
     def point(self, x, y, set_=True, color=None):
-        '''Put a point into the canvas at (x, y) [reference coordinate system]
+        """Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
             x: float         x-coordinate on reference system.
             y: float         y-coordinate on reference system.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
-        '''
+        """
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
         self._set(x_idx, y_idx, set_, color)
 
     def fill_char(self, x, y, set_=True):
-        '''Fill the complete character at the point (x, y) [reference coordinate system]
+        """Fill the complete character at the point (x, y) [reference coordinate system]
 
         Parameters:
             x: float    x-coordinate on reference system.
             y: float    y-coordinate on reference system.
             set_: bool  Whether to plot or remove the point.
-        '''
+        """
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
 
@@ -201,14 +201,14 @@ class Canvas(object):
             self._canvas[y_c][x_c].clear()
 
     def line(self, x0, y0, x1, y1, set_=True, color=None):
-        '''Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
+        """Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
 
         Parameters:
             x0, y0: float    Point 0
             x1, y1: float    Point 1
             set_: bool       Whether to plot or remove the line.
             color: multiple  Color of the line.
-        '''
+        """
         x0_idx = self._transform_x(x0)
         y0_idx = self._transform_y(y0)
         self._set(x0_idx, y0_idx, set_, color)
@@ -226,14 +226,14 @@ class Canvas(object):
             self._set(xb, yb, set_, color)
 
     def rect(self, xmin, ymin, xmax, ymax, set_=True, color=None):
-        '''Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
+        """Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
 
         Parameters:
             xmin, ymin: float  Lower left corner of rectangle.
             xmax, ymax: float  Upper right corner of rectangle.
             set_: bool         Whether to plot or remove the rect.
             color: multiple    Color of the rect.
-        '''
+        """
         assert xmin <= xmax
         assert ymin <= ymax
         self.line(xmin, ymin, xmin, ymax, set_, color)
@@ -242,14 +242,14 @@ class Canvas(object):
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
     def plot(self, linesep=linesep):
-        '''Transform canvas into `print`-able string
+        """Transform canvas into `print`-able string
 
         Parameters:
             linesep: str  The requested line seperator. default: os.linesep
 
         Returns:
             unicode: The canvas as a string.
-        '''
+        """
 
         return linesep.join(''.join(map(six.text_type, row))
                             for row in reversed(self._canvas))

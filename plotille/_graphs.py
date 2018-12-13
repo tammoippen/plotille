@@ -34,7 +34,7 @@ from ._util import hist as compute_hist
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
          lc=None, bg=None, color_mode='names'):
-    '''Create histogram over `X` from left to right
+    """Create histogram over `X` from left to right
 
     The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
     The values on the right are the total counts of this bucket.
@@ -52,7 +52,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
 
     Returns:
         str: histogram over `X` from left to right.
-    '''
+    """
     def _scale(a):
         if log_scale and a > 0:
             return log(a)
@@ -80,7 +80,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
 def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
               x_min=None, x_max=None, y_min=None, y_max=None,
               lc=None, bg=None, color_mode='names'):
-    '''Create histogram over `X`
+    """Create histogram over `X`
 
     In contrast to `hist`, this is the more `usual` histogram from bottom
     to up. The X-axis represents the values in `X` and the Y-axis is the
@@ -102,7 +102,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
 
     Returns:
         str: histogram over `X`.
-    '''
+    """
     fig = Figure()
     fig.width = width
     fig.height = height
@@ -131,7 +131,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
             x_min=None, x_max=None, y_min=None, y_max=None,
             lc=None, bg=None, color_mode='names'):
-    '''Create scatter plot with X , Y values
+    """Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
         `plot(X, Y, ... , interp=None)`
@@ -153,7 +153,7 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
 
     Returns:
         str: scatter plot over `X`, `Y`.
-    '''
+    """
     return plot(X, Y, width, height, X_label, Y_label, linesep, None,
                 x_min, x_max, y_min, y_max, lc, bg, color_mode)
 
@@ -161,7 +161,7 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
          x_min=None, x_max=None, y_min=None, y_max=None,
          lc=None, bg=None, color_mode='names'):
-    '''Create plot with X , Y values and linear interpolation between points
+    """Create plot with X , Y values and linear interpolation between points
 
     Parameters:
         X: List[float]         X values.
@@ -181,7 +181,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
 
     Returns:
         str: plot over `X`, `Y`.
-    '''
+    """
     fig = Figure()
     fig.width = width
     fig.height = height

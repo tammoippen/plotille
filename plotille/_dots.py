@@ -29,7 +29,7 @@ from ._colors import color
 
 
 class Dots(object):
-    '''A Dots object is responsible for printing requested braille dots and colors
+    """A Dots object is responsible for printing requested braille dots and colors
 
     Dot ordering: \u2800 '⠀' - \u28FF '⣿'' Coding according to ISO/TR 11548-1
 
@@ -45,18 +45,18 @@ class Dots(object):
         2  5
         3  6
         7  8
-    '''
+    """
     def __init__(self, dots=None, fg=None, bg=None, color_mode='names'):
-        '''Create a Dots object
+        """Create a Dots object
 
         Parameters:
-            dots: List[int]  With set dots to on; \in 1 - 8
+            dots: List[int]  With set dots to on; ∈ 1 - 8
             fg: str          Color of dots
             bg: str          Color of background
 
         Returns:
             Dots
-        '''
+        """
         if dots is None:
             dots = []
         self.dots = dots
@@ -93,13 +93,13 @@ class Dots(object):
         self.dots = []
 
     def update(self, x, y, set_=True):
-        '''(Un)Set dot at position x, y, with (0, 0) is top left corner.
+        """(Un)Set dot at position x, y, with (0, 0) is top left corner.
 
         Parameters:
-            x: int      x-coordinate \in [0, 1]
-            y: int      y-coordinate \in [0, 1, 2, 3]
+            x: int      x-coordinate ∈ [0, 1]
+            y: int      y-coordinate ∈ [0, 1, 2, 3]
             set_: bool  True, sets dot, False, removes dot
-        '''
+        """
         xy2dot = [[7, 8],  # I plot upside down, hence the different order
                   [3, 6],
                   [2, 5],
@@ -113,7 +113,7 @@ class Dots(object):
 
 
 def braille_from(dots):
-    '''Unicode character for braille with given dots set
+    """Unicode character for braille with given dots set
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
     for dot to braille encoding.
@@ -123,7 +123,7 @@ def braille_from(dots):
 
     Returns:
         unicode: braille sign with given dots set. \u2800 - \u28ff
-    '''
+    """
     bin_code = ['0'] * 8
     for i in dots:
         bin_code[8 - i] = '1'
@@ -134,7 +134,7 @@ def braille_from(dots):
 
 
 def dots_from(braille):
-    '''Get set dots from given
+    """Get set dots from given
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
     for braille to dot decoding.
@@ -144,7 +144,7 @@ def dots_from(braille):
 
     Returns:
         List[int]: dots that are set in braille sign
-    '''
+    """
     assert 0x2800 <= ord(braille) <= 0x28ff
 
     code = six.text_type(bin(ord(braille) - 0x2800))[2:].rjust(8, '0')
