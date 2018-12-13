@@ -90,7 +90,7 @@ def test_bytes(tty):
 def test_hex2rgb():
     good = list(range(0, 256))
 
-    for i in range(100):
+    for _i in range(100):
         r, g, b = choice(good), choice(good), choice(good)
 
         h = '{}{}{}'.format(
