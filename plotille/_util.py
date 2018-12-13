@@ -30,7 +30,7 @@ import pendulum
 
 
 def roundeven(x):
-    '''Round to next even integer number in case of `X.5`
+    """Round to next even integer number in case of `X.5`
 
     In Python3 this is the same as `round(x, 0)`, but since Python2 rounds up
     in that case and I want consistent behaviour, here is the roundeven function.
@@ -42,7 +42,7 @@ def roundeven(x):
         int: floor(x)       if x - floor(x) < 0.5
              ceil(x)        if x - floor(x) > 0.5
              next even of x if x - floor(x) == 0.5
-    '''
+    """
     if math.isinf(x) or math.isnan(x):
         return x  # same behaviour as in python2
     x_r = round(x)
@@ -52,7 +52,7 @@ def roundeven(x):
 
 
 def hist(X, bins):  # noqa: N803
-    '''Create histogram similar to `numpy.hist()`
+    """Create histogram similar to `numpy.hist()`
 
     Parameters:
         X: List[float|datetime]  The items to count over.
@@ -62,7 +62,7 @@ def hist(X, bins):  # noqa: N803
         (counts, bins):
             counts: List[int]  The counts for all bins.
             bins: List[float]  The range for each bin: bin `i` is in [bins[i], bins[i+1])
-    '''
+    """
     assert bins > 0
 
     if is_datetimes(X):
