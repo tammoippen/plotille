@@ -20,6 +20,7 @@ matrix:
 
 before_install:
   - pip install poetry
+  - poetry config settings.virtualenvs.create false
 
 install:
   - poetry install
