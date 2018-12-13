@@ -13,11 +13,12 @@ python:
   - "pypy"
   - "pypy3.5"
 
-env:
-  matrix:
+matrix:
     fast_finish: true
     allow_failures:
       - python: nightly
+
+env:
   global:
     secure: "aEqZt0qnP/dPJpCHk/qpeeOW+Mf0k780083avEbU7mZ+sZABRRBq42aeYVVnTvqefgwiBgE0iw99YAg19ZVXdSWfKHc+XFSPdJ2INWPDPgp7Wh4S1feVVVtREUOhmGjK3azqEvOSGJLTqaavy7AHB/VIpZTD5WbR/QmM7/IcQkZjPZ9ifjt7JCTsiIZfqqBWVUOPxLh3ylCCjp9HX1ocYmZXXKv99HaTL6aHBofcN+WzmVd2cRyDFeVdxHbgJBmfo0agk7ITNvyvF9K8UjUS1ETOkeIJsX/6ZCtF3/70rfZxfpNcWiCiBmYUDrvbngNcnpopQFUudRutwnOK0IHteOzsXqsmm7kE2uOMyrQ/6/5TlWo/rLQv1iuRTETtB6ReSxqoEmP/SYUe/eAgrXiSCA4l7lnbc01LW4TydeTjijCeTVhbLbYYbhGRWvTX4S8k3+xSioS5Z6EvSCKPP+ajAo1oymzJ8EIUiRqEv5Rkt2XBkPgmeWi7KQPAsJvjGL/dOU1cw3b3O/BF+ABF9Rvf4jncJX7psMk6vt7uzS/lwzAMfjVPqp0UNJdCkKHZJupP7ZGQ+oWB1+SuEL+DtCugJQnqEg1mXQezp/dWWgwWTvqpZMzfNsywfLE1Sa4DxVWx2M3tc75xF9UAbS+Q2S/BhQO3eDF39bMWAp7oA8OsxoI="
 
