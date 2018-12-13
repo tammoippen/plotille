@@ -53,6 +53,7 @@ class Dots(object):
             dots: List[int]  With set dots to on; ∈ 1 - 8
             fg: str          Color of dots
             bg: str          Color of background
+            color_mode: str  Define the used color mode. See `plotille.color()`.
 
         Returns:
             Dots
