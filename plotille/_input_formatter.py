@@ -83,19 +83,19 @@ def _datetime_formatter(val, chars, delta, left=False):
         # make time representation
         if chars < 15:
             res = '{:02d}:{:02d}:{:02d}'.format(val.hour, val.minute, val.second)
-        elif 15 <= chars:
+        else:
             res = '{:02d}:{:02d}:{:02d}.{:06d}'.format(val.hour, val.minute, val.second, val.microsecond)
     elif 1 <= delta.days <= 10:
         # make day / time representation
         if chars < 11:
             res = '{:02d}T{:02d}:{:02d}'.format(val.day, val.hour, val.minute)
-        elif 11 <= chars:
+        else:
             res = '{:02d}T{:02d}:{:02d}:{:02d}'.format(val.day, val.hour, val.minute, val.second)
     else:
         # make date representation
         if chars < 10:
             res = '{:02d}-{:02d}-{:02d}'.format(val.year % 100, val.month, val.day)
-        elif 10 <= chars:
+        else:
             res = '{:04d}-{:02d}-{:02d}'.format(val.year, val.month, val.day)
 
     if left:
