@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime as orig_datetime
 
 from mock import call
-from pendulum import datetime, interval
+from pendulum import datetime, duration
 from plotille import Figure
 from plotille._figure import Histogram, Plot
 import pytest
@@ -470,7 +470,7 @@ def test_timeseries():
     fig = Figure()
     fig.with_colors = False
 
-    day = interval(days=1)
+    day = duration(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
     x = list(reversed(x))
@@ -548,7 +548,7 @@ def test_timehistogram():
     fig = Figure()
     fig.with_colors = False
 
-    day = interval(days=1)
+    day = duration(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
 
