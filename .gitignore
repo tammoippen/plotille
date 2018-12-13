@@ -1,4 +1,5 @@
 venv/
+.venv/
 data/
 build/
 *.egg-info
@@ -13,3 +14,5 @@ __pycache__/
 dist/
 README.rst
 .pytest_cache/
+poetry.lock
+Pipfile.lock

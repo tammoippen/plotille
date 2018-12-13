@@ -8,33 +8,30 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
-  - "pypy2.7-5.8.0"
-  - "pypy3.5-5.8.0"
+  - "3.7-dev"
   - "nightly"
+  - "pypy"
+  - "pypy3.5"
 
 matrix:
   fast_finish: true
   allow_failures:
     - python: nightly
 
-addons:
-  apt:
-    packages:
-      - pandoc
+before_install:
+  - pip install poetry
 
 install:
-  - pip install pipenv
-  - pipenv install --dev
-  - pip install pytest-flake8 # in python 2.7 need to reinstall...
+  - poetry install
+  - poetry show
 
-script: PYTHONPATH=$PWD pipenv run pytest
+script: poetry run pytest
 
 after_success:
   - coveralls
 
 before_deploy:
   - git stash --all
-  - pandoc --from=markdown --to=rst --output=README.rst README.md
 
 deploy:
   provider: pypi
