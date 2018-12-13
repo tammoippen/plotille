@@ -1,10 +1,12 @@
 venv/
+.venv/
+.vscode/
 data/
 build/
 *.egg-info
 .DS_Store
 .cache/
-.coverage
+.coverage*
 *.so
 *.c
 *.html
@@ -13,3 +15,5 @@ __pycache__/
 dist/
 README.rst
 .pytest_cache/
+poetry.lock
+Pipfile.lock

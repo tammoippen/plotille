@@ -1,3 +1,0 @@
-include LICENSE.txt README.md README.rst *.py
-recursive-include tests *.py
-recursive-include plotille *.py

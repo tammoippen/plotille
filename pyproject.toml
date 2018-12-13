@@ -1,0 +1,61 @@
+[tool.poetry]
+
+name = "plotille"
+version = "3.5"
+description = "Plot in the terminal using braille dots."
+authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
+license = "MIT"
+
+readme = "README.md"
+
+repository = "https://github.com/tammoippen/plotille"
+homepage = "https://github.com/tammoippen/plotille"
+
+keywords = ['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode', 'timeseries']
+
+classifiers = [
+    # Trove classifiers
+    # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    'Environment :: Console',
+    'License :: OSI Approved :: MIT License',
+    'Intended Audience :: Science/Research',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: Implementation :: CPython',
+    'Programming Language :: Python :: Implementation :: PyPy',
+    'Topic :: Scientific/Engineering :: Visualization',
+    'Topic :: Terminals'
+]
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.5"
+
+six = "^1.12"
+pendulum = "^2.0"
+
+
+[tool.poetry.dev-dependencies]
+
+coveralls = "^1.5.1"
+flake8 = "^3.5.0"
+flake8-bugbear = { version = "^18.8.0", python = "^3.5" }
+flake8-commas = "^2.0.0"
+flake8-comprehensions = "^1.4.1"
+flake8-import-order = "^0.18"
+flake8-pep3101 = "^1.2.1"
+flake8-polyfill = "^1.0.2"
+flake8-quotes = "^1.0.0"
+funcsigs = { version = "^1.0", python = "~2.7" }
+mock = "^2.0"
+pep8-naming = "^0.7"
+pytest = "^3.7.3"
+pytest-cov = "^2.5.1"
+pytest-flake8 = "^1.0.2"
+pytest-mccabe = "^0.1"
+pytest-mock = "^1.10"
+pytest-pythonpath =  "^0.7.3"
+numpy = "^1.15"

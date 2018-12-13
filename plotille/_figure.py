@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ from ._util import dt2pendulum_dt, hist, is_datetimes, make_datetimes
 
 
 class Figure(object):
-    '''Figure class to compose multiple plots.
+    """Figure class to compose multiple plots.
 
     Within a Figure you can easily compose many plots, assign labels to plots
     and define the properties of the underlying Canvas. Possible properties that
@@ -56,7 +56,7 @@ class Figure(object):
         with_colors: bool     Define, whether to use colors at all.
         background: multiple  Define the background color.
         x_label, y_label: str Define the X / Y axis label.
-    '''
+    """
     _COLOR_SEQ = [
         {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
         {'names': 'red', 'rgb': (255, 0, 0), 'byte': 0x1},
@@ -81,7 +81,7 @@ class Figure(object):
         self.background = None
         self.x_label = 'X'
         self.y_label = 'Y'
-        self._plots = list()
+        self._plots = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -142,33 +142,15 @@ class Figure(object):
         return self._limits(self._x_min, self._x_max, False)
 
     def set_x_limits(self, min_=None, max_=None):
-        if isinstance(min_, datetime):
-            min_ = dt2pendulum_dt(min_)
-
-        if isinstance(max_, datetime):
-            max_ = dt2pendulum_dt(max_)
-
-        if min_ is not None and max_ is not None:
-            if min_ >= max_:
-                raise ValueError('min_ is larger or equal than max_.')
-            self._x_min = min_
-            self._x_max = max_
-        elif min_ is not None:
-            if self._x_max is not None and min_ >= self._x_max:
-                raise ValueError('Previous max is smaller or equal to new min_.')
-            self._x_min = min_
-        elif max_ is not None:
-            if self._x_min is not None and self._x_min >= max_:
-                raise ValueError('Previous min is larger or equal to new max_.')
-            self._x_max = max_
-        else:
-            self._x_min = None
-            self._x_max = None
+        self._x_min, self._x_max = self._set_limits(self._x_min, self._x_max, min_, max_)
 
     def y_limits(self):
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(self, min_=None, max_=None):
+        self._y_min, self._y_max = self._set_limits(self._y_min, self._y_max, min_, max_)
+
+    def _set_limits(self, init_min, init_max, min_=None, max_=None):
         if isinstance(min_, datetime):
             min_ = dt2pendulum_dt(min_)
 
@@ -178,19 +160,21 @@ class Figure(object):
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError('min_ is larger or equal than max_.')
-            self._y_min = min_
-            self._y_max = max_
+            init_min = min_
+            init_max = max_
         elif min_ is not None:
-            if self._y_max is not None and min_ >= self._y_max:
+            if init_max is not None and min_ >= init_max:
                 raise ValueError('Previous max is smaller or equal to new min_.')
-            self._y_min = min_
+            init_min = min_
         elif max_ is not None:
-            if self._y_min is not None and self._y_min >= max_:
+            if init_min is not None and init_min >= max_:
                 raise ValueError('Previous min is larger or equal to new max_.')
-            self._y_max = max_
+            init_max = max_
         else:
-            self._y_min = None
-            self._y_max = None
+            init_min = None
+            init_max = None
+
+        return init_min, init_max
 
     def _limits(self, low_set, high_set, is_height):
         if low_set is not None and high_set is not None:

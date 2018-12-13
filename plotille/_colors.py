@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,17 +29,17 @@ import six
 
 
 def color(text, fg=None, bg=None, mode='names', no_color=False):
-    '''Surround `text` with control characters for coloring
+    """Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
 
     There are 3 color modes possible:
         - `names`:  corresponds to 3/4 bit encoding; provide colors as lower case
                     with underscore names, e.g. 'red', 'bright_green'
-        - `byte`: corresponds to 8-bit encoding; provide colors as int \in [0, 255];
+        - `byte`: corresponds to 8-bit encoding; provide colors as int ∈ [0, 255];
                   compare 256-color lookup table
         - `rgb`: corresponds to 24-bit encoding; provide colors either in 3- or 6-character
-                 hex encoding or provide as a list / tuple with three ints (\in [0, 255] each)
+                 hex encoding or provide as a list / tuple with three ints (∈ [0, 255] each)
 
     With `fg` you can specify the foreground, i.e. text color, and with `bg` you
     specify the background color. The resulting `text` also gets the `RESET` signal
@@ -73,7 +73,7 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
 
     Returns:
         str: `text` enclosed with corresponding coloring controls
-    '''
+    """
     if fg is None and bg is None:
         return text
 
@@ -107,13 +107,13 @@ def _isatty():
 
 
 def _names(fg, bg):
-    '''3/4 bit encoding part
+    """3/4 bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#3.2F4_bit
 
     Parameters:
 
-    '''
+    """
     if not (fg is None or fg in _FOREGROUNDS):
         raise ValueError('Invalid color name fg = "{}"'.format(fg))
     if not (bg is None or bg in _BACKGROUNDS):
@@ -126,10 +126,10 @@ def _names(fg, bg):
 
 
 def _byte(fg, bg):
-    '''8-bite encoding part
+    """8-bite encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
-    '''
+    """
     if not (fg is None or (isinstance(fg, int) and 0 <= fg <= 255)):
         raise ValueError('Invalid fg = {}. Allowed int in [0, 255].'.format(fg))
     if not (bg is None or (isinstance(bg, int) and 0 <= bg <= 255)):
@@ -146,7 +146,7 @@ def _byte(fg, bg):
 
 
 def _hex2rgb(h):
-    '''Transform rgb hex representation into rgb tuple of ints representation'''
+    """Transform rgb hex representation into rgb tuple of ints representation"""
     assert isinstance(h, six.string_types)
     if h.lower().startswith('0x'):
         h = h[2:]
@@ -159,10 +159,10 @@ def _hex2rgb(h):
 
 
 def _rgb(fg, bg):
-    '''24-bit encoding part
+    """24-bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
-    '''
+    """
     if not (fg is None or (isinstance(fg, (list, tuple)) and len(fg) == 3) and all(0 <= f <= 255 for f in fg)):
         raise ValueError('Foreground fg either None or 3-tuple: {}'.format(fg))
     if not (bg is None or (isinstance(bg, (list, tuple)) and len(bg) == 3) and all(0 <= b <= 255 for b in bg)):
@@ -179,7 +179,7 @@ def _rgb(fg, bg):
 
 
 def _join_codes(fg, bg):
-    '''Join `fg` and `bg` with ; and surround with correct esc sequence.'''
+    """Join `fg` and `bg` with ; and surround with correct esc sequence."""
     colors = ';'.join(filter(lambda c: len(c) > 0, (fg, bg)))
     if colors:
         return '\x1b[' + colors + 'm'
@@ -187,40 +187,40 @@ def _join_codes(fg, bg):
     return ''
 
 
-_BACKGROUNDS = dict(
-    black='40',
-    red='41',
-    green='42',
-    yellow='43',
-    blue='44',
-    magenta='45',
-    cyan='46',
-    white='47',
-    bright_black='100',
-    bright_red='101',
-    bright_green='102',
-    bright_yellow='103',
-    bright_blue='104',
-    bright_magenta='105',
-    bright_cyan='106',
-    bright_white='107',
-)
+_BACKGROUNDS = {
+    'black': '40',
+    'red': '41',
+    'green': '42',
+    'yellow': '43',
+    'blue': '44',
+    'magenta': '45',
+    'cyan': '46',
+    'white': '47',
+    'bright_black': '100',
+    'bright_red': '101',
+    'bright_green': '102',
+    'bright_yellow': '103',
+    'bright_blue': '104',
+    'bright_magenta': '105',
+    'bright_cyan': '106',
+    'bright_white': '107',
+}
 
-_FOREGROUNDS = dict(
-    black='30',
-    red='31',
-    green='32',
-    yellow='33',
-    blue='34',
-    magenta='35',
-    cyan='36',
-    white='37',
-    bright_black='1;30',
-    bright_red='1;31',
-    bright_green='1;32',
-    bright_yellow='1;33',
-    bright_blue='1;34',
-    bright_magenta='1;35',
-    bright_cyan='1;36',
-    bright_white='1;37',
-)
+_FOREGROUNDS = {
+    'black': '30',
+    'red': '31',
+    'green': '32',
+    'yellow': '33',
+    'blue': '34',
+    'magenta': '35',
+    'cyan': '36',
+    'white': '37',
+    'bright_black': '1;30',
+    'bright_red': '1;31',
+    'bright_green': '1;32',
+    'bright_yellow': '1;33',
+    'bright_blue': '1;34',
+    'bright_magenta': '1;35',
+    'bright_cyan': '1;36',
+    'bright_white': '1;37',
+}

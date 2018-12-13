@@ -8,40 +8,41 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
-  - "pypy2.7-5.8.0"
-  - "pypy3.5-5.8.0"
+  - "3.7-dev"
   - "nightly"
+  - "pypy"
+  - "pypy3.5"
 
 matrix:
-  fast_finish: true
-  allow_failures:
-    - python: nightly
+    fast_finish: true
+    allow_failures:
+      - python: nightly
 
-addons:
-  apt:
-    packages:
-      - pandoc
+env:
+  global:
+    secure: "aEqZt0qnP/dPJpCHk/qpeeOW+Mf0k780083avEbU7mZ+sZABRRBq42aeYVVnTvqefgwiBgE0iw99YAg19ZVXdSWfKHc+XFSPdJ2INWPDPgp7Wh4S1feVVVtREUOhmGjK3azqEvOSGJLTqaavy7AHB/VIpZTD5WbR/QmM7/IcQkZjPZ9ifjt7JCTsiIZfqqBWVUOPxLh3ylCCjp9HX1ocYmZXXKv99HaTL6aHBofcN+WzmVd2cRyDFeVdxHbgJBmfo0agk7ITNvyvF9K8UjUS1ETOkeIJsX/6ZCtF3/70rfZxfpNcWiCiBmYUDrvbngNcnpopQFUudRutwnOK0IHteOzsXqsmm7kE2uOMyrQ/6/5TlWo/rLQv1iuRTETtB6ReSxqoEmP/SYUe/eAgrXiSCA4l7lnbc01LW4TydeTjijCeTVhbLbYYbhGRWvTX4S8k3+xSioS5Z6EvSCKPP+ajAo1oymzJ8EIUiRqEv5Rkt2XBkPgmeWi7KQPAsJvjGL/dOU1cw3b3O/BF+ABF9Rvf4jncJX7psMk6vt7uzS/lwzAMfjVPqp0UNJdCkKHZJupP7ZGQ+oWB1+SuEL+DtCugJQnqEg1mXQezp/dWWgwWTvqpZMzfNsywfLE1Sa4DxVWx2M3tc75xF9UAbS+Q2S/BhQO3eDF39bMWAp7oA8OsxoI="
+
+before_install:
+  - pip install poetry
+  - poetry config settings.virtualenvs.create false
 
 install:
-  - pip install pipenv
-  - pipenv install --dev
-  - pip install pytest-flake8 # in python 2.7 need to reinstall...
+  - poetry install
+  - poetry show
 
-script: PYTHONPATH=$PWD pipenv run pytest
+script: poetry run pytest
 
 after_success:
   - coveralls
 
 before_deploy:
   - git stash --all
-  - pandoc --from=markdown --to=rst --output=README.rst README.md
+  - poetry build -f sdist
 
 deploy:
-  provider: pypi
-  user: tammoippen
+  provider: script
+  script: poetry publish -u tammoippen -p $PYPI_PASS
   skip_cleanup: true
-  password:
-    secure: RRm/32GM4WLDSv3TEjca/giPOeh0F49omzeDOq690uBWtIiqUzBzp7eCCcWrw+6OdVttUHhwsn4KCDhJR9jIAuFraFF6+CmMq4iwsMmeAVL9kEWJRIN05cR5hKkn7Jn/WcH5XOE24/8/4h3B8dvA3R/KK3qejpw6VfPXSiltA9cuerc/FawyHtIdrWDP+fCNYPcR9FWcjwRzpL+Rtyt5ymgQGBDyoQIQkhQ2kE4h4QVj0PxloArCzr0GoyBFvYkhZsY26CloRZu8+ng/jEeu4VxMNrbxr5NaGs6YgXxN5+jxnRWeDRho842JYxc196xiIbzbWJhykCATZjw7H+cPsJARhoUzHfqRXHdcb98a+RWxX9sMlU9faEZFHDb/sUE7MynQL1ZyWiSWfsC4I2MUJDvt0h9skjqYt2j6kKN5u0qfNZiUwofNLz5YPysISH57d63PKD/BLfO+5oHhBSvruB1x9GwlbnqenIi2Vz0SRhbH9PEyAEDA3MZejeiJuj2RTxNqXMnbT9oo9OG4TJcgn+T8y4/aH+w1yrf94A0udgqYrddBcBpbMgho4ewo1jI9GQ0t0ihYfffvBMdGCHrLDMb+VQrHb4FCDTP3tXhpi/ZgxfoJGGpEKRrPSOqbMIupZiKKQ1F5RwQjFEbBJ03NopDdv8DlYbuZjQ69dau5hek=
   on:
     branch: master
     tags: true

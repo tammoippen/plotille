@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/tammoippen/plotille.svg?branch=master)](https://travis-ci.org/tammoippen/plotille)
 [![Coverage Status](https://coveralls.io/repos/github/tammoippen/plotille/badge.svg?branch=master)](https://coveralls.io/github/tammoippen/plotille?branch=master)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tammoippen/plotille.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tammoippen/plotille/context:python)
 [![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%20nightly-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%20nightly-brightgreen.svg)
 [![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--5.8.0%2C%203.5--5.8.0-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--5.8.0%2C%203.5--5.8.0-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)

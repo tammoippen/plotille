@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from collections import OrderedDict
 import math
 
-from pendulum import datetime, interval, period
+from pendulum import DateTime, Duration, Period
 import six
 
 from ._util import roundeven
@@ -40,14 +40,14 @@ class InputFormatter(object):
         for int_type in six.integer_types:
             self.formatters[int_type] = _num_formatter
 
-        self.formatters[datetime] = _datetime_formatter
+        self.formatters[DateTime] = _datetime_formatter
 
         self.converters = OrderedDict()
         self.converters[float] = _convert_numbers
         for int_type in six.integer_types:
             self.converters[int_type] = _convert_numbers
 
-        self.converters[datetime] = _convert_datetime
+        self.converters[DateTime] = _convert_datetime
 
     def register_formatter(self, t, f):
         self.formatters[t] = f
@@ -71,8 +71,8 @@ class InputFormatter(object):
 
 
 def _datetime_formatter(val, chars, delta, left=False):
-    assert isinstance(val, datetime)
-    assert isinstance(delta, (interval, period))
+    assert isinstance(val, DateTime)
+    assert isinstance(delta, (Duration, Period))
 
     if chars < 8:
         raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
@@ -81,21 +81,21 @@ def _datetime_formatter(val, chars, delta, left=False):
 
     if delta.days <= 0:
         # make time representation
-        if 8 <= chars < 15:
+        if chars < 15:
             res = '{:02d}:{:02d}:{:02d}'.format(val.hour, val.minute, val.second)
-        elif 15 <= chars:
+        else:
             res = '{:02d}:{:02d}:{:02d}.{:06d}'.format(val.hour, val.minute, val.second, val.microsecond)
     elif 1 <= delta.days <= 10:
         # make day / time representation
-        if 8 <= chars < 11:
+        if chars < 11:
             res = '{:02d}T{:02d}:{:02d}'.format(val.day, val.hour, val.minute)
-        elif 11 <= chars:
+        else:
             res = '{:02d}T{:02d}:{:02d}:{:02d}'.format(val.day, val.hour, val.minute, val.second)
     else:
         # make date representation
-        if 8 <= chars < 10:
+        if chars < 10:
             res = '{:02d}-{:02d}-{:02d}'.format(val.year % 100, val.month, val.day)
-        elif 10 <= chars:
+        else:
             res = '{:04d}-{:02d}-{:02d}'.format(val.year, val.month, val.day)
 
     if left:
@@ -175,5 +175,5 @@ def _convert_numbers(v):
 
 
 def _convert_datetime(v):
-    assert isinstance(v, datetime)
+    assert isinstance(v, DateTime)
     return v.timestamp()
