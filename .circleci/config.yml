@@ -36,7 +36,7 @@ commands:
       
       - store_artifacts:
           path: ~/app/poetry.lock
-          destination: dependencies
+          destination: poetry.lock
 
       - run:
           name: Test
