@@ -110,8 +110,8 @@ jobs:
           name: Pre-install
           command: |
             pip install --user poetry
-            poetry build -f sdist
-            echo "poetry publish -u tammoippen -p <pass>"
+            poetry build -vvv -f sdist
+            poetry publish -vvv -n -u tammoippen -p $PYPI_PASS
 
 workflows:
   version: 2.1
@@ -131,8 +131,8 @@ workflows:
             - test_3_5_pypy
             - test_3_6
             - test_3_7
-          # filters:
-            # branches:
-            #   only: master
-            # tags:
-            #   only: /v[0-9]+(\.[0-9]+)*/
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
