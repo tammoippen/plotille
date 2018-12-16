@@ -3,31 +3,33 @@ version: 2.1
 commands:
   tester:
     description: "Test plotille given a certain python version."
-    environment:
-      PATH: 
     steps:
       - checkout
       
       - run:
-          name: Update PATH and Define Environment Variable at Runtime
+          name: Set PATH.
           command: |
             echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
             source $BASH_EN
 
       - run:
+          name: Pre-install
           command: |
             pip install --user poetry virtualenv
             python -m virtualenv venv
 
       - run:
+          name: Install
           command: |
             poetry install
             poetry show
 
       - run:
+          name: Test
           command: poetry run pytest
 
       - run:
+          name: Coverage
           command: coveralls
 
 jobs:
