@@ -23,16 +23,21 @@ commands:
       - run:
           name: Install
           command: |
+            . venv/bin/activate
             poetry install
             poetry show --tree
 
       - run:
           name: Test
-          command: poetry run pytest
+          command: |
+            . venv/bin/activate
+            poetry run pytest
 
       - run:
           name: Coverage
-          command: poetry run coveralls
+          command: |
+            . venv/bin/activate
+            poetry run coveralls
 
 jobs:
   test_2_7:
