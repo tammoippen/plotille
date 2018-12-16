@@ -31,7 +31,7 @@ commands:
             poetry show --tree
             
       - save_cache:
-          key: - v1-plotille-{{ python --version }}-{{ checksum "pyproject.toml" }}
+          key: v1-plotille-{{ python --version }}-{{ checksum "pyproject.toml" }}
           paths:
             - ~/app/venv
 
@@ -61,37 +61,37 @@ jobs:
   test_2_7:
     executor:
       name: python
-      tag: "circleci/python:2.7.15"
+      image: "circleci/python:2.7.15"
     steps:
       - tester
   test_2_7_pypy:
     executor:
         name: python
-        tag: "pypy:2-6.0.0"
+        image: "pypy:2-6.0.0"
     steps:
       - tester
   test_3_5:
     executor:
       name: python
-      tag: "circleci/python:3.5.6"
+      image: "circleci/python:3.5.6"
     steps:
       - tester
   test_3_5_pypy:
     executor:
       name: python
-      tag: "pypy:3-6.0.0"
+      image: "pypy:3-6.0.0"
     steps:
       - tester
   test_3_6:
     executor:
       name: python
-      tag: "circleci/python:3.6.7"
+      image: "circleci/python:3.6.7"
     steps:
       - tester
   test_3_7:
     executor:
       name: python
-      tag: "circleci/python:3.7.1"
+      image: "circleci/python:3.7.1"
     steps:
       - tester
   
