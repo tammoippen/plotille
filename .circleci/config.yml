@@ -30,7 +30,7 @@ commands:
 
       - run:
           name: Coverage
-          command: coveralls
+          command: poetry run coveralls
 
 jobs:
   test_2_7:
