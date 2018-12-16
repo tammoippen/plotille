@@ -72,9 +72,7 @@ jobs:
   deploy_job:
     docker:
       - image: circleci/python:3.6.7
-    steps:
-    tester:
-    description: "Test plotille given a certain python version."
+    description: "Deploy plotille to pypi."
     steps:
       - checkout
       
