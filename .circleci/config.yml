@@ -13,9 +13,7 @@ commands:
             source $BASH_ENV
       
       - restore_cache:
-          keys:
-            - v1-plotille-{{ python --version }}-{{ checksum "pyproject.toml" }}
-            - v1-plotille-
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}
 
       - run:
           name: Pre-install
@@ -31,7 +29,7 @@ commands:
             poetry show --tree
             
       - save_cache:
-          key: v1-plotille-{{ python --version }}-{{ checksum "pyproject.toml" }}
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}
           paths:
             - ~/app/venv
 
@@ -133,8 +131,8 @@ workflows:
             - test_3_5_pypy
             - test_3_6
             - test_3_7
-          filters:
+          # filters:
             # branches:
             #   only: master
-            tags:
-              only: /v[0-9]+(\.[0-9]+)*/
+            # tags:
+            #   only: /v[0-9]+(\.[0-9]+)*/
