@@ -32,12 +32,25 @@ commands:
           key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}
           paths:
             - ~/app/venv
+            - ~/app/poetry.lock
+      
+      - store_artifacts:
+          path: ~/app/poetry.lock
+          destination: dependencies
 
       - run:
           name: Test
           command: |
             . venv/bin/activate
             poetry run pytest
+
+      - run:
+          name: Build sdist
+          command: poetry build -vvv -f sdist
+      
+      - store_artifacts:
+          path: ~/app/dist
+          destination: sdist
 
       - run:
           name: Coverage
