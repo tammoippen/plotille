@@ -16,7 +16,7 @@ commands:
           name: Pre-install
           command: |
             pip install --user poetry virtualenv
-            python -m virtualenv venv
+            virtualenv venv
 
       - run:
           name: Install
