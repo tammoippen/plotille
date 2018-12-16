@@ -6,23 +6,25 @@ commands:
     steps:
       - checkout
       
-      - run:
-          name: Set PATH.
-          command: |
-            echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
-            source $BASH_ENV
+      # - run:
+      #     name: Set PATH.
+      #     command: |
+      #       echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+      #       source $BASH_ENV
 
       - run:
           name: Pre-install
           command: |
-            pip install --user poetry virtualenv
+            sudo pip install poetry virtualenv
             virtualenv venv
+            . venv/bin/activate
+            pip install --upgrade setuptools
 
       - run:
           name: Install
           command: |
             poetry install
-            poetry show
+            poetry show --tree
 
       - run:
           name: Test
