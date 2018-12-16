@@ -10,7 +10,7 @@ commands:
           name: Set PATH.
           command: |
             echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
-            source $BASH_EN
+            source $BASH_ENV
 
       - run:
           name: Pre-install
