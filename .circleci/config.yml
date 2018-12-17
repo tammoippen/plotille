@@ -1,0 +1,160 @@
+version: 2.1
+
+commands:
+  tester:
+    description: "Test plotille given a certain python version."
+    steps:
+      - checkout
+
+      - run:
+          name: Set PATH.
+          command: |
+            echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+
+      - restore_cache:
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
+
+      - run:
+          name: Pre-install
+          command: |
+            pip install --user poetry virtualenv
+            virtualenv venv
+
+      - run:
+          name: Install
+          command: |
+            . venv/bin/activate
+            poetry install
+
+      - save_cache:
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
+          paths:
+            - ~/app/venv
+            - ~/app/poetry.lock
+
+      - store_artifacts:
+          path: ~/app/poetry.lock
+          destination: poetry.lock
+
+      - run:
+          name: Style
+          command: |
+            . venv/bin/activate
+            poetry run flake8 tests/ plotille/
+
+      - run:
+          name: Test
+          command: |
+            . venv/bin/activate
+            poetry run pytest
+
+      - run:
+          name: Build sdist
+          command: poetry build -vvv -f sdist
+
+      - store_artifacts:
+          path: ~/app/dist
+          destination: dist
+
+      - store_artifacts:
+          path: ~/app/cov_html
+          destination: cov_html
+
+      - run:
+          name: Coverage
+          command: |
+            . venv/bin/activate
+            poetry run coveralls
+
+executors:
+  python:
+    working_directory: ~/app
+    parameters:
+      image:
+        type: string
+        default: latest
+    docker:
+      - image: << parameters.image >>
+
+jobs:
+  test_2_7:
+    executor:
+      name: python
+      image: "circleci/python:2.7.15"
+    steps:
+      - tester
+  test_2_7_pypy:
+    executor:
+        name: python
+        image: "pypy:2-6.0.0"
+    steps:
+      - tester
+  test_3_5:
+    executor:
+      name: python
+      image: "circleci/python:3.5.6"
+    steps:
+      - tester
+  test_3_5_pypy:
+    executor:
+      name: python
+      image: "pypy:3-6.0.0"
+    steps:
+      - tester
+  test_3_6:
+    executor:
+      name: python
+      image: "circleci/python:3.6.7"
+    steps:
+      - tester
+  test_3_7:
+    executor:
+      name: python
+      image: "circleci/python:3.7.1"
+    steps:
+      - tester
+
+  deploy_job:
+    docker:
+      - image: circleci/python:3.6.7
+    description: "Deploy plotille to pypi."
+    steps:
+      - checkout
+
+      - run:
+          name: Set PATH.
+          command: |
+            echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+
+      - run:
+          name: Pre-install
+          command: |
+            pip install --user poetry
+            poetry build -vvv -f sdist
+            poetry publish -vvv -n -u tammoippen -p $PYPI_PASS
+
+workflows:
+  version: 2.1
+  test_and_deploy:
+    jobs:
+      - test_2_7
+      - test_2_7_pypy
+      - test_3_5
+      - test_3_5_pypy
+      - test_3_6
+      - test_3_7
+      - deploy_job:
+          requires:
+            - test_2_7
+            - test_2_7_pypy
+            - test_3_5
+            - test_3_5_pypy
+            - test_3_6
+            - test_3_7
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
