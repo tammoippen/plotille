@@ -5,15 +5,15 @@ commands:
     description: "Test plotille given a certain python version."
     steps:
       - checkout
-      
+
       - run:
           name: Set PATH.
           command: |
             echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
             source $BASH_ENV
-      
+
       - restore_cache:
-          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
 
       - run:
           name: Pre-install
@@ -27,13 +27,13 @@ commands:
             . venv/bin/activate
             poetry install
             poetry show --tree
-            
+
       - save_cache:
-          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
           paths:
             - ~/app/venv
             - ~/app/poetry.lock
-      
+
       - store_artifacts:
           path: ~/app/poetry.lock
           destination: poetry.lock
@@ -47,10 +47,14 @@ commands:
       - run:
           name: Build sdist
           command: poetry build -vvv -f sdist
-      
+
       - store_artifacts:
           path: ~/app/dist
-          destination: sdist
+          destination: dist
+
+      - store_artifacts:
+          path: ~/app/cov_html
+          destination: cov_html
 
       - run:
           name: Coverage
@@ -105,14 +109,14 @@ jobs:
       image: "circleci/python:3.7.1"
     steps:
       - tester
-  
+
   deploy_job:
     docker:
       - image: circleci/python:3.6.7
     description: "Deploy plotille to pypi."
     steps:
       - checkout
-      
+
       - run:
           name: Set PATH.
           command: |
