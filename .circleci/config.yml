@@ -139,12 +139,30 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
-      - test_2_7
-      - test_2_7_pypy
-      - test_3_5
-      - test_3_5_pypy
-      - test_3_6
-      - test_3_7
+      - test_2_7:
+          filters:
+            tags:
+              only: /.*/
+      - test_2_7_pypy:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_5:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_5_pypy:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_6:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_7:
+          filters:
+            tags:
+              only: /.*/
       - deploy_job:
           requires:
             - test_2_7
