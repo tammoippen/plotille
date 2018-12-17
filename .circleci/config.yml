@@ -26,7 +26,6 @@ commands:
           command: |
             . venv/bin/activate
             poetry install
-            poetry show --tree
 
       - save_cache:
           key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
