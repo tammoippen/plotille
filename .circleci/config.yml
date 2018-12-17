@@ -38,6 +38,12 @@ commands:
           destination: poetry.lock
 
       - run:
+          name: Style
+          command: |
+            . venv/bin/activate
+            poetry run flake8 tests/ plotille/
+
+      - run:
           name: Test
           command: |
             . venv/bin/activate
