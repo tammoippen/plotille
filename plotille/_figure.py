@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import namedtuple
-from datetime import datetime
+from datetime import timedelta
 from itertools import cycle
 import os
 
@@ -33,7 +33,7 @@ from six.moves import zip
 from ._canvas import Canvas
 from ._colors import color
 from ._input_formatter import InputFormatter
-from ._util import dt2pendulum_dt, hist, is_datetimes, make_datetimes
+from ._util import hist, mk_timedelta, timestamp
 
 # TODO documentation!!!
 # TODO tests
@@ -151,12 +151,6 @@ class Figure(object):
         self._y_min, self._y_max = self._set_limits(self._y_min, self._y_max, min_, max_)
 
     def _set_limits(self, init_min, init_max, min_=None, max_=None):
-        if isinstance(min_, datetime):
-            min_ = dt2pendulum_dt(min_)
-
-        if isinstance(max_, datetime):
-            max_ = dt2pendulum_dt(max_)
-
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError('min_ is larger or equal than max_.')
@@ -196,7 +190,11 @@ class Figure(object):
         return _choose(low, high, low_set, high_set)
 
     def _y_axis(self, ymin, ymax, label='Y'):
-        y_delta = abs((ymax - ymin) / self.height)
+        delta = abs(ymax - ymin)
+        if isinstance(delta, timedelta):
+            y_delta = mk_timedelta(timestamp(delta) / self.height)
+        else:
+            y_delta = delta / self.height
 
         res = [self._in_fmt.fmt(i * y_delta + ymin, abs(ymax - ymin), chars=10) + ' | '
                for i in range(self.height)]
@@ -211,14 +209,18 @@ class Figure(object):
         return list(reversed(res))
 
     def _x_axis(self, xmin, xmax, label='X', with_y_axis=False):
-        x_delta = abs((xmax - xmin) / self.width)
+        delta = abs(xmax - xmin)
+        if isinstance(delta, timedelta):
+            x_delta = mk_timedelta(timestamp(delta) / self.width)
+        else:
+            x_delta = delta / self.width
         starts = ['', '']
         if with_y_axis:
             starts = ['-' * 11 + '|-', ' ' * 11 + '| ']
         res = []
 
         res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
-        res += [starts[1] + ' '.join(self._in_fmt.fmt(i * 10 * x_delta + xmin, abs(xmax - xmin), left=True, chars=9)
+        res += [starts[1] + ' '.join(self._in_fmt.fmt(i * 10 * x_delta + xmin, delta, left=True, chars=9)
                                      for i in range(self.width // 10 + 1))]
         return res
 
@@ -302,12 +304,6 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        if is_datetimes(X):
-            X = make_datetimes(X)  # noqa: N806
-
-        if is_datetimes(Y):
-            Y = make_datetimes(Y)  # noqa: N806
-
         return cls(X, Y, lc, interp, label)
 
     def width_vals(self):
@@ -337,9 +333,6 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
 class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
-        if is_datetimes(X):
-            X = make_datetimes(X)  # noqa: N806
-
         frequencies, buckets = hist(X, bins)
 
         return cls(X, bins, frequencies, buckets, lc)
@@ -387,7 +380,11 @@ def _diff(low, high):
         else:
             return abs(low * 0.1)
     else:
-        return abs(high - low) * 0.1
+        delta = abs(high - low)
+        if isinstance(delta, timedelta):
+            return mk_timedelta(timestamp(delta) * 0.1)
+        else:
+            return delta * 0.1
 
 
 def _default(low_set, high_set):

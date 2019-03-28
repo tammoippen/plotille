@@ -3,7 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import datetime as orig_datetime
 
+import numpy as np
 from pendulum import datetime, duration
+
 from plotille import hist
 
 
@@ -20,9 +22,21 @@ _hist = """\
 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"""
 
 
-def test_timehist():
+def test_timehist_pendulum():
     day = duration(days=1)
     now = datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+
+    res = hist(x, bins=8)
+
+    print()
+    print(res)
+    assert _hist == res
+
+
+def test_timehist_numpy():
+    day = np.timedelta64(1, 'D')
+    now = np.datetime64('2018-01-16T11:09:42.0001')
     x = [now - i * day for i in range(10)]
 
     res = hist(x, bins=8)

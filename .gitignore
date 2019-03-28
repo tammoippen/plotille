@@ -1,5 +1,5 @@
 venv/
-.venv/
+.venv*/
 .vscode/
 data/
 build/
@@ -18,3 +18,4 @@ README.rst
 poetry.lock
 Pipfile.lock
 cov_html/
+pip-wheel-metadata/

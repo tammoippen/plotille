@@ -87,7 +87,7 @@ jobs:
   test_2_7_pypy:
     executor:
         name: python
-        image: "pypy:2-6.0.0"
+        image: "pypy:2-7.1.0"
     steps:
       - tester
   test_3_5:
@@ -99,13 +99,19 @@ jobs:
   test_3_5_pypy:
     executor:
       name: python
-      image: "pypy:3-6.0.0"
+      image: "pypy:3.5-7.0.0"
     steps:
       - tester
   test_3_6:
     executor:
       name: python
       image: "circleci/python:3.6.7"
+    steps:
+      - tester
+  test_3_6_pypy:
+    executor:
+      name: python
+      image: "pypy:3.6-7.1.0"
     steps:
       - tester
   test_3_7:
@@ -159,6 +165,10 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test_3_6_pypy:
+          filters:
+            tags:
+              only: /.*/
       - test_3_7:
           filters:
             tags:
@@ -170,6 +180,7 @@ workflows:
             - test_3_5
             - test_3_5_pypy
             - test_3_6
+            - test_3_6_pypy
             - test_3_7
           filters:
             branches:

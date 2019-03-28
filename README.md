@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/tammoippen/plotille/badge.svg?branch=master)](https://coveralls.io/github/tammoippen/plotille?branch=master)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tammoippen/plotille.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tammoippen/plotille/context:python)
 [![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%203.7-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%203.7-brightgreen.svg)
-[![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--6.0.0%2C%203.5--6.0.0-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--6.0.0%2C%203.5--6.0.0-brightgreen.svg)
+[![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--7.1.0%2C%203.5--7.0.0%2C%203.6--7.1.0-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--6.0.0%2C%203.5--6.0.0-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
@@ -23,7 +23,7 @@ Similar to other libraries:
 * like [termgraph](https://github.com/sgeisler/termgraph) (not on pypi), but very different style.
 * like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
 
-Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime` or `pendulum.datetime` values (internally I work with `pendulum.datetime`, as the python 2/3 consistency is much better). Labels are generated respecting the difference of of `x_limits` and `y_limits`.
+Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime`, `pendulum.datetime` or `numpy.datetime64` values. Labels are generated respecting the difference of `x_limits` and `y_limits`.
 
 ## Documentation
 

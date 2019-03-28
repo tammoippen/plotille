@@ -4,10 +4,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime as orig_datetime
 
 from mock import call
+import numpy as np
 from pendulum import datetime, duration
+import pytest
+
 from plotille import Figure
 from plotille._figure import Histogram, Plot
-import pytest
 
 
 def test_width():
@@ -544,7 +546,21 @@ _histogram = """   (Y)     ^
            | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """
 
 
-def test_timehistogram():
+def test_timehistogram_numpy():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = np.timedelta64(1, 'D')
+    now = np.datetime64('2018-01-16T11:09:42.000100')
+    x = [now - i * day for i in range(10)]
+
+    fig.histogram(x, bins=8)
+
+    print(fig.show())
+    assert _histogram == fig.show()
+
+
+def test_timehistogram_pendulum():
     fig = Figure()
     fig.with_colors = False
 

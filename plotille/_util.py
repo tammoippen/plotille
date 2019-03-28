@@ -23,10 +23,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import datetime
+from datetime import datetime, timedelta, tzinfo
 import math
-
-import pendulum
+import time
 
 
 def roundeven(x):
@@ -65,32 +64,59 @@ def hist(X, bins):  # noqa: N803
     """
     assert bins > 0
 
-    if is_datetimes(X):
-        X = make_datetimes(X)  # noqa: N806
-
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0
-    xwidth = (xmax - xmin) / bins
+    delta = xmax - xmin
+    is_datetime = False
+    if isinstance(delta, timedelta):
+        is_datetime = True
+        delta = timestamp(delta)
+
+    xwidth = delta / bins
 
     y = [0] * bins
     for x in X:
-        x_idx = min(bins - 1, int((x - xmin) // xwidth))
+        delta = (x - xmin)
+        if isinstance(delta, timedelta):
+            delta = timestamp(delta)
+        x_idx = min(bins - 1, int(delta // xwidth))
         y[x_idx] += 1
+
+    if is_datetime:
+        xwidth = mk_timedelta(xwidth)
 
     return y, [i * xwidth + xmin for i in range(bins + 1)]
 
 
-def make_datetimes(l):
-    return [dt2pendulum_dt(dt) for dt in l]
+class _UTC(tzinfo):
+    """UTC"""
+    _ZERO = timedelta(0)
+
+    def utcoffset(self, dt):
+        return self._ZERO
+
+    def tzname(self, dt):
+        return 'UTC'
+
+    def dst(self, dt):
+        return self._ZERO
 
 
-def is_datetimes(l):
-    return (
-        all(isinstance(x, datetime.datetime) for x in l) and  # all are datetimes,
-        any(not isinstance(x, pendulum.DateTime) for x in l)  # but at least one is not pendulum datetime
-    )
+_EPOCH = datetime(1970, 1, 1, tzinfo=_UTC())
 
 
-def dt2pendulum_dt(dt):
-    assert isinstance(dt, datetime.datetime)  # also works on pendulum datetimes
-    return pendulum.datetime(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond, dt.tzinfo)
+def timestamp(v):
+    """Get timestamp of `v` datetime in py2/3."""
+    if isinstance(v, datetime):
+        if v.tzinfo is None:
+            return time.mktime(v.timetuple()) + v.microsecond / 1e6
+        else:
+            return (v - _EPOCH).total_seconds()
+    elif isinstance(v, timedelta):
+        return v.total_seconds()
+
+
+def mk_timedelta(v):
+    seconds = int(v)
+    microseconds = int((v - seconds) * 1e6)
+    return timedelta(seconds=seconds, microseconds=microseconds)

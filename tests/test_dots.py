@@ -3,8 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from itertools import combinations
 
-from plotille._dots import braille_from, Dots, dots_from
 import six
+
+from plotille._dots import braille_from, Dots, dots_from
 
 
 def test_update():

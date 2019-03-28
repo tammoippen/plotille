@@ -3,8 +3,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from random import choice
 
-import plotille._colors as clr
 import pytest
+
+import plotille._colors as clr
 
 
 def test_color_edges(mocker, tty):
