@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import namedtuple
-from datetime import datetime, timedelta
+from datetime import timedelta
 from itertools import cycle
 import os
 

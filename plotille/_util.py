@@ -96,10 +96,11 @@ class _UTC(tzinfo):
         return self._ZERO
 
     def tzname(self, dt):
-        return "UTC"
+        return 'UTC'
 
     def dst(self, dt):
         return self._ZERO
+
 
 _EPOCH = datetime(1970, 1, 1, tzinfo=_UTC())
 
