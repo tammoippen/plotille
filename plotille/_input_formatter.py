@@ -49,6 +49,14 @@ class InputFormatter(object):
 
         self.converters[datetime] = _convert_datetime
 
+        try:
+            import numpy as np
+
+            self.converters[np.datetime64] = _convert_np_datetime
+            self.formatters[np.datetime64] = _np_datetime_formatter
+        except ImportError:  # pragma: nocover
+            pass
+
     def register_formatter(self, t, f):
         self.formatters[t] = f
 
@@ -68,6 +76,13 @@ class InputFormatter(object):
                 return f(val)
 
         return val
+
+
+def _np_datetime_formatter(val, chars, delta, left=False):
+    # assert isinstance(val, np.datetime64)
+    # assert isinstance(delta, np.timedelta64)
+
+    return _datetime_formatter(val.item(), chars, delta.item(), left)
 
 
 def _datetime_formatter(val, chars, delta, left=False):
@@ -172,6 +187,11 @@ def _large_pos(val, chars, left, digits, sign):
 def _convert_numbers(v):
     assert isinstance(v, float) or isinstance(v, six.integer_types)
     return float(v)
+
+
+def _convert_np_datetime(v):
+    # assert isinstance(v, np.datetime64)
+    return timestamp(v.item())
 
 
 def _convert_datetime(v):
