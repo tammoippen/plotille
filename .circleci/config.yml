@@ -165,6 +165,10 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test_3_6_pypy:
+          filters:
+            tags:
+              only: /.*/
       - test_3_7:
           filters:
             tags:
@@ -176,6 +180,7 @@ workflows:
             - test_3_5
             - test_3_5_pypy
             - test_3_6
+            - test_3_6_pypy
             - test_3_7
           filters:
             branches:
