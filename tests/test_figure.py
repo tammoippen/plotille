@@ -6,9 +6,10 @@ import datetime as orig_datetime
 from mock import call
 import numpy as np
 from pendulum import datetime, duration
+import pytest
+
 from plotille import Figure
 from plotille._figure import Histogram, Plot
-import pytest
 
 
 def test_width():

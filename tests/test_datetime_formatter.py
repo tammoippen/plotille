@@ -2,8 +2,9 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from pendulum import datetime, duration
-from plotille._input_formatter import _convert_datetime, _datetime_formatter
 import pytest
+
+from plotille._input_formatter import _convert_datetime, _datetime_formatter
 
 
 @pytest.fixture()
