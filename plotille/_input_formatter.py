@@ -24,12 +24,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import OrderedDict
+from datetime import datetime, timedelta
 import math
 
-from pendulum import DateTime, Duration, Period
 import six
 
-from ._util import roundeven
+from ._util import roundeven, timestamp
 
 
 class InputFormatter(object):
@@ -40,14 +40,14 @@ class InputFormatter(object):
         for int_type in six.integer_types:
             self.formatters[int_type] = _num_formatter
 
-        self.formatters[DateTime] = _datetime_formatter
+        self.formatters[datetime] = _datetime_formatter
 
         self.converters = OrderedDict()
         self.converters[float] = _convert_numbers
         for int_type in six.integer_types:
             self.converters[int_type] = _convert_numbers
 
-        self.converters[DateTime] = _convert_datetime
+        self.converters[datetime] = _convert_datetime
 
     def register_formatter(self, t, f):
         self.formatters[t] = f
@@ -71,8 +71,8 @@ class InputFormatter(object):
 
 
 def _datetime_formatter(val, chars, delta, left=False):
-    assert isinstance(val, DateTime)
-    assert isinstance(delta, (Duration, Period))
+    assert isinstance(val, datetime)
+    assert isinstance(delta, timedelta)
 
     if chars < 8:
         raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
@@ -175,5 +175,5 @@ def _convert_numbers(v):
 
 
 def _convert_datetime(v):
-    assert isinstance(v, DateTime)
-    return v.timestamp()
+    assert isinstance(v, datetime)
+    return timestamp(v)
