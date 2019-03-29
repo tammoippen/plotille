@@ -13,7 +13,7 @@ Plot, scatter plots and histograms in the terminal using braille dots, with (alm
 Install:
 
 ```sh
-pipenv install plotille
+pip install plotille
 ```
 
 Similar to other libraries:
