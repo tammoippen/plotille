@@ -100,7 +100,25 @@ There are some utility functions for fast graphing of single plots.
 #### Plot:
 ```python
 In [4]: plotille.plot?
-Signature: plotille.plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep='\n', interp='linear', x_min=None, x_max=None, y_min=None, y_max=None, lc=None, bg=None, color_mode='names')
+Signature:
+plt.plot(
+    X,
+    Y,
+    width=80,
+    height=40,
+    X_label='X',
+    Y_label='Y',
+    linesep='\n',
+    interp='linear',
+    x_min=None,
+    x_max=None,
+    y_min=None,
+    y_max=None,
+    lc=None,
+    bg=None,
+    color_mode='names',
+    origin=True,
+)
 Docstring:
 Create plot with X , Y values and linear interpolation between points
 
@@ -119,6 +137,7 @@ Parameters:
     bg: multiple           Give the background color.
     color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                            see plotille.color.__docs__
+    origin: bool           Whether to print the origin. default: True
 
 Returns:
     str: plot over `X`, `Y`.
@@ -130,7 +149,24 @@ In [5]: print(plotille.plot(X, np.sin(X), height=30, width=60))
 #### Scatter:
 ```python
 In [6]: plotille.scatter?
-Signature: plotille.scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep='\n', x_min=None, x_max=None, y_min=None, y_max=None, lc=None, bg=None, color_mode='names')
+Signature:
+plt.scatter(
+    X,
+    Y,
+    width=80,
+    height=40,
+    X_label='X',
+    Y_label='Y',
+    linesep='\n',
+    x_min=None,
+    x_max=None,
+    y_min=None,
+    y_max=None,
+    lc=None,
+    bg=None,
+    color_mode='names',
+    origin=True,
+)
 Docstring:
 Create scatter plot with X , Y values
 
@@ -151,6 +187,7 @@ Parameters:
     bg: multiple         Give the background color.
     color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
                          see plotille.color.__docs__
+    origin: bool         Whether to print the origin. default: True
 
 Returns:
     str: scatter plot over `X`, `Y`.
