@@ -135,9 +135,7 @@ class Figure(object):
 
     @property
     def origin(self):
-        if self._width is not None:
-            return self._width
-        return 80
+        return self._origin
 
     @origin.setter
     def origin(self, value):
@@ -275,7 +273,7 @@ class Figure(object):
             if isinstance(p, Plot):
                 plot_origin = True
 
-        if self._origin and plot_origin:
+        if self.origin and plot_origin:
             # print X / Y origin axis
             canvas.line(self._in_fmt.convert(xmin), 0, self._in_fmt.convert(xmax), 0)
             canvas.line(0, self._in_fmt.convert(ymin), 0, self._in_fmt.convert(ymax))

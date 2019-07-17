@@ -88,6 +88,19 @@ def test_with_colors():
         fig.with_colors = 1
 
 
+def test_origin():
+    fig = Figure()
+
+    assert fig.origin
+
+    fig.origin = False
+
+    assert not fig.origin
+
+    with pytest.raises(ValueError):
+        fig.origin = 1
+
+
 def limits(get_limits, set_limits):
     fig = Figure()
     assert get_limits(fig) == (0, 1)
