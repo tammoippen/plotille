@@ -130,7 +130,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
 
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
             x_min=None, x_max=None, y_min=None, y_max=None,
-            lc=None, bg=None, color_mode='names'):
+            lc=None, bg=None, color_mode='names', origin=True):
     """Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
@@ -150,17 +150,18 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         bg: multiple         Give the background color.
         color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
                              see plotille.color.__docs__
+        origin: bool         Whether to print the origin. default: True
 
     Returns:
         str: scatter plot over `X`, `Y`.
     """
     return plot(X, Y, width, height, X_label, Y_label, linesep, None,
-                x_min, x_max, y_min, y_max, lc, bg, color_mode)
+                x_min, x_max, y_min, y_max, lc, bg, color_mode, origin)
 
 
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
          x_min=None, x_max=None, y_min=None, y_max=None,
-         lc=None, bg=None, color_mode='names'):
+         lc=None, bg=None, color_mode='names', origin=True):
     """Create plot with X , Y values and linear interpolation between points
 
     Parameters:
@@ -178,6 +179,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         bg: multiple           Give the background color.
         color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                                see plotille.color.__docs__
+        origin: bool           Whether to print the origin. default: True
 
     Returns:
         str: plot over `X`, `Y`.
@@ -188,6 +190,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     fig.x_label = X_label
     fig.y_label = Y_label
     fig.linesep = linesep
+    fig.origin = origin
     if x_min is not None:
         fig.set_x_limits(min_=x_min)
     if x_max is not None:

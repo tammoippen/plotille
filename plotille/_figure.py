@@ -77,6 +77,7 @@ class Figure(object):
         self._y_max = None
         self._color_mode = None
         self._with_colors = True
+        self._origin = True
         self.linesep = os.linesep
         self.background = None
         self.x_label = 'X'
@@ -131,6 +132,18 @@ class Figure(object):
         if not isinstance(value, bool):
             raise ValueError('Only bool allowed: "{}"'.format(value))
         self._with_colors = value
+
+    @property
+    def origin(self):
+        if self._width is not None:
+            return self._width
+        return 80
+
+    @origin.setter
+    def origin(self, value):
+        if not isinstance(value, bool):
+            raise ValueError('Invalid origin: {}'.format(value))
+        self._origin = value
 
     def register_label_formatter(self, type_, formatter):
         self._in_fmt.register_formatter(type_, formatter)
@@ -262,7 +275,7 @@ class Figure(object):
             if isinstance(p, Plot):
                 plot_origin = True
 
-        if plot_origin:
+        if self._origin and plot_origin:
             # print X / Y origin axis
             canvas.line(self._in_fmt.convert(xmin), 0, self._in_fmt.convert(xmax), 0)
             canvas.line(0, self._in_fmt.convert(ymin), 0, self._in_fmt.convert(ymax))
