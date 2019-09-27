@@ -198,7 +198,7 @@ In [7]: print(plotille.scatter(X, np.sin(X), height=30, width=60))
 
 #### Hist:
 
-Inspired by [crappyhist](http://kevinastraight.x10host.com/2013/12/28/python-histograms-from-the-console/).
+Inspired by [crappyhist](http://kevinastraight.x10host.com/2013/12/28/python-histograms-from-the-console/) (link is gone, but I made a [gist](https://gist.github.com/tammoippen/4474e838e969bf177155231ebba52386)).
 ```python
 In [8]: plotille.hist?
 Signature: plotille.hist(X, bins=40, width=80, log_scale=False, linesep='\n', lc=None, bg=None, color_mode='names')
