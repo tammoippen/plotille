@@ -28,5 +28,16 @@ def test_days(date_a, day):
         _date_formatter(date_a, chars=7, delta=day*15)
 
 
+def test_day_times(date_a, day):
+    assert ' 02T00:00' == _date_formatter(date_a, chars=9, delta=day*5)
+    assert '02T00:00 ' == _date_formatter(date_a, chars=9, delta=day*5, left=True)
+
+    assert ' 02T00:00:00' == _date_formatter(date_a, chars=12, delta=day*5)
+    assert '02T00:00:00 ' == _date_formatter(date_a, chars=12, delta=day*5, left=True)
+
+    with pytest.raises(ValueError):
+        _date_formatter(date_a, chars=7, delta=day*5)
+
+
 def test_converter(date_a):
     assert (date_a - date(1970, 1, 1)).days == _convert_date(date_a)
