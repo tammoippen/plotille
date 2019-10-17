@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from datetime import date, timedelta
+
 import pytest
 
 from plotille._input_formatter import _convert_date, _date_formatter
@@ -40,4 +41,4 @@ def test_day_times(date_a, day):
 
 
 def test_converter(date_a):
-    assert (date_a - date(1970, 1, 1)).days == _convert_date(date_a)
+    assert (date_a - date.min).days == _convert_date(date_a)
