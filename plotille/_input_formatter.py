@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import OrderedDict
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 import math
 
 import six
@@ -91,7 +91,7 @@ def _date_formatter(val, chars, delta, left=False):
     assert isinstance(val, date)
     assert isinstance(delta, timedelta)
 
-    val_dt = datetime.combine(val, datetime.min.time())
+    val_dt = datetime.combine(val, time.min)
     return _datetime_formatter(val_dt, chars, delta, left)
 
 
@@ -206,7 +206,7 @@ def _convert_np_datetime(v):
 
 def _convert_date(v):
     assert isinstance(v, date)
-    return (v - date(1970, 1, 1)).days
+    return (v - date.min).days
 
 
 def _convert_datetime(v):
