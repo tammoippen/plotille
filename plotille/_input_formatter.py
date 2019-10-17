@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import date, datetime, time, timedelta
 import math
 
 import six
@@ -40,6 +40,7 @@ class InputFormatter(object):
         for int_type in six.integer_types:
             self.formatters[int_type] = _num_formatter
 
+        self.formatters[date] = _date_formatter
         self.formatters[datetime] = _datetime_formatter
 
         self.converters = OrderedDict()
@@ -47,6 +48,7 @@ class InputFormatter(object):
         for int_type in six.integer_types:
             self.converters[int_type] = _convert_numbers
 
+        self.converters[date] = _convert_date
         self.converters[datetime] = _convert_datetime
 
         try:
@@ -83,6 +85,14 @@ def _np_datetime_formatter(val, chars, delta, left=False):
     # assert isinstance(delta, np.timedelta64)
 
     return _datetime_formatter(val.item(), chars, delta.item(), left)
+
+
+def _date_formatter(val, chars, delta, left=False):
+    assert isinstance(val, date)
+    assert isinstance(delta, timedelta)
+
+    val_dt = datetime.combine(val, time.min)
+    return _datetime_formatter(val_dt, chars, delta, left)
 
 
 def _datetime_formatter(val, chars, delta, left=False):
@@ -192,6 +202,11 @@ def _convert_numbers(v):
 def _convert_np_datetime(v):
     # assert isinstance(v, np.datetime64)
     return timestamp(v.item())
+
+
+def _convert_date(v):
+    assert isinstance(v, date)
+    return (v - date.min).days
 
 
 def _convert_datetime(v):
