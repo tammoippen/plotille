@@ -368,3 +368,8 @@ In [22]: c.line(0.35, 0.8, 0.6, 0.6)
 In [23]: print(c.plot())
 ```
 ![](https://github.com/tammoippen/plotille/raw/master/imgs/house.png)
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/tammoippen/plotille.svg)](https://starchart.cc/tammoippen/plotille)
