@@ -27,6 +27,7 @@ from collections import namedtuple
 from datetime import timedelta
 from itertools import cycle
 import os
+import numpy as np
 
 from six.moves import zip
 
@@ -238,17 +239,50 @@ class Figure(object):
     def clear(self):
         self._plots = []
 
+
+    def circle(self, xCenter=2.5, yCenter=5,  radius=10, label=None, interp='linear', lc=None):
+        self.ellipse( xCenter=xCenter, yCenter=yCenter, angle=0, xAmplitude=radius,  yAmplitude=radius, label=label, interp=interp, lc=lc)
+
+        
+    def ellipse(self, xCenter=2.5, yCenter=5, angle=30, xAmplitude=1,  yAmplitude=2.5, label=None, interp='linear', lc=None):
+
+        u=xCenter       #x-position of the center
+        v=yCenter      #y-position of the center
+        a=xAmplitude       #radius on the x-axis
+        b=yAmplitude      #radius on the y-axis
+        t_rot=angle #rotation angle
+
+        t = np.linspace(0, 2*np.pi, 100)
+        Ell = np.array([a*np.cos(t) , b*np.sin(t)])  
+        R_rot = np.array([[np.cos(t_rot) , -np.sin(t_rot)],[np.sin(t_rot) , np.cos(t_rot)]])  
+        Ell_rot = np.zeros((2,Ell.shape[1]))
+        for i in range(Ell.shape[1]):
+            Ell_rot[:,i] = np.dot(R_rot,Ell[:,i])
+
+        X = u+Ell_rot[0,:]
+        Y = v+Ell_rot[1,:] 
+        self.plot(X, Y, lc=lc, label=label, interp='linear')
+    
+
+
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label)]
+            overlay = False
+            self._plots += [Plot.create(X, Y, lc, interp, label, overlay)]
 
-    def scatter(self, X, Y, lc=None, label=None):  # noqa: N803
+    def scatter(self, X, Y, lc=None, label=None, marker='',text=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, None, label)]
+
+            if(marker != ''):
+                overlay = True
+            else:
+                overlay = False
+                
+            self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
 
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
         if len(X) > 0:
@@ -306,16 +340,16 @@ class Figure(object):
         return res
 
 
-class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
+class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'marker', 'text'])):
 
     @classmethod
-    def create(cls, X, Y, lc, interp, label):  # noqa: N803
+    def create(cls, X, Y, lc, interp, label, overlay=False, marker='', text=None):  # noqa: N803
         if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        return cls(X, Y, lc, interp, label)
+        return cls(X, Y, lc, interp, label, overlay, marker, text)
 
     def width_vals(self):
         return self.X
@@ -324,19 +358,34 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         return self.Y
 
     def write(self, canvas, with_colors, in_fmt):
+
+        #(plot all points with optional text first, then lines)
+        # separating out points from lines allows single-point scatters to successfuly plot
+        
         # make point iterators
+        color = self.lc if with_colors else None
+        
+        points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
+        
+        for index, (x, y) in enumerate( points):
+
+            if(isinstance(self.text, list) and index <= len(self.text)):
+                text_for_point = self.text[index]
+            else:
+                text_for_point = self.text
+
+            canvas.point(x, y, color=color, overlay=self.overlay, marker=self.marker, text=text_for_point)               
+
+        # make point iterators            
         from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
         to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
         # remove first point of to_points
         next(to_points)
-
-        color = self.lc if with_colors else None
+        
         # plot points
-        for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x0, y0, color=color)
+        for index, ((x0, y0), (x, y)) in enumerate(zip( from_points, to_points)):
 
-            canvas.point(x, y, color=color)
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
 
