@@ -27,8 +27,8 @@ from collections import namedtuple
 from datetime import timedelta
 from itertools import cycle
 import os
-import numpy as np
 
+import numpy as np
 from six.moves import zip
 
 from ._canvas import Canvas
@@ -239,31 +239,37 @@ class Figure(object):
     def clear(self):
         self._plots = []
 
+    def circle(self, xcenter=2.5, ycenter=5,  radius=10, label=None, interp='linear', lc=None):
+        # circle is just a special case of ellipse
+        self.ellipse( xcenter=xcenter, ycenter=ycenter, angle=0, \
+                      xAmplitude=radius, yAmplitude=radius, \
+                      label=label, interp=interp, lc=lc)
 
-    def circle(self, xCenter=2.5, yCenter=5,  radius=10, label=None, interp='linear', lc=None):
-        self.ellipse( xCenter=xCenter, yCenter=yCenter, angle=0, xAmplitude=radius,  yAmplitude=radius, label=label, interp=interp, lc=lc)
+    def ellipse(self, xcenter=2.5, ycenter=5, angle=30, \
+                xAmplitude=1,  yAmplitude=2.5, \
+                label=None, interp='linear', lc=None):
 
-        
-    def ellipse(self, xCenter=2.5, yCenter=5, angle=30, xAmplitude=1,  yAmplitude=2.5, label=None, interp='linear', lc=None):
-
-        u=xCenter       #x-position of the center
-        v=yCenter      #y-position of the center
-        a=xAmplitude       #radius on the x-axis
-        b=yAmplitude      #radius on the y-axis
-        t_rot=angle #rotation angle
+        #x-position of the center        
+        u=xcenter
+        #y-position of the center        
+        v=ycenter
+        #radius on the x-axis        
+        a=xAmplitude
+        #radius on the y-axis        
+        b=yAmplitude
+        #rotation angle        
+        t_rot=angle 
 
         t = np.linspace(0, 2*np.pi, 100)
-        Ell = np.array([a*np.cos(t) , b*np.sin(t)])  
-        R_rot = np.array([[np.cos(t_rot) , -np.sin(t_rot)],[np.sin(t_rot) , np.cos(t_rot)]])  
-        Ell_rot = np.zeros((2,Ell.shape[1]))
-        for i in range(Ell.shape[1]):
-            Ell_rot[:,i] = np.dot(R_rot,Ell[:,i])
+        ell = np.array([a*np.cos(t), b*np.sin(t)])  
+        r_rot = np.array([[np.cos(t_rot), -np.sin(t_rot)], [np.sin(t_rot), np.cos(t_rot)]])  
+        ell_rot = np.zeros((2,ell.shape[1]))
+        for i in range(ell.shape[1]):
+            ell_rot[:,i] = np.dot(r_rot, ell[:,i])
 
-        X = u+Ell_rot[0,:]
-        Y = v+Ell_rot[1,:] 
+        X = u+ell_rot[0,:]
+        Y = v+ell_rot[1,:] 
         self.plot(X, Y, lc=lc, label=label, interp='linear')
-    
-
 
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
         if len(X) > 0:
@@ -283,7 +289,6 @@ class Figure(object):
                 overlay = False
                 
             self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
-
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
@@ -311,7 +316,6 @@ class Figure(object):
             # print X / Y origin axis
             canvas.line(self._in_fmt.convert(xmin), 0, self._in_fmt.convert(xmax), 0)
             canvas.line(0, self._in_fmt.convert(ymin), 0, self._in_fmt.convert(ymax))
-
         res = canvas.plot(linesep=self.linesep)
 
         # add y axis
@@ -384,11 +388,9 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
         next(to_points)
         
         # plot points
-        for index, ((x0, y0), (x, y)) in enumerate(zip( from_points, to_points)):
-
+        for (x0, y0), (x, y) in zip( from_points, to_points):
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
-
 
 class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod

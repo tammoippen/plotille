@@ -27,11 +27,10 @@ from os import linesep
 
 import six
 
-from math import pi
-
 from ._dots import Dots
-from ._util import roundeven
 from ._colors import color as colorlib
+from ._util import roundeven
+
 
 class Canvas(object):
     """A canvas object for plotting braille dots
@@ -197,7 +196,7 @@ class Canvas(object):
         """
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
-        
+
         self._set(x_idx, y_idx, set_, color, overlay, marker, text)
 
     def fill_char(self, x, y, set_=True):
@@ -268,20 +267,19 @@ class Canvas(object):
             linesep: str  The requested line seperator. default: os.linesep
 
         Returns:
-            unicode: The canvas as a string.
+            unicode: The canvas as a string, overlaid with textual elements
         """
 
-        #classic:
-        #ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
+        # classic:
+        # ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
 
-        #combine _canvas (Dots) and overlay (text) so that overlay is on top of dots
+        # combine _canvas (Dots) and overlay (text) so that overlay is on top of dots
         ret_combined = ""
         for row_index in range(len(self._canvas))[::-1]:
-            
             for ii in range(len(self._canvas[row_index])):
                 if(self._canvas_overlay[row_index][ii] == ' '):
                     ret_combined += six.text_type(self._canvas[row_index][ii])
                 else:
-                    ret_combined += six.text_type(self._canvas_overlay[row_index][ii]        )
+                    ret_combined += six.text_type(self._canvas_overlay[row_index][ii])
             ret_combined += linesep
         return ret_combined
