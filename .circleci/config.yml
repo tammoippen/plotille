@@ -1,21 +1,156 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
-
-jobs:
-  build-and-test:
-    executor: python/default
+commands:
+  tester:
+    description: "Test plotille given a certain python version."
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
+
       - run:
-          command: ./manage.py test
+          name: Set PATH.
+          command: |
+            echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
+            source $BASH_ENV
+
+      - restore_cache:
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
+
+      - run:
+          name: Pre-install
+          command: |
+            pip install --user poetry virtualenv
+            virtualenv venv
+
+      - run:
+          name: Install
+          command: |
+            . venv/bin/activate
+            poetry install
+
+      - save_cache:
+          key: v1-plotille-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "pyproject.toml" }}-{{ checksum "setup.cfg" }}
+          paths:
+            - ~/app/venv
+            - ~/app/poetry.lock
+
+      - store_artifacts:
+          path: ~/app/poetry.lock
+          destination: poetry.lock
+
+      - run:
+          name: Style
+          command: |
+            . venv/bin/activate
+            poetry run flake8 tests/ plotille/
+
+      - run:
           name: Test
+          command: |
+            . venv/bin/activate
+            poetry run pytest
+
+      - run:
+          name: Build sdist
+          command: poetry build -vvv -f sdist
+
+      - store_artifacts:
+          path: ~/app/dist
+          destination: dist
+
+      - store_artifacts:
+          path: ~/app/cov_html
+          destination: cov_html
+
+      - run:
+          name: Coverage
+          command: |
+            . venv/bin/activate
+            poetry run coveralls
+
+executors:
+  python:
+    working_directory: ~/app
+    parameters:
+      image:
+        type: string
+        default: latest
+    docker:
+      - image: << parameters.image >>
+
+jobs:
+  test_2_7:
+    executor:
+      name: python
+      image: "circleci/python:2.7.15"
+    steps:
+      - tester
+  test_2_7_pypy:
+    executor:
+        name: python
+        image: "pypy:2-7.1.0"
+    steps:
+      - tester
+  test_3_5:
+    executor:
+      name: python
+      image: "circleci/python:3.5.6"
+    steps:
+      - tester
+  test_3_5_pypy:
+    executor:
+      name: python
+      image: "pypy:3.5-7.0.0"
+    steps:
+      - tester
+  test_3_6:
+    executor:
+      name: python
+      image: "circleci/python:3.6.7"
+    steps:
+      - tester
+  test_3_6_pypy:
+    executor:
+      name: python
+      image: "pypy:3.6-7.1.0"
+    steps:
+      - tester
+  test_3_7:
+    executor:
+      name: python
+      image: "circleci/python:3.7.1"
+    steps:
+      - tester
+
 
 workflows:
-  main:
+  version: 2.1
+  test_and_deploy:
     jobs:
-      - build-and-test
+      - test_2_7:
+          filters:
+            tags:
+              only: /.*/
+      - test_2_7_pypy:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_5:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_5_pypy:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_6:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_6_pypy:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_7:
+          filters:
+            tags:
+              only: /.*/
