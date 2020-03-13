@@ -241,35 +241,35 @@ class Figure(object):
 
     def circle(self, xcenter=2.5, ycenter=5,  radius=10, label=None, interp='linear', lc=None):
         # circle is just a special case of ellipse
-        self.ellipse( xcenter=xcenter, ycenter=ycenter, angle=0, \
-                      xAmplitude=radius, yAmplitude=radius, \
-                      label=label, interp=interp, lc=lc)
+        self.ellipse(xcenter=xcenter, ycenter=ycenter, angle=0,
+                     xAmplitude=radius, yAmplitude=radius,
+                     label=label, interp=interp, lc=lc)
 
     def ellipse(self, xcenter=2.5, ycenter=5, angle=30, \
                 xAmplitude=1,  yAmplitude=2.5, \
                 label=None, interp='linear', lc=None):
 
-        #x-position of the center        
+        # x-position of the center
         u=xcenter
-        #y-position of the center        
+        # y-position of the center
         v=ycenter
-        #radius on the x-axis        
+        # radius on the x-axis
         a=xAmplitude
-        #radius on the y-axis        
+        # radius on the y-axis
         b=yAmplitude
-        #rotation angle        
-        t_rot=angle 
+        #rotation angle
+        t_rot=angle
 
         t = np.linspace(0, 2*np.pi, 100)
-        ell = np.array([a*np.cos(t), b*np.sin(t)])  
+        ell = np.array([a*np.cos(t), b*np.sin(t)])
         r_rot = np.array([[np.cos(t_rot), -np.sin(t_rot)], [np.sin(t_rot), np.cos(t_rot)]])  
-        ell_rot = np.zeros((2,ell.shape[1]))
+        ell_rot = np.zeros((2, ell.shape[1]))
         for i in range(ell.shape[1]):
             ell_rot[:,i] = np.dot(r_rot, ell[:,i])
 
-        X = u+ell_rot[0,:]
-        Y = v+ell_rot[1,:] 
-        self.plot(X, Y, lc=lc, label=label, interp='linear')
+        X = u+ell_rot[0, :]
+        Y = v+ell_rot[1, :]
+        self.plot(X, Y, lc=lc, label=label, interp='linear') # noqa: N803
 
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
         if len(X) > 0:
@@ -278,7 +278,7 @@ class Figure(object):
             overlay = False
             self._plots += [Plot.create(X, Y, lc, interp, label, overlay)]
 
-    def scatter(self, X, Y, lc=None, label=None, marker='',text=None):  # noqa: N803
+    def scatter(self, X, Y, lc=None, label=None, marker='', text=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
@@ -287,8 +287,9 @@ class Figure(object):
                 overlay = True
             else:
                 overlay = False
-                
-            self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
+
+                self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
+
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
         if len(X) > 0:
             if lc is None:
@@ -365,12 +366,12 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
 
         #(plot all points with optional text first, then lines)
         # separating out points from lines allows single-point scatters to successfuly plot
-        
+
         # make point iterators
         color = self.lc if with_colors else None
-        
+
         points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
-        
+
         for index, (x, y) in enumerate( points):
 
             if(isinstance(self.text, list) and index <= len(self.text)):
@@ -380,19 +381,20 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
 
             canvas.point(x, y, color=color, overlay=self.overlay, marker=self.marker, text=text_for_point)               
 
-        # make point iterators            
+        # make point iterators
         from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
         to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
         # remove first point of to_points
         next(to_points)
-        
+
         # plot points
-        for (x0, y0), (x, y) in zip( from_points, to_points):
+        for (x0, y0), (x, y) in zip(from_points, to_points):
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
 
-class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+
+                class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
         frequencies, buckets = hist(X, bins)

@@ -91,11 +91,13 @@ class Canvas(object):
         # the canvas to print in
         self.width_bonus = 10
 
-        #_canvas holds Dot objects
-        self._canvas = [[Dots(bg=background, color_mode=color_mode) for j_ in range(width+self.width_bonus)] for i_ in range(height)]
+        # _canvas holds Dot objects
+        self._canvas = [[Dots(bg=background, color_mode=color_mode)
+                         for j_ in range(width+self.width_bonus)] for i_ in range(height)]
 
-        #_canvas_overlay holds text objects and non-Dot markers
-        self._canvas_overlay = [[' ' for j_ in range(width+self.width_bonus)] for i_ in range(height)]
+        # _canvas_overlay holds text objects and non-Dot markers
+        self._canvas_overlay = [[' ' for j_ in range(width+self.width_bonus)]
+                                for i_ in range(height)]
 
     def __str__(self):
         return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
@@ -165,8 +167,7 @@ class Canvas(object):
                 for ii in range(len(text)):
                     x_text = x_c+2+ii
                     if(x_text < self.width+self.width_bonus):
-                        self._canvas_overlay[y_c][x_text] = colorlib(text[ii], color)                
-
+                        self._canvas_overlay[y_c][x_text] = colorlib(text[ii], color)
 
     def dots_between(self, x0, y0, x1, y1):
         """Number of dots between (x0, y0) and (x1, y1).
@@ -259,7 +260,6 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-
     def plot(self, linesep=linesep):
         """Transform canvas into `print`-able string
 
@@ -274,7 +274,7 @@ class Canvas(object):
         # ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
 
         # combine _canvas (Dots) and overlay (text) so that overlay is on top of dots
-        ret_combined = ""
+        ret_combined = ''
         for row_index in range(len(self._canvas))[::-1]:
             for ii in range(len(self._canvas[row_index])):
                 if(self._canvas_overlay[row_index][ii] == ' '):
