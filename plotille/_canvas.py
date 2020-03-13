@@ -27,8 +27,8 @@ from os import linesep
 
 import six
 
-from ._dots import Dots
 from ._colors import color as colorlib
+from ._dots import Dots
 from ._util import roundeven
 
 

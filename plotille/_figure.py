@@ -245,27 +245,27 @@ class Figure(object):
                      xAmplitude=radius, yAmplitude=radius,
                      label=label, interp=interp, lc=lc)
 
-    def ellipse(self, xcenter=2.5, ycenter=5, angle=30, \
-                xAmplitude=1,  yAmplitude=2.5, \
+    def ellipse(self, xcenter=2.5, ycenter=5, angle=30,
+                xAmplitude=1,  yAmplitude=2.5,
                 label=None, interp='linear', lc=None):
 
         # x-position of the center
-        u=xcenter
+        u = xcenter
         # y-position of the center
-        v=ycenter
+        v = ycenter
         # radius on the x-axis
-        a=xAmplitude
+        a = xAmplitude
         # radius on the y-axis
-        b=yAmplitude
-        #rotation angle
-        t_rot=angle
+        b = yAmplitude
+        # rotation angle
+        t_rot = angle
 
         t = np.linspace(0, 2*np.pi, 100)
         ell = np.array([a*np.cos(t), b*np.sin(t)])
-        r_rot = np.array([[np.cos(t_rot), -np.sin(t_rot)], [np.sin(t_rot), np.cos(t_rot)]])  
+        r_rot = np.array([[np.cos(t_rot), -np.sin(t_rot)], [np.sin(t_rot), np.cos(t_rot)]])
         ell_rot = np.zeros((2, ell.shape[1]))
         for i in range(ell.shape[1]):
-            ell_rot[:,i] = np.dot(r_rot, ell[:,i])
+            ell_rot[:, i] = np.dot(r_rot, ell[:, i])
 
         X = u+ell_rot[0, :]
         Y = v+ell_rot[1, :]
@@ -364,7 +364,7 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
 
     def write(self, canvas, with_colors, in_fmt):
 
-        #(plot all points with optional text first, then lines)
+        # plot all points with optional text first, then lines
         # separating out points from lines allows single-point scatters to successfuly plot
 
         # make point iterators
@@ -372,14 +372,14 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
 
         points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
-        for index, (x, y) in enumerate( points):
+        for index, (x, y) in enumerate(points):
 
             if(isinstance(self.text, list) and index <= len(self.text)):
                 text_for_point = self.text[index]
             else:
                 text_for_point = self.text
 
-            canvas.point(x, y, color=color, overlay=self.overlay, marker=self.marker, text=text_for_point)               
+            canvas.point(x, y, color=color, overlay=self.overlay, marker=self.marker, text=text_for_point)
 
         # make point iterators
         from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
@@ -393,8 +393,8 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
 
+class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
 
-                class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
         frequencies, buckets = hist(X, bins)
