@@ -242,11 +242,11 @@ class Figure(object):
     def circle(self, xcenter=2.5, ycenter=5,  radius=10, label=None, interp='linear', lc=None):
         # circle is just a special case of ellipse
         self.ellipse(xcenter=xcenter, ycenter=ycenter, angle=0,
-                     xAmplitude=radius, yAmplitude=radius,
+                     xamplitude=radius, yamplitude=radius,
                      label=label, interp=interp, lc=lc)
 
     def ellipse(self, xcenter=2.5, ycenter=5, angle=30,
-                xAmplitude=1,  yAmplitude=2.5,
+                xamplitude=1,  yamplitude=2.5,
                 label=None, interp='linear', lc=None):
 
         # x-position of the center
@@ -254,9 +254,9 @@ class Figure(object):
         # y-position of the center
         v = ycenter
         # radius on the x-axis
-        a = xAmplitude
+        a = xamplitude
         # radius on the y-axis
-        b = yAmplitude
+        b = yamplitude
         # rotation angle
         t_rot = angle
 
@@ -267,9 +267,9 @@ class Figure(object):
         for i in range(ell.shape[1]):
             ell_rot[:, i] = np.dot(r_rot, ell[:, i])
 
-        X = u+ell_rot[0, :]
-        Y = v+ell_rot[1, :]
-        self.plot(X, Y, lc=lc, label=label, interp='linear') # noqa: N803
+        X = u+ell_rot[0, :]  # noqa: N806
+        Y = v+ell_rot[1, :]  # noqa: N806
+        self.plot(X, Y, lc=lc, label=label, interp='linear')  # noqa: N803
 
     def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
         if len(X) > 0:
@@ -393,7 +393,8 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
 
-class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+
+                class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
 
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
