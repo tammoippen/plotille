@@ -47,7 +47,8 @@ class Canvas(object):
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
     """
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names', width_bonus=0):
+    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1,
+                 background=None, color_mode='names', width_bonus=0):
         """Initiate a Canvas object
 
         Parameters:
@@ -271,8 +272,8 @@ class Canvas(object):
         """
 
         # classic:
-        #ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
-        #return ret
+        # ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
+        # return ret
 
         # combine _canvas (Dots) and overlay (text) so that overlay is on top of dots
         ret_combined = ''

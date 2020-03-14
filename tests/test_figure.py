@@ -225,7 +225,7 @@ def test_plot(get_canvas):
     ]
     assert canvas.line.call_count == 1  # two points => one line
     assert canvas.line.call_args_list == [
-        call(0.1, 0.2, 0.2, 0.3, color=None),#, overlay=False, marker='', text=None),
+        call(0.1, 0.2, 0.2, 0.3, color=None),
     ]
 
     canvas = get_canvas()
