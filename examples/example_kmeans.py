@@ -5,7 +5,6 @@ from sklearn.datasets import make_blobs
 from skimage.measure import EllipseModel
 
 import plotille
-from plotille import _colors
 
 
 fig = plotille.Figure()
@@ -18,7 +17,7 @@ X, y = make_blobs(n_samples=n_samples, random_state=random_state)
 
 y_pred = KMeans(n_clusters=3, random_state=random_state).fit_predict(X)
 
-color_list = list(filter(lambda color: "bright" in color, sorted(_colors._FOREGROUNDS.keys())))
+color_list = list(filter(lambda color: "bright" in color, sorted(plotille._colors._FOREGROUNDS.keys())))
 marker_list = ['x', 'o', '+', '*', '#', '^']
 
 for cluster_index in range(3):
