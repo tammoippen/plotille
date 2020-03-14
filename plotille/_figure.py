@@ -394,7 +394,7 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'overlay', 'ma
                 canvas.line(x0, y0, x, y, color=color)
 
 
-                class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
 
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
