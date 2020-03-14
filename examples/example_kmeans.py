@@ -32,6 +32,6 @@ for cluster_index in range(3):
 
     fig.scatter(cx, cy, lc=color_list[cluster_index])
 
-    fig.ellipse(xCenter=xc, yCenter=yc, xAmplitude=a,  yAmplitude=b, angle=theta)
+    fig.ellipse(xcenter=xc, ycenter=yc, xamplitude=a,  yamplitude=b, angle=theta)
 
 print(fig.show(legend=False))

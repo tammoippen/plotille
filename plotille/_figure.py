@@ -288,7 +288,7 @@ class Figure(object):
             else:
                 overlay = False
 
-                self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
+            self._plots += [Plot.create(X, Y, lc, None, label, overlay, marker, text)]
 
     def histogram(self, X, bins=160, lc=None):  # noqa: N803
         if len(X) > 0:

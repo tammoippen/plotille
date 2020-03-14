@@ -16,6 +16,6 @@ centers.append([500, 200, 'red'])
 centers.append([310, 250, 'yellow'])
 centers.append([435, 250, 'green'])
 for ring in centers:
-    fig.circle(xCenter=ring[0], yCenter=500-ring[1], radius=50, lc=ring[2])
+    fig.circle(xcenter=ring[0], ycenter=500-ring[1], radius=50, lc=ring[2])
 
 print(fig.show(legend=False))
