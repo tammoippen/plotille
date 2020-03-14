@@ -47,7 +47,7 @@ class Canvas(object):
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
     """
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names'):
+    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names', width_bonus=0):
         """Initiate a Canvas object
 
         Parameters:
@@ -89,7 +89,7 @@ class Canvas(object):
         self._x_delta_pt = self._x_delta / 2
         self._y_delta_pt = self._y_delta / 4
         # the canvas to print in
-        self.width_bonus = 10
+        self.width_bonus = width_bonus
 
         # _canvas holds Dot objects
         self._canvas = [[Dots(bg=background, color_mode=color_mode)
@@ -271,7 +271,8 @@ class Canvas(object):
         """
 
         # classic:
-        # ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
+        #ret = linesep.join(''.join(map(six.text_type, row)) for row in reversed(self._canvas))
+        #return ret
 
         # combine _canvas (Dots) and overlay (text) so that overlay is on top of dots
         ret_combined = ''
@@ -282,4 +283,4 @@ class Canvas(object):
                 else:
                     ret_combined += six.text_type(self._canvas_overlay[row_index][ii])
             ret_combined += linesep
-        return ret_combined
+        return ret_combined[:-1]
