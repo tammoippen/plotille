@@ -453,7 +453,7 @@ def test_overlay():
     fig.with_colors = False
     fig.width = 20
     fig.height = 20
-    fig.scatter([4], [5], marker='x', text="Test")
+    fig.scatter([4], [5], marker='x', text='Test')
     c = fig.show(legend=False)
 
     expected = """   (Y)     ^
@@ -553,7 +553,7 @@ def test_circle():
 -0.5399320 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⡏⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 -0.5999245 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 -----------|-|---------|---------|---------|---------|-> (X)
-           | -0.599723 -0.299799 0.0001259 0.3000503 0.5999748"""
+           | -0.599723 -0.299799 0.0001259 0.3000503 0.5999748"""  # noqa: Q000
 
     assert expected == c
     print(c)
