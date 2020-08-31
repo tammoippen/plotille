@@ -50,7 +50,7 @@ def roundeven(x):
     return x_r
 
 
-def hist(X, bins):  # noqa: N803
+def hist(X, bins):
     """Create histogram similar to `numpy.hist()`
 
     Parameters:

@@ -32,7 +32,7 @@ from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
 
-def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N803
+def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,
          lc=None, bg=None, color_mode='names'):
     """Create histogram over `X` from left to right
 
@@ -70,14 +70,14 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,  # noqa: N80
         canvas += ['[{}, {}) | {} {}'.format(
             ipf.fmt(b[i], delta=delta, chars=8, left=True),
             ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
-            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode) +
-            color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
+            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode)
+            + color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
             h[i])]
-    canvas += ['‾' * (2*8 + 2 + 3 + width + 12)]
+    canvas += ['‾' * (2 * 8 + 2 + 3 + width + 12)]
     return linesep.join(canvas)
 
 
-def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,  # noqa: N803
+def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep=os.linesep,
               x_min=None, x_max=None, y_min=None, y_max=None,
               lc=None, bg=None, color_mode='names'):
     """Create histogram over `X`
@@ -128,7 +128,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     return fig.show()
 
 
-def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,  # noqa: N803
+def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,
             x_min=None, x_max=None, y_min=None, y_max=None,
             lc=None, bg=None, color_mode='names', origin=True):
     """Create scatter plot with X , Y values
@@ -159,7 +159,7 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
                 x_min, x_max, y_min, y_max, lc, bg, color_mode, origin)
 
 
-def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',  # noqa: N803
+def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',
          x_min=None, x_max=None, y_min=None, y_max=None,
          lc=None, bg=None, color_mode='names', origin=True):
     """Create plot with X , Y values and linear interpolation between points
