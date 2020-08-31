@@ -329,13 +329,15 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
         # remove first point of to_points
-        next(to_points)
+        (x0, y0) = next(to_points)
 
         color = self.lc if with_colors else None
-        # plot points
-        for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x0, y0, color=color)
 
+        # print first point
+        canvas.point(x0, y0, color=color)
+
+        # plot other points and lines
+        for (x0, y0), (x, y) in zip(from_points, to_points):
             canvas.point(x, y, color=color)
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
