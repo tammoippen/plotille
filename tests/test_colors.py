@@ -125,8 +125,8 @@ def test_rgb(tty):
 
         fgh = hex(fg)[2:].rjust(2, str('0'))
         assert '\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) == clr.color(' ', fgh + fgh + fgh, None, mode='rgb')
-        assert ('\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) ==
-                clr.color(' ', '0x' + fgh + fgh + fgh, None, mode='rgb'))
+        assert ('\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg)
+                == clr.color(' ', '0x' + fgh + fgh + fgh, None, mode='rgb'))
 
         for bg in range(0, 256):
             assert '\x1b[48;2;{};{};{}m'.format(bg, bg, bg) == clr._rgb(None, (bg, bg, bg))
@@ -134,13 +134,13 @@ def test_rgb(tty):
 
             bgh = hex(bg)[2:].rjust(2, str('0'))
             assert '\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) == clr.color(' ', None, bgh + bgh + bgh, mode='rgb')
-            assert ('\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) ==
-                    clr.color(' ', None, '0x' + bgh + bgh + bgh, mode='rgb'))
+            assert ('\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg)
+                    == clr.color(' ', None, '0x' + bgh + bgh + bgh, mode='rgb'))
 
-            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m'.format(fg, fg, fg, bg, bg, bg) ==
-                    clr._rgb((fg, fg, fg), (bg, bg, bg)))
-            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m \x1b[0m'.format(fg, fg, fg, bg, bg, bg) ==
-                    clr.color(' ', (fg, fg, fg), (bg, bg, bg), mode='rgb'))
+            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m'.format(fg, fg, fg, bg, bg, bg)
+                    == clr._rgb((fg, fg, fg), (bg, bg, bg)))
+            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m \x1b[0m'.format(fg, fg, fg, bg, bg, bg)
+                    == clr.color(' ', (fg, fg, fg), (bg, bg, bg), mode='rgb'))
 
     with pytest.raises(ValueError):
         clr._rgb(-15, None)

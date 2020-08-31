@@ -50,7 +50,7 @@ def roundeven(x):
     return x_r
 
 
-def hist(X, bins):  # noqa: N803
+def hist(X, bins):
     """Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -66,6 +66,9 @@ def hist(X, bins):  # noqa: N803
 
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0
+    if xmin == xmax:
+        xmin -= 0.5
+        xmax += 0.5
     delta = xmax - xmin
     is_datetime = False
     if isinstance(delta, timedelta):

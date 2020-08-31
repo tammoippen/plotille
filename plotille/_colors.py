@@ -151,7 +151,7 @@ def _hex2rgb(h):
     if h.lower().startswith('0x'):
         h = h[2:]
     if len(h) == 3:
-        return (int(h[0]*2, base=16), int(h[1]*2, base=16), int(h[2]*2, base=16))
+        return (int(h[0] * 2, base=16), int(h[1] * 2, base=16), int(h[2] * 2, base=16))
     if len(h) == 6:
         return (int(h[0:2], base=16), int(h[2:4], base=16), int(h[4:6], base=16))
 

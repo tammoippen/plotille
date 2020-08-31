@@ -238,19 +238,19 @@ class Figure(object):
     def clear(self):
         self._plots = []
 
-    def plot(self, X, Y, lc=None, interp='linear', label=None):  # noqa: N803
+    def plot(self, X, Y, lc=None, interp='linear', label=None):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot.create(X, Y, lc, interp, label)]
 
-    def scatter(self, X, Y, lc=None, label=None):  # noqa: N803
+    def scatter(self, X, Y, lc=None, label=None):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot.create(X, Y, lc, None, label)]
 
-    def histogram(self, X, bins=160, lc=None):  # noqa: N803
+    def histogram(self, X, bins=160, lc=None):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
@@ -283,16 +283,16 @@ class Figure(object):
         # add y axis
         yaxis = self._y_axis(ymin, ymax, label=self.y_label)
         res = (
-            yaxis[0] + self.linesep +  # up arrow
-            yaxis[1] + self.linesep +  # maximum
-            self.linesep.join(lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep)))
+            yaxis[0] + self.linesep  # up arrow
+            + yaxis[1] + self.linesep  # maximum
+            + self.linesep.join(lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep)))
         )
 
         # add x axis
         xaxis = self._x_axis(xmin, xmax, label=self.x_label, with_y_axis=True)
         res = (
-            res + self.linesep +  # plot
-            self.linesep.join(xaxis)
+            res + self.linesep  # plot
+            + self.linesep.join(xaxis)
         )
 
         if legend:
@@ -309,7 +309,7 @@ class Figure(object):
 class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
 
     @classmethod
-    def create(cls, X, Y, lc, interp, label):  # noqa: N803
+    def create(cls, X, Y, lc, interp, label):
         if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
         if interp not in ('linear', None):
@@ -329,13 +329,15 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
 
         # remove first point of to_points
-        next(to_points)
+        (x0, y0) = next(to_points)
 
         color = self.lc if with_colors else None
-        # plot points
-        for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x0, y0, color=color)
 
+        # print first point
+        canvas.point(x0, y0, color=color)
+
+        # plot other points and lines
+        for (x0, y0), (x, y) in zip(from_points, to_points):
             canvas.point(x, y, color=color)
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
@@ -343,7 +345,7 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
 
 class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod
-    def create(cls, X, bins, lc):  # noqa: N803
+    def create(cls, X, bins, lc):
         frequencies, buckets = hist(X, bins)
 
         return cls(X, bins, frequencies, buckets, lc)
