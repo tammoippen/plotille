@@ -315,7 +315,7 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        return cls(X, Y, lc, interp, label)
+        return cls(X, Y, lc, interp, label)  # noqa: N803
 
     def width_vals(self):
         return self.X
@@ -346,7 +346,7 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
 class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
     @classmethod
     def create(cls, X, bins, lc):  # noqa: N803
-        frequencies, buckets = hist(X, bins)
+        frequencies, buckets = hist(X, bins)  # noqa: N803
 
         return cls(X, bins, frequencies, buckets, lc)
 
