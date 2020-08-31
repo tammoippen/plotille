@@ -87,7 +87,7 @@ jobs:
   test_2_7_pypy:
     executor:
         name: python
-        image: "pypy:2-7.3"
+        image: "pypy:2.7-7.3"
     steps:
       - tester
   test_3_5:
