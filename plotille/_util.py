@@ -52,7 +52,7 @@ def roundeven(x):
 
 def _numpy_to_native(x):
     # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
-    if '<class \'numpy.' in str(type(x)) and callable(getattr(x, 'item')):
+    if ('<class \'numpy.' in str(type(x)) or '<type \'numpy.' in str(type(x))) and callable(getattr(x, 'item')):
         return x.item()
     return x
 
