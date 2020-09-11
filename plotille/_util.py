@@ -50,6 +50,13 @@ def roundeven(x):
     return x_r
 
 
+def _numpy_to_native(x):
+    # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
+    if '<class \'numpy.' in str(type(x)) and callable(getattr(x, 'item')):
+        return x.item()
+    return x
+
+
 def hist(X, bins):
     """Create histogram similar to `numpy.hist()`
 
@@ -69,6 +76,10 @@ def hist(X, bins):
     if xmin == xmax:
         xmin -= 0.5
         xmax += 0.5
+
+    xmin = _numpy_to_native(xmin)
+    xmax = _numpy_to_native(xmax)
+
     delta = xmax - xmin
     is_datetime = False
     if isinstance(delta, timedelta):
@@ -79,7 +90,8 @@ def hist(X, bins):
 
     y = [0] * bins
     for x in X:
-        delta = (x - xmin)
+        x_ = _numpy_to_native(x)
+        delta = (x_ - xmin)
         if isinstance(delta, timedelta):
             delta = timestamp(delta)
         x_idx = min(bins - 1, int(delta // xwidth))
