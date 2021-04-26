@@ -90,18 +90,6 @@ jobs:
         image: "pypy:2.7-7.3"
     steps:
       - tester
-  test_3_5:
-    executor:
-      name: python
-      image: "circleci/python:3.5"
-    steps:
-      - tester
-  test_3_5_pypy:
-    executor:
-      name: python
-      image: "pypy:3.5-7.0.0"
-    steps:
-      - tester
   test_3_6:
     executor:
       name: python
@@ -120,10 +108,22 @@ jobs:
       image: "circleci/python:3.7"
     steps:
       - tester
+  test_3_7_pypy:
+    executor:
+      name: python
+      image: "pypy:3.7-7.3"
+    steps:
+      - tester
   test_3_8:
     executor:
       name: python
       image: "circleci/python:3.8"
+    steps:
+      - tester
+  test_3_9:
+    executor:
+      name: python
+      image: "circleci/python:3.9"
     steps:
       - tester
 
@@ -159,14 +159,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test_3_5:
-          filters:
-            tags:
-              only: /.*/
-      - test_3_5_pypy:
-          filters:
-            tags:
-              only: /.*/
       - test_3_6:
           filters:
             tags:
@@ -179,7 +171,15 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test_3_7_pypy:
+          filters:
+            tags:
+              only: /.*/
       - test_3_8:
+          filters:
+            tags:
+              only: /.*/
+      - test_3_9:
           filters:
             tags:
               only: /.*/
@@ -187,12 +187,12 @@ workflows:
           requires:
             - test_2_7
             - test_2_7_pypy
-            - test_3_5
-            - test_3_5_pypy
             - test_3_6
             - test_3_6_pypy
             - test_3_7
+            - test_3_7_pypy
             - test_3_8
+            - test_3_9
           filters:
             branches:
               ignore: /.*/
