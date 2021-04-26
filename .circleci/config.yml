@@ -65,7 +65,7 @@ commands:
           name: Coverage
           command: |
             . venv/bin/activate
-            poetry run coveralls
+            test "$CIRCLE_JOB" == "test_2_7" || test "$CIRCLE_JOB" == "test_2_7_pypy" || poetry run coveralls
 
 executors:
   python:
