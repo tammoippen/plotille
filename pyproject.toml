@@ -40,7 +40,7 @@ six = "^1.12"
 
 [tool.poetry.dev-dependencies]
 
-coveralls = "^1"
+coveralls = "*"
 flake8 = "^3.9.1"
 flake8-bugbear = { version = "^21", python = "^3.6" }
 flake8-commas = "^2.0.0"
