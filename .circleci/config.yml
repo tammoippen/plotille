@@ -64,7 +64,10 @@ commands:
       - run:
           name: CodeCov
           command: |
-            bash <(curl -s https://codecov.io/bash) -n coverage-{{ .Environment.CIRCLE_STAGE }}
+            bash <(curl -s https://codecov.io/bash) \
+              -n coverage-{{ .Environment.CIRCLE_STAGE }} \
+              -F unittests
+
 
 executors:
   python:
