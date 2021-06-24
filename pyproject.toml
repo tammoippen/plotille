@@ -57,4 +57,4 @@ pytest-cov = "^2.11.1"
 pytest-mccabe = "^1"
 pytest-mock = "^2"
 pytest-pythonpath =  "^0.7.3"
-numpy = "^1"
+numpy = "1.16.6"  # release for 2.7
