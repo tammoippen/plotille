@@ -1,11 +1,12 @@
 # Plotille
 
 [![CircleCI](https://circleci.com/gh/tammoippen/plotille.svg?style=svg)](https://circleci.com/gh/tammoippen/plotille)
-[![Coverage Status](https://coveralls.io/repos/github/tammoippen/plotille/badge.svg?branch=master)](https://coveralls.io/github/tammoippen/plotille?branch=master)
+[![codecov](https://codecov.io/gh/tammoippen/plotille/branch/master/graph/badge.svg?token=OGWI832JNM)](https://codecov.io/gh/tammoippen/plotille)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tammoippen/plotille.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tammoippen/plotille/context:python)
-[![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%203.7%2C%203.8-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.5%2C%203.6%2C%203.7%2C%203.8-brightgreen.svg)
-[![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.5--7.0.0%2C%203.6--7.3-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.5--7.0.0%2C%203.6--7.3-brightgreen.svg)
+[![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.8-brightgreen.svg)
+[![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.6--7.3%2C%203.7--7.3-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.6--7.3%2C%203.7--7.3-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)
+[![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
 Plot, scatter plots and histograms in the terminal using braille dots, with (almost) no dependancies. Plot with color or make complex figures - similar to a very small sibling to matplotlib. Or use the canvas to plot dots and lines yourself.

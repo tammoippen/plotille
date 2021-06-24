@@ -22,9 +22,10 @@ classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 2.7',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Topic :: Scientific/Engineering :: Visualization',
@@ -32,30 +33,29 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "~2.7 || ^3.5"
+python = "~2.7 || ^3.6"
 
 six = "^1.12"
 
 
 [tool.poetry.dev-dependencies]
 
-coveralls = "^1.5.1"
-flake8 = "^3.5.0"
-flake8-bugbear = { version = "^18.8.0", python = "^3.5" }
+flake8 = "^3.9.1"
+flake8-bugbear = { version = "^21", python = "^3.6" }
 flake8-commas = "^2.0.0"
-flake8-comprehensions = "^1.4.1"
+flake8-comprehensions = "^1"
 flake8-import-order = "^0.18"
-flake8-pep3101 = "^1.2.1"
+flake8-pep3101 = "^1.3.0"
 flake8-polyfill = "^1.0.2"
-flake8-quotes = "^1.0.0"
+flake8-quotes = "^3.2.0"
 funcsigs = { version = "^1.0", python = "~2.7" }
-mock = "^2.0"
-pendulum = "^2.0"
-pep8-naming = "^0.7"
-pytest = "^3.7.3"
-pytest-cov = "^2.5.1"
-pytest-flake8 = "^1.0.2"
-pytest-mccabe = "^0.1"
-pytest-mock = "^1.10"
+mock = "^3"
+more_itertools = { version = "5.0.0", python = "~2.7" } # last release for 2.7
+pendulum = "^2.1"
+pep8-naming = "^0.11"
+pytest = "^4"
+pytest-cov = "^2.11.1"
+pytest-mccabe = "^1"
+pytest-mock = "^2"
 pytest-pythonpath =  "^0.7.3"
-numpy = "^1.15"
+numpy = "1.16.6"  # release for 2.7

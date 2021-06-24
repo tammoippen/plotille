@@ -18,4 +18,5 @@ README.rst
 poetry.lock
 Pipfile.lock
 cov_html/
+coverage.xml
 pip-wheel-metadata/
