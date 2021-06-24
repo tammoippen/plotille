@@ -65,7 +65,7 @@ commands:
           name: CodeCov
           command: |
             bash <(curl -s https://codecov.io/bash) \
-              -n coverage-{{ .Environment.CIRCLE_STAGE }} \
+              -n coverage-$CIRCLE_JOB \
               -F unittests
 
 
