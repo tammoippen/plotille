@@ -62,10 +62,9 @@ commands:
           destination: cov_html
 
       - run:
-          name: Coverage
+          name: CodeCov
           command: |
-            . venv/bin/activate
-            test "$CIRCLE_JOB" == "test_2_7" || test "$CIRCLE_JOB" == "test_2_7_pypy" || poetry run coveralls
+            bash <(curl -s https://codecov.io/bash) -n coverage-{{ .Environment.CIRCLE_STAGE }}
 
 executors:
   python:
