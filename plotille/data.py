@@ -23,29 +23,33 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import plotille
+import math
 
 
-def main():
-    fig = plotille.Figure()
-    fig.width = 50
-    fig.height = 20
+def ellipse(x_center, y_center, angle=0,
+            x_amplitude=1, y_amplitude=1, n=20):
+    assert isinstance(n, int)
+    assert isinstance(x_amplitude, (int, float))
+    assert n > 0
 
-    # the olympic rings
-    fig.set_x_limits(min_=0, max_=600)
-    fig.set_y_limits(min_=0, max_=500)
+    max_ = 2 * math.pi
+    step = max_ / n
+    ell_x = []
+    ell_y = []
+    rot_matrix = [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]]
+    for i in range(n + 1):
+        t = step * i
+        x = x_amplitude * math.cos(t)
+        y = y_amplitude * math.sin(t)
+        # do the rotation
+        x = x * rot_matrix[0][0] + y * rot_matrix[0][1]
+        y = x * rot_matrix[1][0] + y * rot_matrix[1][1]
 
-    centers = []
-    centers.append([250, 200, 'blue'])
-    centers.append([375, 200, 'black'])
-    centers.append([500, 200, 'red'])
-    centers.append([310, 250, 'yellow'])
-    centers.append([435, 250, 'green'])
-    for ring in centers:
-        fig.circle(xcenter=ring[0], ycenter=500 - ring[1], radius=50, lc=ring[2])
+        ell_x.append(x + x_center)
+        ell_y.append(y + y_center)
 
-    print(fig.show(legend=False))
+    return ell_x, ell_y
 
 
-if __name__ == '__main__':
-    main()
+def circle(x_center, y_center, radius, n=20):
+    return ellipse(x_center, y_center, x_amplitude=radius, y_amplitude=radius)

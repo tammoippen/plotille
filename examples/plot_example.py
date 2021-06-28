@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 import numpy as np
+
 import plotille
 
 
@@ -32,5 +33,5 @@ def main():
     print(plotille.plot(x, np.sin(x), height=30, width=60))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

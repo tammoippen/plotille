@@ -24,6 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 import plotille
+import plotille.data as plt_data
 
 
 def main():
@@ -31,31 +32,22 @@ def main():
     fig.width = 50
     fig.height = 20
 
-    fig.ellipse(xcenter=0, ycenter=0, xamplitude=0.5, yamplitude=0.5)
-    print(fig.show(legend=True))
+    # the olympic rings
+    fig.set_x_limits(min_=0, max_=600)
+    fig.set_y_limits(min_=0, max_=500)
 
-    # first set
-    fig.ellipse(xcenter=0, ycenter=0)
+    centers = []
+    centers.append([250, 200, 'blue'])
+    centers.append([375, 200, 'white'])
+    centers.append([500, 200, 'red'])
+    centers.append([310, 250, 'yellow'])
+    centers.append([435, 250, 'green'])
+    for ring in centers:
+        X, Y = plt_data.circle(x_center=ring[0], y_center=500 - ring[1], radius=50)  # noqa: N806
+        fig.plot(X, Y, lc=ring[2])
 
-    fig.ellipse(xcenter=0, ycenter=0, xamplitude=0.5, yamplitude=0.5, label='Ellipse 2')
-
-    print(fig.show(legend=True))
-
-    # second set, offset
-    fig.clear()
-    fig.ellipse(xcenter=0, ycenter=0)
-    fig.set_x_limits(min_=-10, max_=10)
-    fig.set_y_limits(min_=-10, max_=10)
-
-    for xx in [-4, 0, 4]:
-        for yy in [-4, 0, 4]:
-            fig.ellipse(xcenter=xx, ycenter=yy, xamplitude=1, yamplitude=1, label=("%d,%d" % (xx, yy)))
-
-    fig.scatter([4], [4])
-
-    print(fig.show(legend=True))
+    print(fig.show(legend=False))
 
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

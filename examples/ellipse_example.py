@@ -23,14 +23,44 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import numpy as np
-
 import plotille
+import plotille.data as plt_data
 
 
 def main():
-    x = np.linspace(0, 2 * np.pi, 20)
-    print(plotille.scatter(x, np.sin(x), height=30, width=60))
+    fig = plotille.Figure()
+    fig.width = 50
+    fig.height = 20
+
+    X1, Y1 = plt_data.ellipse(x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20)  # noqa: N806
+    fig.plot(X1, Y1)
+
+    print(fig.show(legend=True))
+
+    # first set
+    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)  # noqa: N806
+    fig.plot(X2, Y2)
+
+    X3, Y3 = plt_data.ellipse(x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20)  # noqa: N806
+    fig.plot(X3, Y3, label='Ellipse 2')
+
+    print(fig.show(legend=True))
+
+    # second set, offset
+    fig.clear()
+    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)  # noqa: N806
+    fig.plot(X2, Y2)
+    fig.set_x_limits(min_=-10, max_=10)
+    fig.set_y_limits(min_=-10, max_=10)
+
+    for xx in [-4, 0, 4]:
+        for yy in [-4, 0, 4]:
+            X, Y = plt_data.ellipse(x_center=xx, y_center=yy, x_amplitude=1, y_amplitude=1, n=20)  # noqa: N806
+            fig.plot(X, Y, label=('{},{}'.format(xx, yy)))
+
+    fig.scatter([4], [4])
+
+    print(fig.show(legend=True))
 
 
 if __name__ == '__main__':

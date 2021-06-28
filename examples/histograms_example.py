@@ -24,16 +24,17 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 import numpy as np
+
 import plotille
 
 
 def main():
-    print("Histogram left to right")
+    print('Histogram left to right')
     print(plotille.hist(np.random.normal(size=10000)))
 
-    print("Histogram rotated")
+    print('Histogram rotated')
     print(plotille.histogram(np.random.normal(size=10000)))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

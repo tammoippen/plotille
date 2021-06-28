@@ -41,7 +41,7 @@ commands:
           name: Style
           command: |
             . venv/bin/activate
-            poetry run flake8 tests/ plotille/
+            poetry run flake8 tests/ plotille/ examples/
 
       - run:
           name: Test
