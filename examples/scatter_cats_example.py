@@ -38,24 +38,24 @@ def draw_scene(mouse_list, cat_list):
 
     listx = []
     listy = []
-    names = []
-    for mouse_index, mouse in enumerate(mouse_list):
+    # names = []
+    for mouse in mouse_list:
         listx.append(mouse[0])
         listy.append(mouse[1])
-        names.append("MOUSE %d" % (mouse_index))
+        # names.append('MOUSE {}'.format(mouse_index))
 
-    fig.scatter(listy, listx, lc='red', label='MOUSE', marker='o', text=names)
+    fig.scatter(listy, listx, lc='red', label='MOUSE', marker='o')
 
     listx = []
     listy = []
-    for cat_index, cat in enumerate(cat_list):
+    for cat in cat_list:
         listx.append(cat[0])
         listy.append(cat[1])
 
-    fig.scatter(listy, listx, lc='green', label='Cat', marker='x', text='Cat')
+    fig.scatter(listy, listx, lc='green', label='Cat', marker='x')
 
     print(fig.show(legend=True))
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

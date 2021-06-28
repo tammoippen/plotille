@@ -130,7 +130,8 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
 
 def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep,
             x_min=None, x_max=None, y_min=None, y_max=None,
-            lc=None, bg=None, color_mode='names', origin=True):
+            lc=None, bg=None, color_mode='names', origin=True,
+            marker=None):
     """Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
@@ -151,17 +152,19 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
                              see plotille.color.__docs__
         origin: bool         Whether to print the origin. default: True
+        marker: str          Instead of braille dots set a marker char.
 
     Returns:
         str: scatter plot over `X`, `Y`.
     """
     return plot(X, Y, width, height, X_label, Y_label, linesep, None,
-                x_min, x_max, y_min, y_max, lc, bg, color_mode, origin)
+                x_min, x_max, y_min, y_max, lc, bg, color_mode, origin, marker)
 
 
 def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep, interp='linear',
          x_min=None, x_max=None, y_min=None, y_max=None,
-         lc=None, bg=None, color_mode='names', origin=True):
+         lc=None, bg=None, color_mode='names', origin=True,
+         marker=None):
     """Create plot with X , Y values and linear interpolation between points
 
     Parameters:
@@ -180,6 +183,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                                see plotille.color.__docs__
         origin: bool           Whether to print the origin. default: True
+        marker: str            Instead of braille dots set a marker char. (no interpolation!)
 
     Returns:
         str: plot over `X`, `Y`.
@@ -205,6 +209,9 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     if lc is None and bg is None:
         fig.with_colors = False
 
-    fig.plot(X, Y, lc, interp)
+    if marker:
+        fig.scatter(X, Y, lc, marker=marker)
+    else:
+        fig.plot(X, Y, lc, interp)
 
     return fig.show()

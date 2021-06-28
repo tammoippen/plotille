@@ -134,7 +134,7 @@ class Canvas(object):
     def _transform_y(self, y):
         return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
-    def _set(self, x_idx, y_idx, set_=True, color=None):
+    def _set(self, x_idx, y_idx, set_=True, color=None, marker=None):
         """Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
@@ -142,12 +142,13 @@ class Canvas(object):
             y: int           y-coordinate on canvas.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
+            marker: str      Instead of braille dots set a marker char.
         """
         x_c, x_p = x_idx // 2, x_idx % 2
         y_c, y_p = y_idx // 4, y_idx % 4
 
         if 0 <= x_c < self.width and 0 <= y_c < self.height:
-            self._canvas[y_c][x_c].update(x_p, y_p, set_)
+            self._canvas[y_c][x_c].update(x_p, y_p, set_, marker)
             if color:
                 self._canvas[y_c][x_c].fg = color
 
@@ -168,7 +169,7 @@ class Canvas(object):
 
         return x1_idx - x0_idx, y1_idx - y0_idx
 
-    def point(self, x, y, set_=True, color=None):
+    def point(self, x, y, set_=True, color=None, marker=None):
         """Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
@@ -176,10 +177,11 @@ class Canvas(object):
             y: float         y-coordinate on reference system.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
+            marker: str      Instead of braille dots set a marker char.
         """
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
-        self._set(x_idx, y_idx, set_, color)
+        self._set(x_idx, y_idx, set_, color, marker)
 
     def fill_char(self, x, y, set_=True):
         """Fill the complete character at the point (x, y) [reference coordinate system]

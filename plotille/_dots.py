@@ -46,11 +46,12 @@ class Dots(object):
         3  6
         7  8
     """
-    def __init__(self, dots=None, fg=None, bg=None, color_mode='names'):
+    def __init__(self, dots=None, marker=None, fg=None, bg=None, color_mode='names'):
         """Create a Dots object
 
         Parameters:
             dots: List[int]  With set dots to on; ∈ 1 - 8
+            marker: str      Set a marker instead of braille dots.
             fg: str          Color of dots
             bg: str          Color of background
             color_mode: str  Define the used color mode. See `plotille.color()`.
@@ -58,9 +59,11 @@ class Dots(object):
         Returns:
             Dots
         """
+        assert marker is None or len(marker) == 1
         if dots is None:
             dots = []
-        self.dots = dots
+        self._dots = dots
+        self._marker = marker
         self.fg = fg
         self.bg = bg
         self._mode = color_mode
@@ -79,11 +82,26 @@ class Dots(object):
         assert all(map(lambda x: 1 <= x <= 8, value))
         self._dots = list(value)
 
+    @property
+    def marker(self):
+        return self._marker
+
+    @marker.setter
+    def marker(self, value):
+        assert value is None or isinstance(value, six.string_types)
+        assert value is None or len(value) == 1
+        self._marker = value
+
     def __repr__(self):
-        return 'Dots(dots={}, fg={}, bg={}, color_mode={})'.format(self.dots, self.fg, self.bg, self.mode)
+        return 'Dots(dots={}, marker={}, fg={}, bg={}, color_mode={})'.format(
+            self.dots, self.marker, self.fg, self.bg, self.mode,
+        )
 
     def __str__(self):
-        res = braille_from(self.dots)
+        if self.marker:
+            res = self.marker
+        else:
+            res = braille_from(self.dots)
 
         return color(res, fg=self.fg, bg=self.bg, mode=self.mode)
 
@@ -92,14 +110,16 @@ class Dots(object):
 
     def clear(self):
         self.dots = []
+        self.marker = None
 
-    def update(self, x, y, set_=True):
+    def update(self, x, y, set_=True, marker=None):
         """(Un)Set dot at position x, y, with (0, 0) is top left corner.
 
         Parameters:
             x: int      x-coordinate ∈ [0, 1]
             y: int      y-coordinate ∈ [0, 1, 2, 3]
             set_: bool  True, sets dot, False, removes dot
+            marker: str Instead of braille dots set a marker char.
         """
         xy2dot = [[7, 8],  # I plot upside down, hence the different order
                   [3, 6],
@@ -107,10 +127,12 @@ class Dots(object):
                   [1, 4]]
         if set_:
             self.dots = sorted(set(self.dots) | {xy2dot[y][x]})
+            self.marker = marker
         else:
             idx = xy2dot[y][x]
             if idx in self._dots:
                 self._dots.remove(idx)
+            self.marker = None
 
 
 def braille_from(dots):

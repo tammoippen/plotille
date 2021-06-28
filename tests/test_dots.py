@@ -16,51 +16,51 @@ def test_update():
     assert d.bg is None
     assert d.mode == 'names'
 
-    assert repr(d) == 'Dots(dots=[], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(0, 0)
     assert d.dots == [7]
-    assert repr(d) == 'Dots(dots=[7], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[7], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(1, 0)
     assert d.dots == [7, 8]
-    assert repr(d) == 'Dots(dots=[7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(1, 0)
     assert d.dots == [7, 8]
-    assert repr(d) == 'Dots(dots=[7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(0, 1)
     assert d.dots == [3, 7, 8]
-    assert repr(d) == 'Dots(dots=[3, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[3, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(1, 1)
     assert d.dots == [3, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[3, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[3, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(0, 2)
     assert d.dots == [2, 3, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[2, 3, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[2, 3, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(1, 2)
     assert d.dots == [2, 3, 5, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[2, 3, 5, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[2, 3, 5, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(0, 3)
     assert d.dots == [1, 2, 3, 5, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[1, 2, 3, 5, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[1, 2, 3, 5, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.update(1, 3)
     assert d.dots == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[1, 2, 3, 4, 5, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[1, 2, 3, 4, 5, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.clear()
     assert d.dots == []
-    assert repr(d) == 'Dots(dots=[], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=names)'
 
     d.fill()
     assert d.dots == [1, 2, 3, 4, 5, 6, 7, 8]
-    assert repr(d) == 'Dots(dots=[1, 2, 3, 4, 5, 6, 7, 8], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[1, 2, 3, 4, 5, 6, 7, 8], marker=None, fg=None, bg=None, color_mode=names)'
 
 
 def test_unset():
@@ -159,13 +159,37 @@ def test_braille_dots_from():
 
 def test_repr():
     d = Dots()
-    assert repr(d) == 'Dots(dots=[], fg=None, bg=None, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=names)'
 
     d = Dots(color_mode='byte')
-    assert repr(d) == 'Dots(dots=[], fg=None, bg=None, color_mode=byte)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=byte)'
 
     d = Dots(color_mode='rgb')
-    assert repr(d) == 'Dots(dots=[], fg=None, bg=None, color_mode=rgb)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=rgb)'
 
     d = Dots(fg='white', bg='black')
-    assert repr(d) == 'Dots(dots=[], fg=white, bg=black, color_mode=names)'
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=white, bg=black, color_mode=names)'
+
+
+def test_markers():
+    d = Dots()
+    d.marker = 'x'
+    assert repr(d) == 'Dots(dots=[], marker=x, fg=None, bg=None, color_mode=names)'
+
+    d.marker = None
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=names)'
+
+    d.update(0, 0, set_=True, marker='o')
+    assert repr(d) == 'Dots(dots=[7], marker=o, fg=None, bg=None, color_mode=names)'
+
+    d.update(0, 0, set_=False, marker='o')
+    assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_mode=names)'
+
+    d.update(0, 0)
+    assert '⡀' == six.text_type(d)
+
+    d.update(0, 0, marker='x')
+    assert 'x' == six.text_type(d)
+
+    d.marker = None
+    assert '⡀' == six.text_type(d)

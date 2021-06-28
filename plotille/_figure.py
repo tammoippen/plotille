@@ -242,13 +242,13 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label)]
+            self._plots += [Plot.create(X, Y, lc, interp, label, None)]
 
-    def scatter(self, X, Y, lc=None, label=None):
+    def scatter(self, X, Y, lc=None, label=None, marker=None):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, None, label)]
+            self._plots += [Plot.create(X, Y, lc, None, label, marker)]
 
     def histogram(self, X, bins=160, lc=None):
         if len(X) > 0:
@@ -306,16 +306,16 @@ class Figure(object):
         return res
 
 
-class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
+class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'marker'])):
 
     @classmethod
-    def create(cls, X, Y, lc, interp, label):
+    def create(cls, X, Y, lc, interp, label, marker):
         if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        return cls(X, Y, lc, interp, label)
+        return cls(X, Y, lc, interp, label, marker)
 
     def width_vals(self):
         return self.X
@@ -334,11 +334,11 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         color = self.lc if with_colors else None
 
         # print first point
-        canvas.point(x0, y0, color=color)
+        canvas.point(x0, y0, color=color, marker=self.marker)
 
         # plot other points and lines
         for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x, y, color=color)
+            canvas.point(x, y, color=color, marker=self.marker)
             if self.interp == 'linear':
                 canvas.line(x0, y0, x, y, color=color)
 
