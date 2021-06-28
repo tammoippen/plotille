@@ -23,18 +23,18 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from ._canvas import Canvas
-from ._colors import color
-from ._figure import Figure
-from ._graphs import hist, histogram, plot, scatter
+from plotille import Canvas
 
 
-__all__ = [
-    'Canvas',
-    'color',
-    'Figure',
-    'hist',
-    'histogram',
-    'plot',
-    'scatter',
-]
+def main():
+    c = Canvas(width=40, height=20)
+    c.rect(0.1, 0.1, 0.6, 0.6)
+    c.line(0.1, 0.1, 0.6, 0.6)
+    c.line(0.1, 0.6, 0.6, 0.1)
+    c.line(0.1, 0.6, 0.35, 0.8)
+    c.line(0.35, 0.8, 0.6, 0.6)
+    print(c.plot())
+
+
+if __name__ == '__main__':
+    main()
