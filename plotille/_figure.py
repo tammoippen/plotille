@@ -323,11 +323,11 @@ class Plot:
         self._marker = marker
 
     @property
-    def X(self):
+    def X(self):  # noqa: N802
         return self._X
 
     @property
-    def Y(self):
+    def Y(self):  # noqa: N802
         return self._Y
 
     @property
@@ -390,7 +390,7 @@ class Histogram:
         self._lc = lc
 
     @property
-    def X(self):
+    def X(self):  # noqa: N802
         return self._X
 
     @property
@@ -449,11 +449,11 @@ class Text:
         self._lc = lc
 
     @property
-    def X(self):
+    def X(self):  # noqa: N802
         return self._X
 
     @property
-    def Y(self):
+    def Y(self):  # noqa: N802
         return self._Y
 
     @property
