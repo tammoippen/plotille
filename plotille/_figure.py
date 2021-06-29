@@ -83,6 +83,7 @@ class Figure(object):
         self.x_label = 'X'
         self.y_label = 'Y'
         self._plots = []
+        self._texts = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -186,7 +187,7 @@ class Figure(object):
             return low_set, high_set
 
         low, high = None, None
-        for p in self._plots:
+        for p in self._plots + self._texts:
             if is_height:
                 _min, _max = _limit(p.height_vals())
             else:
@@ -256,6 +257,10 @@ class Figure(object):
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Histogram.create(X, bins, lc)]
 
+    def text(self, X, Y, texts, lc=None):
+        if len(X) > 0:
+            self._texts += [Text.create(X, Y, texts, lc)]
+
     def show(self, legend=False):
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
@@ -272,6 +277,9 @@ class Figure(object):
             p.write(canvas, self.with_colors, self._in_fmt)
             if isinstance(p, Plot):
                 plot_origin = True
+
+        for t in self._texts:
+            t.write(canvas, self.with_colors, self._in_fmt)
 
         if self.origin and plot_origin:
             # print X / Y origin axis
@@ -374,6 +382,32 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 
                         canvas.line(x_, 0,
                                     x_, self.frequencies[i],
                                     color=color)
+
+
+class Text(namedtuple('Text', ['X', 'Y', 'texts', 'lc'])):
+
+    @classmethod
+    def create(cls, X, Y, texts, lc):
+        if len(X) != len(Y) != len(texts):
+            raise ValueError('X, Y and texts dim have to be the same.')
+
+        return cls(X, Y, texts, lc)
+
+    def width_vals(self):
+        return self.X
+
+    def height_vals(self):
+        return self.Y
+
+    def write(self, canvas, with_colors, in_fmt):
+        # make point iterator
+        points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts)
+
+        color = self.lc if with_colors else None
+
+        # plot texts with color
+        for x, y, text in points:
+            canvas.text(x, y, text, color=color)
 
 
 def _limit(values):
