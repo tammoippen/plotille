@@ -23,7 +23,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections import namedtuple
 from datetime import timedelta
 from itertools import cycle
 import os
@@ -314,7 +313,38 @@ class Figure(object):
         return res
 
 
-class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'marker'])):
+class Plot:
+    def __init__(self, X, Y, lc, interp, label, marker):
+        self._X = X
+        self._Y = Y
+        self._lc = lc
+        self._interp = interp
+        self._label = label
+        self._marker = marker
+
+    @property
+    def X(self):
+        return self._X
+
+    @property
+    def Y(self):
+        return self._Y
+
+    @property
+    def lc(self):
+        return self._lc
+
+    @property
+    def interp(self):
+        return self._interp
+
+    @property
+    def label(self):
+        return self._label
+
+    @property
+    def marker(self):
+        return self._marker
 
     @classmethod
     def create(cls, X, Y, lc, interp, label, marker):
@@ -351,7 +381,34 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label', 'marker'])):
                 canvas.line(x0, y0, x, y, color=color)
 
 
-class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+class Histogram:
+    def __init__(self, X, bins, frequencies, buckets, lc):
+        self._X = X
+        self._bins = bins
+        self._frequencies = frequencies
+        self._buckets = buckets
+        self._lc = lc
+
+    @property
+    def X(self):
+        return self._X
+
+    @property
+    def bins(self):
+        return self._bins
+
+    @property
+    def frequencies(self):
+        return self._frequencies
+
+    @property
+    def buckets(self):
+        return self._buckets
+
+    @property
+    def lc(self):
+        return self._lc
+
     @classmethod
     def create(cls, X, bins, lc):
         frequencies, buckets = hist(X, bins)
@@ -384,7 +441,28 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 
                                     color=color)
 
 
-class Text(namedtuple('Text', ['X', 'Y', 'texts', 'lc'])):
+class Text:
+    def __init__(self, X, Y, texts, lc):
+        self._X = X
+        self._Y = Y
+        self._texts = texts
+        self._lc = lc
+
+    @property
+    def X(self):
+        return self._X
+
+    @property
+    def Y(self):
+        return self._Y
+
+    @property
+    def texts(self):
+        return self._texts
+
+    @property
+    def lc(self):
+        return self._lc
 
     @classmethod
     def create(cls, X, Y, texts, lc):
