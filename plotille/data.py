@@ -23,11 +23,26 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import math
+from math import cos, pi, sin
 
 
 def ellipse(x_center, y_center, angle=0,
             x_amplitude=1, y_amplitude=1, n=20):
+    r"""Create X and Y values for an ellipse.
+
+        Parameters:
+            x_center: float     X-coordinate of the center of the ellipse.
+            y_center: float     Y-coordinate of the center of the ellipse.
+            angle: float        Rotation angle of the ellipse \in [0 .. 2pi] .
+            x_amplitude: float  The radius in X-direction before rotation.
+            y_amplitude: float  The radius in Y-direction before rotation.
+            n: int              The number of points to return. The ellipse is
+                                closed, hence the function actually return n+1 points.
+
+        Returns:
+            X, Y: Tuple[List[float], List[float]]
+                The X and Y values for the ellipse.
+    """
     # see https://en.wikipedia.org/wiki/Ellipse#Parametric_representation
     assert isinstance(n, int)
     assert n > 0
@@ -36,18 +51,20 @@ def ellipse(x_center, y_center, angle=0,
     assert isinstance(y_amplitude, (int, float))
     assert y_amplitude > 0
 
-    max_ = 2 * math.pi
+    max_ = 2 * pi
     step = max_ / n
     ell_x = []
     ell_y = []
-    rot_matrix = [[math.cos(angle), -math.sin(angle)], [math.sin(angle), math.cos(angle)]]
+    # rename just to conform to the formula in wiki.
+    a = x_amplitude
+    b = y_amplitude
+    cos_angle = cos(angle)
+    sin_angle = sin(angle)
+
     for i in range(n + 1):
         t = step * i
-        x = x_amplitude * math.cos(t)
-        y = y_amplitude * math.sin(t)
-        # do the rotation
-        x = x * math.cos(angle) - y * math.sin(angle)
-        y = x * math.sin(angle) + y * math.cos(angle)
+        x = a * cos_angle * cos(t) - b * sin_angle * sin(t)
+        y = a * sin_angle * cos(t) + b * cos_angle * sin(t)
 
         ell_x.append(x + x_center)
         ell_y.append(y + y_center)
@@ -56,6 +73,19 @@ def ellipse(x_center, y_center, angle=0,
 
 
 def circle(x_center, y_center, radius, n=20):
+    """Create X and Y values for a circle.
+
+       Parameters:
+           x_center: float     X-coordinate of the center of the circle.
+           y_center: float     Y-coordinate of the center of the circle.
+           radius: float       The radius of the circle.
+           n: int              The number of points to return. The circle is
+                               closed, hence the function actually return n+1 points.
+
+       Returns:
+           X, Y: Tuple[List[float], List[float]]
+               The X and Y values for the circle.
+    """
     assert isinstance(radius, (int, float))
     assert radius > 0
     return ellipse(x_center, y_center, x_amplitude=radius, y_amplitude=radius, n=n)
