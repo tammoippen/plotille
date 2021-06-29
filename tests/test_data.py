@@ -49,7 +49,7 @@ def test_ellipse_rotation(angle):
 
 @pytest.mark.parametrize('n', [10, 20, 50, 100])
 @pytest.mark.parametrize('radius', [1, 2, 5, 10])
-def test_circle(n, radius):
+def test_circle_and_ellipse(n, radius):
     X1, Y1 = plt_data.ellipse(0, 0, x_amplitude=radius, y_amplitude=radius, n=n)  # noqa: N806
     X2, Y2 = plt_data.circle(0, 0, radius=radius, n=n)  # noqa: N806
 
