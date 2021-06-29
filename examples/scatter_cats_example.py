@@ -38,13 +38,13 @@ def draw_scene(mouse_list, cat_list):
 
     listx = []
     listy = []
-    # names = []
-    for mouse in mouse_list:
+    names = []
+    for idx, mouse in enumerate(mouse_list):
         listx.append(mouse[0])
         listy.append(mouse[1])
-        # names.append('MOUSE {}'.format(mouse_index))
+        names.append('o MOUSE {}'.format(idx))
 
-    fig.scatter(listy, listx, lc='red', label='MOUSE', marker='o')
+    fig.text(listy, listx, names, lc='red')
 
     listx = []
     listy = []

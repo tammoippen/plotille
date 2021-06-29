@@ -23,21 +23,27 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import plotille
-
 import numpy
 
-fig = plotille.Figure()
-fig.width = 50
-fig.height = 20
+import plotille
 
-x = numpy.linspace(0, 2*numpy.pi, 20)
-y = numpy.sin(x)
-fig.plot(x, y, lc='red')
 
-xs = x[::5]
-ys = y[::5]
+def main():
+    fig = plotille.Figure()
+    fig.width = 50
+    fig.height = 20
 
-fig.scatter(xs, ys, lc='green', marker='x', text=["%.3f" % (val) for val in ys])
+    x = numpy.linspace(0, 2 * numpy.pi, 20)
+    y = numpy.sin(x)
+    fig.plot(x, y, lc='red')
 
-print(fig.show(legend=True))
+    xs = x[::5]
+    ys = y[::5]
+
+    fig.text(xs, ys, ['x {:.3f}'.format(val) for val in ys], lc='green')
+
+    print(fig.show(legend=True))
+
+
+if __name__ == '__main__':
+    main()

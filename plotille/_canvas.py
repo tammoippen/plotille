@@ -150,7 +150,10 @@ class Canvas(object):
         if 0 <= x_c < self.width and 0 <= y_c < self.height:
             self._canvas[y_c][x_c].update(x_p, y_p, set_, marker)
             if color:
-                self._canvas[y_c][x_c].fg = color
+                if set_:
+                    self._canvas[y_c][x_c].fg = color
+                elif color == self._canvas[y_c][x_c].fg:
+                    self._canvas[y_c][x_c].fg = None
 
     def dots_between(self, x0, y0, x1, y1):
         """Number of dots between (x0, y0) and (x1, y1).
@@ -183,7 +186,7 @@ class Canvas(object):
         y_idx = self._transform_y(y) // 4
 
         for idx in range(self.width - x_idx):
-            if len(text) <= idx:
+            if text is None or len(text) <= idx:
                 break
             val = text[idx]
             if not set_:
@@ -192,7 +195,7 @@ class Canvas(object):
             if color:
                 if set_:
                     self._canvas[y_idx][x_idx + idx].fg = color
-                else:
+                elif color == self._canvas[y_idx][x_idx + idx].fg:
                     self._canvas[y_idx][x_idx + idx].fg = None
 
     def point(self, x, y, set_=True, color=None, marker=None):
