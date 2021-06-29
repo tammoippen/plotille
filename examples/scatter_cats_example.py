@@ -31,7 +31,6 @@ def main():
 
 
 def draw_scene(mouse_list, cat_list):
-
     fig = plotille.Figure()
     fig.width = 50
     fig.height = 20

@@ -28,6 +28,7 @@ import math
 
 def ellipse(x_center, y_center, angle=0,
             x_amplitude=1, y_amplitude=1, n=20):
+    # see https://en.wikipedia.org/wiki/Ellipse#Parametric_representation
     assert isinstance(n, int)
     assert n > 0
     assert isinstance(x_amplitude, (int, float))
@@ -45,8 +46,8 @@ def ellipse(x_center, y_center, angle=0,
         x = x_amplitude * math.cos(t)
         y = y_amplitude * math.sin(t)
         # do the rotation
-        x = x * rot_matrix[0][0] + y * rot_matrix[0][1]
-        y = x * rot_matrix[1][0] + y * rot_matrix[1][1]
+        x = x * math.cos(angle) - y * math.sin(angle)
+        y = x * math.sin(angle) + y * math.cos(angle)
 
         ell_x.append(x + x_center)
         ell_y.append(y + y_center)
@@ -57,4 +58,4 @@ def ellipse(x_center, y_center, angle=0,
 def circle(x_center, y_center, radius, n=20):
     assert isinstance(radius, (int, float))
     assert radius > 0
-    return ellipse(x_center, y_center, x_amplitude=radius, y_amplitude=radius)
+    return ellipse(x_center, y_center, x_amplitude=radius, y_amplitude=radius, n=n)
