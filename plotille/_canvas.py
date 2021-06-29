@@ -169,6 +169,32 @@ class Canvas(object):
 
         return x1_idx - x0_idx, y1_idx - y0_idx
 
+    def text(self, x, y, text, set_=True, color=None):
+        """Put some text into the canvas at (x, y) [reference coordinate system]
+
+        Parameters:
+            x: float         x-coordinate on reference system.
+            y: float         y-coordinate on reference system.
+            set_: bool       Whether to set the text or clear the characters.
+            text: str        The text to add.
+            color: multiple  Color of the point.
+        """
+        x_idx = self._transform_x(x) // 2
+        y_idx = self._transform_y(y) // 4
+
+        for idx in range(self.width - x_idx):
+            if len(text) <= idx:
+                break
+            val = text[idx]
+            if not set_:
+                val = None
+            self._canvas[y_idx][x_idx + idx].marker = val
+            if color:
+                if set_:
+                    self._canvas[y_idx][x_idx + idx].fg = color
+                else:
+                    self._canvas[y_idx][x_idx + idx].fg = None
+
     def point(self, x, y, set_=True, color=None, marker=None):
         """Put a point into the canvas at (x, y) [reference coordinate system]
 

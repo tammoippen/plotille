@@ -127,7 +127,8 @@ class Dots(object):
                   [1, 4]]
         if set_:
             self.dots = sorted(set(self.dots) | {xy2dot[y][x]})
-            self.marker = marker
+            if marker:
+                self.marker = marker
         else:
             idx = xy2dot[y][x]
             if idx in self._dots:
