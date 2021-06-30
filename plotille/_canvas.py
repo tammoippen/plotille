@@ -81,12 +81,9 @@ class Canvas(object):
         self._xmax = xmax
         self._ymin = ymin
         self._ymax = ymax
-        # value of x/y between one character
-        self._x_delta = abs((xmax - xmin) / width)
-        self._y_delta = abs((ymax - ymin) / height)
         # value of x/y between one point
-        self._x_delta_pt = self._x_delta / 2
-        self._y_delta_pt = self._y_delta / 4
+        self._x_delta_pt = abs((xmax - xmin) / (width * 2))
+        self._y_delta_pt = abs((ymax - ymin) / (height * 4))
         # the canvas to print in
         self._canvas = [[Dots(bg=background, color_mode=color_mode) for j_ in range(width)] for i_ in range(height)]
 
@@ -110,23 +107,33 @@ class Canvas(object):
 
     @property
     def xmin(self):
-        """Get xmin coordinate of reference coordinate system."""
+        """Get xmin coordinate of reference coordinate system [including]."""
         return self._xmin
 
     @property
     def ymin(self):
-        """Get ymin coordinate of reference coordinate system."""
+        """Get ymin coordinate of reference coordinate system [including]."""
         return self._ymin
 
     @property
     def xmax(self):
-        """Get xmax coordinate of reference coordinate system."""
+        """Get xmax coordinate of reference coordinate system [excluding]."""
         return self._xmax
 
     @property
+    def xmax_inside(self):
+        """Get max x-coordinate of reference coordinate system still inside the canvas."""
+        return self.xmin + (self.width * 2 - 1) * self._x_delta_pt
+
+    @property
     def ymax(self):
-        """Get ymax coordinate of reference coordinate system."""
+        """Get ymax coordinate of reference coordinate system [excluding]."""
         return self._ymax
+
+    @property
+    def ymax_inside(self):
+        """Get max y-coordinate of reference coordinate system still inside the canvas."""
+        return self.ymin + (self.height * 4 - 1) * self._y_delta_pt
 
     def _transform_x(self, x):
         return int(roundeven((x - self.xmin) / self._x_delta_pt))

@@ -83,6 +83,7 @@ class Figure(object):
         self.y_label = 'Y'
         self._plots = []
         self._texts = []
+        self._spans = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -260,6 +261,18 @@ class Figure(object):
         if len(X) > 0:
             self._texts += [Text.create(X, Y, texts, lc)]
 
+    def axvline(self, x, ymin=0, ymax=1, lc=None):
+        self._spans.append(Span.create(x, x, ymin, ymax, lc))
+
+    def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
+        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+
+    def axhline(self, y, xmin=0, xmax=1, lc=None):
+        self._spans.append(Span.create(xmin, xmax, y, y, lc))
+
+    def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
+        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+
     def show(self, legend=False):
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
@@ -270,6 +283,9 @@ class Figure(object):
                         self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
                         self._in_fmt.convert(xmax), self._in_fmt.convert(ymax),
                         self.background, self.color_mode)
+
+        for s in self._spans:
+            s.write(canvas, self.with_colors)
 
         plot_origin = False
         for p in self._plots:
@@ -304,12 +320,12 @@ class Figure(object):
 
         if legend:
             res += '\n\nLegend:\n-------\n'
-            res += '\n'.join([
-                color('⠤⠤ {}'.format(p.label if p.label is not None else 'Label {}'.format(i)),
-                      fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)
-                for i, p in enumerate(self._plots)
-                if isinstance(p, Plot)
-            ])
+            lines = []
+            for i, p in enumerate(self._plots):
+                if isinstance(p, Plot):
+                    lbl = p.label or 'Label {}'.format(i)
+                    lines += [color('⠤⠤ {}'.format(lbl), fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)]
+            res += '\n'.join(lines)
         return res
 
 
@@ -486,6 +502,64 @@ class Text:
         # plot texts with color
         for x, y, text in points:
             canvas.text(x, y, text, color=color)
+
+
+class Span:
+    def __init__(self, xmin, xmax, ymin, ymax, lc):
+        assert 0 <= xmin <= xmax <= 1
+        assert 0 <= ymin <= ymax <= 1
+        self._xmin = xmin
+        self._xmax = xmax
+        self._ymin = ymin
+        self._ymax = ymax
+        self._lc = lc
+
+    @property
+    def xmin(self):
+        return self._xmin
+
+    @property
+    def xmax(self):
+        return self._xmax
+
+    @property
+    def ymin(self):
+        return self._ymin
+
+    @property
+    def ymax(self):
+        return self._ymax
+
+    @property
+    def lc(self):
+        return self._lc
+
+    @classmethod
+    def create(cls, xmin, xmax, ymin, ymax, lc=None):
+        if not (0 <= xmin <= xmax <= 1):
+            raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
+        if not (0 <= ymin <= ymax <= 1):
+            raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
+
+        return cls(xmin, xmax, ymin, ymax, lc)
+
+    def write(self, canvas, with_colors):
+        color = self.lc if with_colors else None
+
+        # plot texts with color
+        xdelta = canvas.xmax_inside - canvas.xmin
+        assert xdelta > 0
+
+        ydelta = canvas.ymax_inside - canvas.ymin
+        assert ydelta > 0
+
+        canvas.rect(
+            self.xmin * (canvas.xmin + xdelta),
+            self.ymin * (canvas.ymin + ydelta),
+            self.xmax * (canvas.xmin + xdelta),
+            self.ymax * (canvas.ymin + ydelta),
+            color=color,
+        )
 
 
 def _limit(values):
