@@ -81,6 +81,9 @@ class Figure(object):
         self.background = None
         self.x_label = 'X'
         self.y_label = 'Y'
+        # min, max -> value
+        self.y_ticks_fkt = None
+        self.x_ticks_fkt = None
         self._plots = []
         self._texts = []
         self._spans = []
@@ -208,10 +211,18 @@ class Figure(object):
         else:
             y_delta = delta / self.height
 
-        res = [self._in_fmt.fmt(i * y_delta + ymin, abs(ymax - ymin), chars=10) + ' | '
-               for i in range(self.height)]
+        res = []
+        for i in range(self.height):
+            value = i * y_delta + ymin
+            if self.y_ticks_fkt:
+                value = self.y_ticks_fkt(value, value + y_delta)
+            res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' | ']
+
         # add max separately
-        res += [self._in_fmt.fmt(self.height * y_delta + ymin, abs(ymax - ymin), chars=10) + ' |']
+        value = self.height * y_delta + ymin
+        if self.y_ticks_fkt:
+            value = self.y_ticks_fkt(value, value + y_delta)
+        res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' |']
 
         ylbl = '({})'.format(label)
         ylbl_left = (10 - len(ylbl)) // 2
@@ -232,8 +243,15 @@ class Figure(object):
         res = []
 
         res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
-        res += [starts[1] + ' '.join(self._in_fmt.fmt(i * 10 * x_delta + xmin, delta, left=True, chars=9)
-                                     for i in range(self.width // 10 + 1))]
+        bottom = []
+
+        for i in range(self.width // 10 + 1):
+            value = i * 10 * x_delta + xmin
+            if self.x_ticks_fkt:
+                value = self.x_ticks_fkt(value, value + x_delta)
+            bottom += [self._in_fmt.fmt(value, delta, left=True, chars=9)]
+
+        res += [starts[1] + ' '.join(bottom)]
         return res
 
     def clear(self):

@@ -43,6 +43,8 @@ class InputFormatter(object):
         self.formatters[date] = _date_formatter
         self.formatters[datetime] = _datetime_formatter
 
+        self.formatters[six.text_type] = _text_formatter
+
         self.converters = OrderedDict()
         self.converters[float] = _convert_numbers
         for int_type in six.integer_types:
@@ -192,6 +194,13 @@ def _large_pos(val, chars, left, digits, sign):
     if front_digits < 1:
         raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
     return '{:{}{}.{}e}'.format(val, align, chars, residual_digits)
+
+
+def _text_formatter(val, chars, delta, left=False):
+    if left:
+        return val[:chars].ljust(chars)
+    else:
+        return val[:chars].rjust(chars)
 
 
 def _convert_numbers(v):
