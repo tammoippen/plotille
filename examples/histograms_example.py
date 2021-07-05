@@ -27,6 +27,10 @@ import numpy as np
 
 import plotille
 
+# plotille contains two variants for displaying histograms:
+# hist for left to right bars
+# histogram for bottom to top bars
+
 
 def main():
     print('Histogram left to right')

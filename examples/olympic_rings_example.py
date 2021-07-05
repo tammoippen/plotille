@@ -26,6 +26,9 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import plotille
 import plotille.data as plt_data
 
+# The module plotille.data contains helper functions for creating interesting
+# data. At the moment you can create ellipsis and circles.
+
 
 def main():
     fig = plotille.Figure()

@@ -26,6 +26,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from plotille import Canvas
 
 
+# The underlying canvas-implementation can be used on its own.
+
 def main():
     c = Canvas(width=40, height=20)
     c.rect(0.1, 0.1, 0.6, 0.6)
@@ -33,6 +35,9 @@ def main():
     c.line(0.1, 0.6, 0.6, 0.1)
     c.line(0.1, 0.6, 0.35, 0.8)
     c.line(0.35, 0.8, 0.6, 0.6)
+    c.text(0.3, 0.5, 'hi', color='red')
+    c.point(0.35, 0.35, color='blue')
+    c.fill_char(0.35, 0.1)
     print(c.plot())
 
 
