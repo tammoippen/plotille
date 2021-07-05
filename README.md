@@ -81,17 +81,30 @@ The available plotting functions are:
 
 ```python
 # create a plot with linear interpolation between points
-Figure.plot(self, X, Y, lc=None, interp='linear', label=None)
+Figure.plot(self, X, Y, lc=None, interp='linear', label=None, marker=None)
 # create a scatter plot with no interpolation between points
-Figure.scatter(self, X, Y, lc=None, label=None)
+Figure.scatter(self, X, Y, lc=None, label=None, marker=None)
 # create a histogram over X
 Figure.histogram(self, X, bins=160, lc=None)
+# print texts at coordinates X, Y
+Figure.text(self, X, Y, texts, lc=None)
+
+# The following functions use relative coordinates on the canvas
+# i.e. all coordinates are \in [0, 1]
+# plot a vertical line at x
+Figure.axvline(self, x, ymin=0, ymax=1, lc=None)
+# plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
+Figure.axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None)
+# plot a horizontal line at y
+Figure.axhline(self, y, xmin=0, xmax=1, lc=None)
+# plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
+Figure.axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None)
 ```
 
 Other interesting functions are:
 
 ```python
-# remove all plots from the figure
+# remove all plots, texts and spans from the figure
 Figure.clear(self)
 # Create a canvas, plot the registered plots and return the string for displaying the plot
 Figure.show(self, legend=False)
@@ -106,7 +119,7 @@ There are some utility functions for fast graphing of single plots.
 ```python
 In [4]: plotille.plot?
 Signature:
-plt.plot(
+plotille.plot(
     X,
     Y,
     width=80,
@@ -123,6 +136,7 @@ plt.plot(
     bg=None,
     color_mode='names',
     origin=True,
+    marker=None,
 )
 Docstring:
 Create plot with X , Y values and linear interpolation between points
@@ -143,6 +157,7 @@ Parameters:
     color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                            see plotille.color.__docs__
     origin: bool           Whether to print the origin. default: True
+    marker: str            Instead of braille dots set a marker char for actual values.
 
 Returns:
     str: plot over `X`, `Y`.
@@ -157,7 +172,7 @@ In [5]: print(plotille.plot(X, np.sin(X), height=30, width=60))
 ```python
 In [6]: plotille.scatter?
 Signature:
-plt.scatter(
+plotille.scatter(
     X,
     Y,
     width=80,
@@ -173,6 +188,7 @@ plt.scatter(
     bg=None,
     color_mode='names',
     origin=True,
+    marker=None,
 )
 Docstring:
 Create scatter plot with X , Y values
@@ -195,6 +211,7 @@ Parameters:
     color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
                          see plotille.color.__docs__
     origin: bool         Whether to print the origin. default: True
+    marker: str          Instead of braille dots set a marker char.
 
 Returns:
     str: scatter plot over `X`, `Y`.
@@ -210,7 +227,17 @@ Inspired by [crappyhist](http://kevinastraight.x10host.com/2013/12/28/python-his
 
 ```python
 In [8]: plotille.hist?
-Signature: plotille.hist(X, bins=40, width=80, log_scale=False, linesep='\n', lc=None, bg=None, color_mode='names')
+Signature:
+plotille.hist(
+    X,
+    bins=40,
+    width=80,
+    log_scale=False,
+    linesep='\n',
+    lc=None,
+    bg=None,
+    color_mode='names',
+)
 Docstring:
 Create histogram over `X` from left to right
 
@@ -218,11 +245,11 @@ The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) /
 The values on the right are the total counts of this bucket.
 
 Parameters:
-    X: List[float]  The items to count over.
-    bins: int       The number of bins to put X entries in (rows).
-    width: int      The number of characters for the width (columns).
-    log_scale: bool Scale the histogram with `log` function.
-    linesep: str    The requested line seperator. default: os.linesep
+    X: List[float]       The items to count over.
+    bins: int            The number of bins to put X entries in (rows).
+    width: int           The number of characters for the width (columns).
+    log_scale: bool      Scale the histogram with `log` function.
+    linesep: str         The requested line seperator. default: os.linesep
     lc: multiple         Give the line color.
     bg: multiple         Give the background color.
     color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -242,7 +269,23 @@ There is also another more 'usual' histogram function available:
 
 ```python
 In [10]: plotille.histogram?
-Signature: plotille.histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', linesep='\n', x_min=None, x_max=None, y_min=None, y_max=None, lc=None, bg=None, color_mode='names')
+Signature:
+plotille.histogram(
+    X,
+    bins=160,
+    width=80,
+    height=40,
+    X_label='X',
+    Y_label='Counts',
+    linesep='\n',
+    x_min=None,
+    x_max=None,
+    y_min=None,
+    y_max=None,
+    lc=None,
+    bg=None,
+    color_mode='names',
+)
 Docstring:
 Create histogram over `X`
 
@@ -251,12 +294,12 @@ to up. The X-axis represents the values in `X` and the Y-axis is the
 corresponding frequency.
 
 Parameters:
-    X: List[float]  The items to count over.
-    bins: int       The number of bins to put X entries in (columns).
-    height: int     The number of characters for the height (rows).
-    X_label: str    Label for X-axis.
-    Y_label: str    Label for Y-axis. max 8 characters.
-    linesep: str    The requested line seperator. default: os.linesep
+    X: List[float]       The items to count over.
+    bins: int            The number of bins to put X entries in (columns).
+    height: int          The number of characters for the height (rows).
+    X_label: str         Label for X-axis.
+    Y_label: str         Label for Y-axis. max 8 characters.
+    linesep: str         The requested line seperator. default: os.linesep
     x_min, x_max: float  Limits for the displayed X values.
     y_min, y_max: float  Limits for the displayed Y values.
     lc: multiple         Give the line color.
@@ -278,7 +321,17 @@ The underlying plotting area is modeled as the `Canvas` class:
 
 ```python
 In [12]: plotille.Canvas?
-Init signature: plotille.Canvas(width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names')
+Init signature:
+plotille.Canvas(
+    width,
+    height,
+    xmin=0,
+    ymin=0,
+    xmax=1,
+    ymax=1,
+    background=None,
+    color_mode='names',
+)
 Docstring:
 A canvas object for plotting braille dots
 
@@ -314,7 +367,8 @@ The most interesting functions are:
 *point:*
 
 ```python
-Signature: plotille.Canvas.point(self, x, y, set_=True, color=None)
+In [11]: plotille.Canvas.point?
+Signature: plotille.Canvas.point(self, x, y, set_=True, color=None, marker=None)
 Docstring:
 Put a point into the canvas at (x, y) [reference coordinate system]
 
@@ -323,6 +377,7 @@ Parameters:
     y: float         y-coordinate on reference system.
     set_: bool       Whether to plot or remove the point.
     color: multiple  Color of the point.
+    marker: str      Instead of braille dots set a marker char.
 ```
 
 *line:*
@@ -343,7 +398,7 @@ Parameters:
 *rect:*
 
 ```python
-In [15]: Canvas.rect?
+In [15]: plotille.Canvas.rect?
 Signature: plotille.Canvas.rect(self, xmin, ymin, xmax, ymax, set_=True, color=None)
 Docstring:
 Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
@@ -355,23 +410,35 @@ Parameters:
     color: multiple    Color of the rect.
 ```
 
+*text:*
+
+```python
+In [16]: plotille.Canvas.text?
+Signature: plotille.Canvas.text(self, x, y, text, set_=True, color=None)
+Docstring:
+Put some text into the canvas at (x, y) [reference coordinate system]
+
+Parameters:
+    x: float         x-coordinate on reference system.
+    y: float         y-coordinate on reference system.
+    set_: bool       Whether to set the text or clear the characters.
+    text: str        The text to add.
+    color: multiple  Color of the point.
+```
+
 *plot:*
 
 ```python
-In [16]: Canvas.plot?
-Signature: plotille.Canvas.plot(self, x_axis=False, y_axis=False, y_label='Y', x_label='X', linesep='\n')
+In [16]: plotille.Canvas.plot?
+Signature: plotille.Canvas.plot(self, linesep='\n')
 Docstring:
 Transform canvas into `print`-able string
 
 Parameters:
-    x_axis: bool  Add a X-axis at the bottom.
-    y_axis: bool  Add a Y-axis to the left.
-    y_label: str  Label for Y-axis. max 8 characters.
-    x_label: str  Label for X-axis.
     linesep: str  The requested line seperator. default: os.linesep
 
 Returns:
-    unicode: The cancas as a string.
+    unicode: The canvas as a string.
 ```
 
 You can use it for example to plot a house in the terminal:

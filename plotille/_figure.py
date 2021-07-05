@@ -157,12 +157,14 @@ class Figure(object):
         return self._limits(self._x_min, self._x_max, False)
 
     def set_x_limits(self, min_=None, max_=None):
+        """Set min and max X values for displaying."""
         self._x_min, self._x_max = self._set_limits(self._x_min, self._x_max, min_, max_)
 
     def y_limits(self):
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(self, min_=None, max_=None):
+        """Set min and max Y values for displaying."""
         self._y_min, self._y_max = self._set_limits(self._y_min, self._y_max, min_, max_)
 
     def _set_limits(self, init_min, init_max, min_=None, max_=None):
@@ -255,43 +257,141 @@ class Figure(object):
         return res
 
     def clear(self):
+        """Remove all plots, texts and spans from the figure."""
         self._plots = []
+        self._texts = []
+        self._spans = []
 
     def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
+        """Create plot with X , Y values.
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values. X and Y must have the same number of entries.
+            lc: multiple       The line color.
+            interp: str        The interpolation method. (None or 'linear').
+            label: str         The label for the legend.
+            marker: str        Instead of braille dots set a marker char.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot.create(X, Y, lc, interp, label, marker)]
 
     def scatter(self, X, Y, lc=None, label=None, marker=None):
+        """Create a scatter plot with X , Y values
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values. X and Y must have the same number of entries.
+            lc: multiple       The line color.
+            label: str         The label for the legend.
+            marker: str        Instead of braille dots set a marker char.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot.create(X, Y, lc, None, label, marker)]
 
     def histogram(self, X, bins=160, lc=None):
+        """Compute and plot the histogram over X.
+
+        Paramaters:
+            X: List[float]     X values.
+            bins: int          The number of bins to put X entries in (columns).
+            lc: multiple       The line color.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Histogram.create(X, bins, lc)]
 
     def text(self, X, Y, texts, lc=None):
+        """Plot texts at coordinates X, Y.
+
+        Always print the first character of a text at its
+        x, y coordinate and continue to the right. Character
+        extending the canvas are cut.
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values.
+            texts: List[str]   Texts to print. X, Y and texts must have the same
+                               number of entries.
+            lc: multiple       The (text) line color.
+        """
         if len(X) > 0:
             self._texts += [Text.create(X, Y, texts, lc)]
 
     def axvline(self, x, ymin=0, ymax=1, lc=None):
+        """Plot a vertical line at x.
+
+        Parameters:
+            x: float       x-coordinate of the vertical line.
+                           In the range [0, 1]
+            ymin: float    Minimum y-coordinate of the vertical line.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the vertical line.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
         self._spans.append(Span.create(x, x, ymin, ymax, lc))
 
     def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
+        """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
+
+        Parameters:
+            xmin: float    Minimum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmax: float    Maximum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymin: float    Minimum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
         self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
 
     def axhline(self, y, xmin=0, xmax=1, lc=None):
+        """Plot a horizontal line at y.
+
+        Parameters:
+            y: float       y-coordinate of the horizontal line.
+                           In the range [0, 1]
+            x_min: float   Minimum x-coordinate of the vertical line.
+                           In the range [0, 1]
+            x_max: float   Maximum x-coordinate of the vertical line.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
         self._spans.append(Span.create(xmin, xmax, y, y, lc))
 
     def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
+        """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
+
+        Parameters:
+            ymin: float    Minimum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmin: float    Minimum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmax: float    Maximum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
         self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
 
     def show(self, legend=False):
+        """Compute the plot.
+
+        Parameters:
+            legend: bool   Add the legend? default: False
+
+        Returns:
+            plot: str
+        """
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
         if all(isinstance(p, Histogram) for p in self._plots):

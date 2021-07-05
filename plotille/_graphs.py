@@ -40,11 +40,11 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,
     The values on the right are the total counts of this bucket.
 
     Parameters:
-        X: List[float]  The items to count over.
-        bins: int       The number of bins to put X entries in (rows).
-        width: int      The number of characters for the width (columns).
-        log_scale: bool Scale the histogram with `log` function.
-        linesep: str    The requested line seperator. default: os.linesep
+        X: List[float]       The items to count over.
+        bins: int            The number of bins to put X entries in (rows).
+        width: int           The number of characters for the width (columns).
+        log_scale: bool      Scale the histogram with `log` function.
+        linesep: str         The requested line seperator. default: os.linesep
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
         color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -87,12 +87,12 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
     corresponding frequency.
 
     Parameters:
-        X: List[float]  The items to count over.
-        bins: int       The number of bins to put X entries in (columns).
-        height: int     The number of characters for the height (rows).
-        X_label: str    Label for X-axis.
-        Y_label: str    Label for Y-axis. max 8 characters.
-        linesep: str    The requested line seperator. default: os.linesep
+        X: List[float]       The items to count over.
+        bins: int            The number of bins to put X entries in (columns).
+        height: int          The number of characters for the height (rows).
+        X_label: str         Label for X-axis.
+        Y_label: str         Label for Y-axis. max 8 characters.
+        linesep: str         The requested line seperator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
@@ -183,7 +183,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                                see plotille.color.__docs__
         origin: bool           Whether to print the origin. default: True
-        marker: str            Instead of braille dots set a marker char.
+        marker: str            Instead of braille dots set a marker char for actual values.
 
     Returns:
         str: plot over `X`, `Y`.
