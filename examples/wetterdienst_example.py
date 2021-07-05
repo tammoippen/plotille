@@ -92,9 +92,8 @@ def main():
     ]
     station_by_id = {st['station_id']: st for st in stations}
 
-
-    Xs = defaultdict(list)
-    Ys = defaultdict(list)
+    Xs = defaultdict(list)  # noqa: N806
+    Ys = defaultdict(list)  # noqa: N806
     for d in data:
         if d['temperature_air_200'] is not None:
             dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
@@ -114,8 +113,9 @@ def main():
     fig.x_ticks_fkt = lambda min_, max_: '{:d}'.format(int(min_))
     fig.y_ticks_fkt = lambda min_, max_: '{:.3f}'.format(min_)
 
-    for station in Xs.keys():
-        fig.plot(Xs[station], Ys[station], label=station)
+    markers = ['x', 'o']
+    for idx, station in enumerate(Xs.keys()):
+        fig.plot(Xs[station], Ys[station], label=station, marker=markers[idx])
         m, b = regression(Xs[station], Ys[station])
         start = m * 1970 + b
         end = m * 2021 + b

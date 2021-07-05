@@ -257,11 +257,11 @@ class Figure(object):
     def clear(self):
         self._plots = []
 
-    def plot(self, X, Y, lc=None, interp='linear', label=None):
+    def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label, None)]
+            self._plots += [Plot.create(X, Y, lc, interp, label, marker)]
 
     def scatter(self, X, Y, lc=None, label=None, marker=None):
         if len(X) > 0:
@@ -342,7 +342,15 @@ class Figure(object):
             for i, p in enumerate(self._plots):
                 if isinstance(p, Plot):
                     lbl = p.label or 'Label {}'.format(i)
-                    lines += [color('⠤⠤ {}'.format(lbl), fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)]
+                    marker = p.marker or ''
+                    lines += [
+                        color(
+                            '⠤{}⠤ {}'.format(marker, lbl),
+                            fg=p.lc,
+                            mode=self.color_mode,
+                            no_color=not self.with_colors,
+                        ),
+                    ]
             res += '\n'.join(lines)
         return res
 
@@ -412,6 +420,7 @@ class Plot:
         for (x0, y0), (x, y) in zip(from_points, to_points):
             canvas.point(x, y, color=color, marker=self.marker)
             if self.interp == 'linear':
+                # no marker for interpolated values
                 canvas.line(x0, y0, x, y, color=color)
 
 

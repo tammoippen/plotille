@@ -183,7 +183,7 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
                                see plotille.color.__docs__
         origin: bool           Whether to print the origin. default: True
-        marker: str            Instead of braille dots set a marker char. (no interpolation!)
+        marker: str            Instead of braille dots set a marker char.
 
     Returns:
         str: plot over `X`, `Y`.
@@ -209,9 +209,6 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
     if lc is None and bg is None:
         fig.with_colors = False
 
-    if marker:
-        fig.scatter(X, Y, lc, marker=marker)
-    else:
-        fig.plot(X, Y, lc, interp)
+    fig.plot(X, Y, lc, interp, marker=marker)
 
     return fig.show()
