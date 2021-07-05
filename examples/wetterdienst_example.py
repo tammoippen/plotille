@@ -104,7 +104,7 @@ Xs = defaultdict(list)
 Ys = defaultdict(list)
 for d in data:
     if d['temperature_air_200'] is not None:
-        dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%f%z').date()
+        dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
         name = station_by_id[d['station_id']]['name']
         if dt.month == 1 and dt.day == 1:
             Xs[name] += [dt.year]
