@@ -50,7 +50,8 @@ flake8-polyfill = "^1.0.2"
 flake8-quotes = "^3.2.0"
 funcsigs = { version = "^1.0", python = "~2.7" }
 mock = "^3"
-more_itertools = { version = "5.0.0", python = "~2.7" } # last release for 2.7
+more_itertools = { version = "5.0.0", python = "~2.7" }  # last release for 2.7
+numpy = "1.16.6"  # release for 2.7
 pendulum = "^2.1"
 pep8-naming = "^0.11"
 pytest = "^4"
@@ -58,4 +59,3 @@ pytest-cov = "^2.11.1"
 pytest-mccabe = "^1"
 pytest-mock = "^2"
 pytest-pythonpath =  "^0.7.3"
-numpy = "1.16.6"  # release for 2.7
