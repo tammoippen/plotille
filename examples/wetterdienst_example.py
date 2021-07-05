@@ -40,94 +40,91 @@ import plotille as plt
 
 
 def regression(x, y):
-    # number of observations/points
+    # formula from here:
+    # https://devarea.com/linear-regression-with-numpy/
     n = len(x)
     assert n > 0
     assert n == len(y)
 
-    # mean of x and y vector
-    m_x = sum(x) / n
-    m_y = sum(y) / n
+    sum_x = sum(x)
+    sum_xx = sum(x_ * x_ for x_ in x)
+    sum_y = sum(y)
+    sum_xy = sum(x_ * y_ for x_, y_ in zip(x, y))
 
-    # calculating cross-deviation and deviation about x
-    xy = 0
-    xx = 0
-    for idx in range(n):
-        xy += y[idx] * x[idx]
-        xx += x[idx] * x[idx]
-    xy -= n * m_y * m_x
-    xx -= n * m_x * m_x
-
-    # calculating regression coefficients
-    m = xy / xx
-    b = m_y - m * m_x
+    m = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x)
+    b = (sum_y - m * sum_x) / n
 
     return m, b
 
 
-current_dir = os.path.dirname(__file__)
+def main():
+    current_dir = os.path.dirname(__file__)
 
-with gzip.open(current_dir + os.sep + 'wetter-data.json.gz', 'r') as f:
-    data = json.load(f)
+    with gzip.open(current_dir + os.sep + 'wetter-data.json.gz', 'r') as f:
+        data = json.load(f)
 
-# wetterdienst stations --station 1048,4411 \
-#                       --provider dwd \
-#                       --kind observation \
-#                       --parameter kl \
-#                       --resolution daily
-stations = [
-    {
-        'station_id': '01048',
-        'from_date': '1934-01-01T00:00:00.000Z',
-        'to_date': '2021-07-04T00:00:00.000Z',
-        'height': 228.0,
-        'latitude': 51.1278,
-        'longitude': 13.7543,
-        'name': 'Dresden-Klotzsche',
-        'state': 'Sachsen',
-    },
-    {
-        'station_id': '04411',
-        'from_date': '1979-12-01T00:00:00.000Z',
-        'to_date': '2021-07-04T00:00:00.000Z',
-        'height': 155.0,
-        'latitude': 49.9195,
-        'longitude': 8.9671,
-        'name': 'Schaafheim-Schlierbach',
-        'state': 'Hessen',
-    },
-]
-station_by_id = {st['station_id']: st for st in stations}
+    # wetterdienst stations --station 1048,4411 \
+    #                       --provider dwd \
+    #                       --kind observation \
+    #                       --parameter kl \
+    #                       --resolution daily
+    stations = [
+        {
+            'station_id': '01048',
+            'from_date': '1934-01-01T00:00:00.000Z',
+            'to_date': '2021-07-04T00:00:00.000Z',
+            'height': 228.0,
+            'latitude': 51.1278,
+            'longitude': 13.7543,
+            'name': 'Dresden-Klotzsche',
+            'state': 'Sachsen',
+        },
+        {
+            'station_id': '04411',
+            'from_date': '1979-12-01T00:00:00.000Z',
+            'to_date': '2021-07-04T00:00:00.000Z',
+            'height': 155.0,
+            'latitude': 49.9195,
+            'longitude': 8.9671,
+            'name': 'Schaafheim-Schlierbach',
+            'state': 'Hessen',
+        },
+    ]
+    station_by_id = {st['station_id']: st for st in stations}
 
 
-Xs = defaultdict(list)
-Ys = defaultdict(list)
-for d in data:
-    if d['temperature_air_200'] is not None:
-        dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-        name = station_by_id[d['station_id']]['name']
-        if dt.month == 1 and dt.day == 1:
-            Xs[name] += [dt.year]
-            Ys[name] += [d['temperature_air_200'] - 273.15]
+    Xs = defaultdict(list)
+    Ys = defaultdict(list)
+    for d in data:
+        if d['temperature_air_200'] is not None:
+            dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
+            name = station_by_id[d['station_id']]['name']
+            if dt.month == 1 and dt.day == 1:
+                Xs[name] += [dt.year]
+                Ys[name] += [d['temperature_air_200'] - 273.15]
 
-fig = plt.Figure()
-fig.width = 120
-fig.height = 30
-fig.set_x_limits(1970, 2021)
-fig.set_y_limits(-18, 12)
-fig.y_label = 'Celsius'
-fig.x_label = 'Year'
+    fig = plt.Figure()
+    fig.width = 120
+    fig.height = 30
+    fig.set_x_limits(1970, 2021)
+    fig.set_y_limits(-18, 12)
+    fig.y_label = 'Celsius'
+    fig.x_label = 'Year'
 
-fig.x_ticks_fkt = lambda min_, max_: '{:d}'.format(int(min_))
-fig.y_ticks_fkt = lambda min_, max_: '{:.3f}'.format(min_)
+    fig.x_ticks_fkt = lambda min_, max_: '{:d}'.format(int(min_))
+    fig.y_ticks_fkt = lambda min_, max_: '{:.3f}'.format(min_)
 
-for station in Xs.keys():
-    fig.plot(Xs[station], Ys[station], label=station)
-    m, b = regression(Xs[station], Ys[station])
-    start = m * 1970 + b
-    end = m * 2021 + b
-    fig.plot([1970, 2021], [start, end], label='{} - regression'.format(station))
+    for station in Xs.keys():
+        fig.plot(Xs[station], Ys[station], label=station)
+        m, b = regression(Xs[station], Ys[station])
+        start = m * 1970 + b
+        end = m * 2021 + b
+        fig.plot([1970, 2021], [start, end], label='{} - regression'.format(station))
 
-print('\033[2J')  # clear screen
-print(' ' * 50 + 'Temperatur of two stations in Germany at 1. Januar')
-print(fig.show(legend=True))
+    print('\033[2J')  # clear screen
+    print(' ' * 50 + 'Temperatur of two stations in Germany at 1. Januar')
+    print(fig.show(legend=True))
+
+
+if __name__ == '__main__':
+    main()
