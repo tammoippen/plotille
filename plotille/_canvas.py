@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -81,12 +81,9 @@ class Canvas(object):
         self._xmax = xmax
         self._ymin = ymin
         self._ymax = ymax
-        # value of x/y between one character
-        self._x_delta = abs((xmax - xmin) / width)
-        self._y_delta = abs((ymax - ymin) / height)
         # value of x/y between one point
-        self._x_delta_pt = self._x_delta / 2
-        self._y_delta_pt = self._y_delta / 4
+        self._x_delta_pt = abs((xmax - xmin) / (width * 2))
+        self._y_delta_pt = abs((ymax - ymin) / (height * 4))
         # the canvas to print in
         self._canvas = [[Dots(bg=background, color_mode=color_mode) for j_ in range(width)] for i_ in range(height)]
 
@@ -110,23 +107,33 @@ class Canvas(object):
 
     @property
     def xmin(self):
-        """Get xmin coordinate of reference coordinate system."""
+        """Get xmin coordinate of reference coordinate system [including]."""
         return self._xmin
 
     @property
     def ymin(self):
-        """Get ymin coordinate of reference coordinate system."""
+        """Get ymin coordinate of reference coordinate system [including]."""
         return self._ymin
 
     @property
     def xmax(self):
-        """Get xmax coordinate of reference coordinate system."""
+        """Get xmax coordinate of reference coordinate system [excluding]."""
         return self._xmax
 
     @property
+    def xmax_inside(self):
+        """Get max x-coordinate of reference coordinate system still inside the canvas."""
+        return self.xmin + (self.width * 2 - 1) * self._x_delta_pt
+
+    @property
     def ymax(self):
-        """Get ymax coordinate of reference coordinate system."""
+        """Get ymax coordinate of reference coordinate system [excluding]."""
         return self._ymax
+
+    @property
+    def ymax_inside(self):
+        """Get max y-coordinate of reference coordinate system still inside the canvas."""
+        return self.ymin + (self.height * 4 - 1) * self._y_delta_pt
 
     def _transform_x(self, x):
         return int(roundeven((x - self.xmin) / self._x_delta_pt))
@@ -134,7 +141,7 @@ class Canvas(object):
     def _transform_y(self, y):
         return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
-    def _set(self, x_idx, y_idx, set_=True, color=None):
+    def _set(self, x_idx, y_idx, set_=True, color=None, marker=None):
         """Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
@@ -142,14 +149,18 @@ class Canvas(object):
             y: int           y-coordinate on canvas.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
+            marker: str      Instead of braille dots set a marker char.
         """
         x_c, x_p = x_idx // 2, x_idx % 2
         y_c, y_p = y_idx // 4, y_idx % 4
 
         if 0 <= x_c < self.width and 0 <= y_c < self.height:
-            self._canvas[y_c][x_c].update(x_p, y_p, set_)
+            self._canvas[y_c][x_c].update(x_p, y_p, set_, marker)
             if color:
-                self._canvas[y_c][x_c].fg = color
+                if set_:
+                    self._canvas[y_c][x_c].fg = color
+                elif color == self._canvas[y_c][x_c].fg:
+                    self._canvas[y_c][x_c].fg = None
 
     def dots_between(self, x0, y0, x1, y1):
         """Number of dots between (x0, y0) and (x1, y1).
@@ -168,7 +179,33 @@ class Canvas(object):
 
         return x1_idx - x0_idx, y1_idx - y0_idx
 
-    def point(self, x, y, set_=True, color=None):
+    def text(self, x, y, text, set_=True, color=None):
+        """Put some text into the canvas at (x, y) [reference coordinate system]
+
+        Parameters:
+            x: float         x-coordinate on reference system.
+            y: float         y-coordinate on reference system.
+            set_: bool       Whether to set the text or clear the characters.
+            text: str        The text to add.
+            color: multiple  Color of the point.
+        """
+        x_idx = self._transform_x(x) // 2
+        y_idx = self._transform_y(y) // 4
+
+        for idx in range(self.width - x_idx):
+            if text is None or len(text) <= idx:
+                break
+            val = text[idx]
+            if not set_:
+                val = None
+            self._canvas[y_idx][x_idx + idx].marker = val
+            if color:
+                if set_:
+                    self._canvas[y_idx][x_idx + idx].fg = color
+                elif color == self._canvas[y_idx][x_idx + idx].fg:
+                    self._canvas[y_idx][x_idx + idx].fg = None
+
+    def point(self, x, y, set_=True, color=None, marker=None):
         """Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
@@ -176,10 +213,11 @@ class Canvas(object):
             y: float         y-coordinate on reference system.
             set_: bool       Whether to plot or remove the point.
             color: multiple  Color of the point.
+            marker: str      Instead of braille dots set a marker char.
         """
         x_idx = self._transform_x(x)
         y_idx = self._transform_y(y)
-        self._set(x_idx, y_idx, set_, color)
+        self._set(x_idx, y_idx, set_, color, marker)
 
     def fill_char(self, x, y, set_=True):
         """Fill the complete character at the point (x, y) [reference coordinate system]

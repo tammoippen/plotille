@@ -23,18 +23,27 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from ._canvas import Canvas
-from ._colors import color
-from ._figure import Figure
-from ._graphs import hist, histogram, plot, scatter
+import numpy
+
+import plotille
 
 
-__all__ = [
-    'Canvas',
-    'color',
-    'Figure',
-    'hist',
-    'histogram',
-    'plot',
-    'scatter',
-]
+def main():
+    fig = plotille.Figure()
+    fig.width = 50
+    fig.height = 20
+
+    x = numpy.linspace(0, 2 * numpy.pi, 20)
+    y = numpy.sin(x)
+    fig.plot(x, y, lc='red')
+
+    xs = x[::5]
+    ys = y[::5]
+
+    fig.text(xs, ys, ['x {:.3f}'.format(val) for val in ys], lc='green')
+
+    print(fig.show(legend=True))
+
+
+if __name__ == '__main__':
+    main()

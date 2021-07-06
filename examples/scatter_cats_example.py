@@ -23,18 +23,38 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from ._canvas import Canvas
-from ._colors import color
-from ._figure import Figure
-from ._graphs import hist, histogram, plot, scatter
+import plotille
 
 
-__all__ = [
-    'Canvas',
-    'color',
-    'Figure',
-    'hist',
-    'histogram',
-    'plot',
-    'scatter',
-]
+def main():
+    draw_scene([[-36, 108], [-36, 108.2], [-35.1, 108]], [[-35.4, 108]])
+
+
+def draw_scene(mouse_list, cat_list):
+    fig = plotille.Figure()
+    fig.width = 50
+    fig.height = 20
+
+    listx = []
+    listy = []
+    names = []
+    for idx, mouse in enumerate(mouse_list):
+        listx.append(mouse[0])
+        listy.append(mouse[1])
+        names.append('o MOUSE {}'.format(idx))
+
+    fig.text(listy, listx, names, lc='red')
+
+    listx = []
+    listy = []
+    for cat in cat_list:
+        listx.append(cat[0])
+        listy.append(cat[1])
+
+    fig.scatter(listy, listx, lc='green', label='Cat', marker='x')
+
+    print(fig.show(legend=True))
+
+
+if __name__ == '__main__':
+    main()

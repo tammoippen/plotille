@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections import namedtuple
 from datetime import timedelta
 from itertools import cycle
 import os
@@ -82,7 +81,12 @@ class Figure(object):
         self.background = None
         self.x_label = 'X'
         self.y_label = 'Y'
+        # min, max -> value
+        self.y_ticks_fkt = None
+        self.x_ticks_fkt = None
         self._plots = []
+        self._texts = []
+        self._spans = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -153,12 +157,14 @@ class Figure(object):
         return self._limits(self._x_min, self._x_max, False)
 
     def set_x_limits(self, min_=None, max_=None):
+        """Set min and max X values for displaying."""
         self._x_min, self._x_max = self._set_limits(self._x_min, self._x_max, min_, max_)
 
     def y_limits(self):
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(self, min_=None, max_=None):
+        """Set min and max Y values for displaying."""
         self._y_min, self._y_max = self._set_limits(self._y_min, self._y_max, min_, max_)
 
     def _set_limits(self, init_min, init_max, min_=None, max_=None):
@@ -186,7 +192,7 @@ class Figure(object):
             return low_set, high_set
 
         low, high = None, None
-        for p in self._plots:
+        for p in self._plots + self._texts:
             if is_height:
                 _min, _max = _limit(p.height_vals())
             else:
@@ -207,10 +213,18 @@ class Figure(object):
         else:
             y_delta = delta / self.height
 
-        res = [self._in_fmt.fmt(i * y_delta + ymin, abs(ymax - ymin), chars=10) + ' | '
-               for i in range(self.height)]
+        res = []
+        for i in range(self.height):
+            value = i * y_delta + ymin
+            if self.y_ticks_fkt:
+                value = self.y_ticks_fkt(value, value + y_delta)
+            res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' | ']
+
         # add max separately
-        res += [self._in_fmt.fmt(self.height * y_delta + ymin, abs(ymax - ymin), chars=10) + ' |']
+        value = self.height * y_delta + ymin
+        if self.y_ticks_fkt:
+            value = self.y_ticks_fkt(value, value + y_delta)
+        res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' |']
 
         ylbl = '({})'.format(label)
         ylbl_left = (10 - len(ylbl)) // 2
@@ -231,32 +245,153 @@ class Figure(object):
         res = []
 
         res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
-        res += [starts[1] + ' '.join(self._in_fmt.fmt(i * 10 * x_delta + xmin, delta, left=True, chars=9)
-                                     for i in range(self.width // 10 + 1))]
+        bottom = []
+
+        for i in range(self.width // 10 + 1):
+            value = i * 10 * x_delta + xmin
+            if self.x_ticks_fkt:
+                value = self.x_ticks_fkt(value, value + x_delta)
+            bottom += [self._in_fmt.fmt(value, delta, left=True, chars=9)]
+
+        res += [starts[1] + ' '.join(bottom)]
         return res
 
     def clear(self):
+        """Remove all plots, texts and spans from the figure."""
         self._plots = []
+        self._texts = []
+        self._spans = []
 
-    def plot(self, X, Y, lc=None, interp='linear', label=None):
+    def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
+        """Create plot with X , Y values.
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values. X and Y must have the same number of entries.
+            lc: multiple       The line color.
+            interp: str        The interpolation method. (None or 'linear').
+            label: str         The label for the legend.
+            marker: str        Instead of braille dots set a marker char.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label)]
+            self._plots += [Plot.create(X, Y, lc, interp, label, marker)]
 
-    def scatter(self, X, Y, lc=None, label=None):
+    def scatter(self, X, Y, lc=None, label=None, marker=None):
+        """Create a scatter plot with X , Y values
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values. X and Y must have the same number of entries.
+            lc: multiple       The line color.
+            label: str         The label for the legend.
+            marker: str        Instead of braille dots set a marker char.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, None, label)]
+            self._plots += [Plot.create(X, Y, lc, None, label, marker)]
 
     def histogram(self, X, bins=160, lc=None):
+        """Compute and plot the histogram over X.
+
+        Paramaters:
+            X: List[float]     X values.
+            bins: int          The number of bins to put X entries in (columns).
+            lc: multiple       The line color.
+        """
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Histogram.create(X, bins, lc)]
 
+    def text(self, X, Y, texts, lc=None):
+        """Plot texts at coordinates X, Y.
+
+        Always print the first character of a text at its
+        x, y coordinate and continue to the right. Character
+        extending the canvas are cut.
+
+        Parameters:
+            X: List[float]     X values.
+            Y: List[float]     Y values.
+            texts: List[str]   Texts to print. X, Y and texts must have the same
+                               number of entries.
+            lc: multiple       The (text) line color.
+        """
+        if len(X) > 0:
+            self._texts += [Text.create(X, Y, texts, lc)]
+
+    def axvline(self, x, ymin=0, ymax=1, lc=None):
+        """Plot a vertical line at x.
+
+        Parameters:
+            x: float       x-coordinate of the vertical line.
+                           In the range [0, 1]
+            ymin: float    Minimum y-coordinate of the vertical line.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the vertical line.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
+        self._spans.append(Span.create(x, x, ymin, ymax, lc))
+
+    def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
+        """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
+
+        Parameters:
+            xmin: float    Minimum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmax: float    Maximum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymin: float    Minimum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
+        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+
+    def axhline(self, y, xmin=0, xmax=1, lc=None):
+        """Plot a horizontal line at y.
+
+        Parameters:
+            y: float       y-coordinate of the horizontal line.
+                           In the range [0, 1]
+            x_min: float   Minimum x-coordinate of the vertical line.
+                           In the range [0, 1]
+            x_max: float   Maximum x-coordinate of the vertical line.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
+        self._spans.append(Span.create(xmin, xmax, y, y, lc))
+
+    def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
+        """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
+
+        Parameters:
+            ymin: float    Minimum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            ymax: float    Maximum y-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmin: float    Minimum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            xmax: float    Maximum x-coordinate of the rectangle.
+                           In the range [0, 1]
+            lc: multiple   The line color.
+        """
+        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+
     def show(self, legend=False):
+        """Compute the plot.
+
+        Parameters:
+            legend: bool   Add the legend? default: False
+
+        Returns:
+            plot: str
+        """
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
         if all(isinstance(p, Histogram) for p in self._plots):
@@ -267,11 +402,17 @@ class Figure(object):
                         self._in_fmt.convert(xmax), self._in_fmt.convert(ymax),
                         self.background, self.color_mode)
 
+        for s in self._spans:
+            s.write(canvas, self.with_colors)
+
         plot_origin = False
         for p in self._plots:
             p.write(canvas, self.with_colors, self._in_fmt)
             if isinstance(p, Plot):
                 plot_origin = True
+
+        for t in self._texts:
+            t.write(canvas, self.with_colors, self._in_fmt)
 
         if self.origin and plot_origin:
             # print X / Y origin axis
@@ -297,25 +438,64 @@ class Figure(object):
 
         if legend:
             res += '\n\nLegend:\n-------\n'
-            res += '\n'.join([
-                color('⠤⠤ {}'.format(p.label if p.label is not None else 'Label {}'.format(i)),
-                      fg=p.lc, mode=self.color_mode, no_color=not self.with_colors)
-                for i, p in enumerate(self._plots)
-                if isinstance(p, Plot)
-            ])
+            lines = []
+            for i, p in enumerate(self._plots):
+                if isinstance(p, Plot):
+                    lbl = p.label or 'Label {}'.format(i)
+                    marker = p.marker or ''
+                    lines += [
+                        color(
+                            '⠤{}⠤ {}'.format(marker, lbl),
+                            fg=p.lc,
+                            mode=self.color_mode,
+                            no_color=not self.with_colors,
+                        ),
+                    ]
+            res += '\n'.join(lines)
         return res
 
 
-class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
+class Plot:
+    def __init__(self, X, Y, lc, interp, label, marker):
+        self._X = X
+        self._Y = Y
+        self._lc = lc
+        self._interp = interp
+        self._label = label
+        self._marker = marker
+
+    @property
+    def X(self):  # noqa: N802
+        return self._X
+
+    @property
+    def Y(self):  # noqa: N802
+        return self._Y
+
+    @property
+    def lc(self):
+        return self._lc
+
+    @property
+    def interp(self):
+        return self._interp
+
+    @property
+    def label(self):
+        return self._label
+
+    @property
+    def marker(self):
+        return self._marker
 
     @classmethod
-    def create(cls, X, Y, lc, interp, label):
+    def create(cls, X, Y, lc, interp, label, marker):
         if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        return cls(X, Y, lc, interp, label)
+        return cls(X, Y, lc, interp, label, marker)
 
     def width_vals(self):
         return self.X
@@ -334,16 +514,44 @@ class Plot(namedtuple('Plot', ['X', 'Y', 'lc', 'interp', 'label'])):
         color = self.lc if with_colors else None
 
         # print first point
-        canvas.point(x0, y0, color=color)
+        canvas.point(x0, y0, color=color, marker=self.marker)
 
         # plot other points and lines
         for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x, y, color=color)
+            canvas.point(x, y, color=color, marker=self.marker)
             if self.interp == 'linear':
+                # no marker for interpolated values
                 canvas.line(x0, y0, x, y, color=color)
 
 
-class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 'lc'])):
+class Histogram:
+    def __init__(self, X, bins, frequencies, buckets, lc):
+        self._X = X
+        self._bins = bins
+        self._frequencies = frequencies
+        self._buckets = buckets
+        self._lc = lc
+
+    @property
+    def X(self):  # noqa: N802
+        return self._X
+
+    @property
+    def bins(self):
+        return self._bins
+
+    @property
+    def frequencies(self):
+        return self._frequencies
+
+    @property
+    def buckets(self):
+        return self._buckets
+
+    @property
+    def lc(self):
+        return self._lc
+
     @classmethod
     def create(cls, X, bins, lc):
         frequencies, buckets = hist(X, bins)
@@ -374,6 +582,111 @@ class Histogram(namedtuple('Histogram', ['X', 'bins', 'frequencies', 'buckets', 
                         canvas.line(x_, 0,
                                     x_, self.frequencies[i],
                                     color=color)
+
+
+class Text:
+    def __init__(self, X, Y, texts, lc):
+        self._X = X
+        self._Y = Y
+        self._texts = texts
+        self._lc = lc
+
+    @property
+    def X(self):  # noqa: N802
+        return self._X
+
+    @property
+    def Y(self):  # noqa: N802
+        return self._Y
+
+    @property
+    def texts(self):
+        return self._texts
+
+    @property
+    def lc(self):
+        return self._lc
+
+    @classmethod
+    def create(cls, X, Y, texts, lc):
+        if len(X) != len(Y) != len(texts):
+            raise ValueError('X, Y and texts dim have to be the same.')
+
+        return cls(X, Y, texts, lc)
+
+    def width_vals(self):
+        return self.X
+
+    def height_vals(self):
+        return self.Y
+
+    def write(self, canvas, with_colors, in_fmt):
+        # make point iterator
+        points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts)
+
+        color = self.lc if with_colors else None
+
+        # plot texts with color
+        for x, y, text in points:
+            canvas.text(x, y, text, color=color)
+
+
+class Span:
+    def __init__(self, xmin, xmax, ymin, ymax, lc):
+        assert 0 <= xmin <= xmax <= 1
+        assert 0 <= ymin <= ymax <= 1
+        self._xmin = xmin
+        self._xmax = xmax
+        self._ymin = ymin
+        self._ymax = ymax
+        self._lc = lc
+
+    @property
+    def xmin(self):
+        return self._xmin
+
+    @property
+    def xmax(self):
+        return self._xmax
+
+    @property
+    def ymin(self):
+        return self._ymin
+
+    @property
+    def ymax(self):
+        return self._ymax
+
+    @property
+    def lc(self):
+        return self._lc
+
+    @classmethod
+    def create(cls, xmin, xmax, ymin, ymax, lc=None):
+        if not (0 <= xmin <= xmax <= 1):
+            raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
+        if not (0 <= ymin <= ymax <= 1):
+            raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
+
+        return cls(xmin, xmax, ymin, ymax, lc)
+
+    def write(self, canvas, with_colors):
+        color = self.lc if with_colors else None
+
+        # plot texts with color
+        xdelta = canvas.xmax_inside - canvas.xmin
+        assert xdelta > 0
+
+        ydelta = canvas.ymax_inside - canvas.ymin
+        assert ydelta > 0
+
+        canvas.rect(
+            self.xmin * (canvas.xmin + xdelta),
+            self.ymin * (canvas.ymin + ydelta),
+            self.xmax * (canvas.xmin + xdelta),
+            self.ymax * (canvas.ymin + ydelta),
+            color=color,
+        )
 
 
 def _limit(values):

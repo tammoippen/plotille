@@ -23,18 +23,22 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from ._canvas import Canvas
-from ._colors import color
-from ._figure import Figure
-from ._graphs import hist, histogram, plot, scatter
+import numpy as np
+
+import plotille
+
+# plotille contains two variants for displaying histograms:
+# hist for left to right bars
+# histogram for bottom to top bars
 
 
-__all__ = [
-    'Canvas',
-    'color',
-    'Figure',
-    'hist',
-    'histogram',
-    'plot',
-    'scatter',
-]
+def main():
+    print('Histogram left to right')
+    print(plotille.hist(np.random.normal(size=10000)))
+
+    print('Histogram rotated')
+    print(plotille.histogram(np.random.normal(size=10000)))
+
+
+if __name__ == '__main__':
+    main()

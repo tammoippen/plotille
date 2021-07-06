@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2018 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import os
 import sys
 
 import six
@@ -64,6 +65,13 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
     If you want to use colorama (https://pypi.python.org/pypi/colorama), you should
     also stick to the ISO 6429 colors.
 
+    The environment variables `NO_COLOR` (https://no-color.org/) and `FORCE_COLOR`
+    (only toggle; see https://nodejs.org/api/tty.html#tty_writestream_getcolordepth_env)
+    have some influence on color output.
+
+    If you do not run in a TTY, e.g. pipe to some other program or redirect output
+    into a file, color codes are stripped as well.
+
     Parameters:
         text: str        Some text to surround.
         fg: multiple     Specify the foreground / text color.
@@ -77,7 +85,19 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
     if fg is None and bg is None:
         return text
 
-    if not _isatty() or no_color:
+    if no_color or os.environ.get('NO_COLOR'):
+        #  https://no-color.org/
+        return text
+
+    # similar to https://nodejs.org/api/tty.html#tty_writestream_getcolordepth_env
+    # except for only on or of
+    force_color = os.environ.get('FORCE_COLOR')
+    if force_color:
+        force_color = force_color.strip().lower()
+        if force_color in ('0', 'false', 'none'):
+            return text
+
+    if not (force_color or _isatty()):
         # only color if tty (not a redirect / pipe)
         return text
 

@@ -220,8 +220,8 @@ def test_plot(get_canvas):
     plot.write(canvas, with_colors=False, in_fmt=fig._in_fmt)
     assert canvas.point.call_count == 2  # two points
     assert canvas.point.call_args_list == [
-        call(0.1, 0.2, color=None),
-        call(0.2, 0.3, color=None),
+        call(0.1, 0.2, color=None, marker=None),
+        call(0.2, 0.3, color=None, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
     assert canvas.line.call_args_list == [
@@ -232,8 +232,8 @@ def test_plot(get_canvas):
     plot.write(canvas, with_colors=True, in_fmt=fig._in_fmt)
     assert canvas.point.call_count == 2  # two points
     assert canvas.point.call_args_list == [
-        call(0.1, 0.2, color=plot.lc),
-        call(0.2, 0.3, color=plot.lc),
+        call(0.1, 0.2, color=plot.lc, marker=None),
+        call(0.2, 0.3, color=plot.lc, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
     assert canvas.line.call_args_list == [
@@ -277,8 +277,8 @@ def test_scatter(get_canvas):
     plot.write(canvas, with_colors=False, in_fmt=fig._in_fmt)
     assert canvas.point.call_count == 2  # two points
     assert canvas.point.call_args_list == [
-        call(0.1, 0.2, color=None),
-        call(0.2, 0.3, color=None),
+        call(0.1, 0.2, color=None, marker=None),
+        call(0.2, 0.3, color=None, marker=None),
     ]
     assert canvas.line.call_count == 0  # scatter
 
@@ -286,8 +286,8 @@ def test_scatter(get_canvas):
     plot.write(canvas, with_colors=True, in_fmt=fig._in_fmt)
     assert canvas.point.call_count == 2  # two points
     assert canvas.point.call_args_list == [
-        call(0.1, 0.2, color=plot.lc),
-        call(0.2, 0.3, color=plot.lc),
+        call(0.1, 0.2, color=plot.lc, marker=None),
+        call(0.2, 0.3, color=plot.lc, marker=None),
     ]
     assert canvas.line.call_count == 0  # scatter
 

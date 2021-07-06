@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import os
 from random import choice
 
 import pytest
@@ -159,3 +160,35 @@ def test_rgb(tty):
 
     with pytest.raises(ValueError):
         clr._rgb(None, (1, 1))
+
+
+def test_no_color(tty, mocker):
+    mocker.patch.dict(os.environ, {'NO_COLOR': '1'})
+
+    assert '' == clr.color('', 'black', 'red')
+
+
+def test_no_color_before_force_color(tty, mocker):
+    mocker.patch.dict(os.environ, {'NO_COLOR': '1', 'FORCE_COLOR': '1'})
+
+    assert '' == clr.color('', 'black', 'red')
+
+
+@pytest.mark.parametrize('off', ['0', 'NONE', 'False', 'false'])
+def test_force_color_off(tty, mocker, off):
+    mocker.patch.dict(os.environ, {'FORCE_COLOR': off})
+
+    assert '' == clr.color('', 'black', 'red')
+
+
+@pytest.mark.parametrize('on', ['1', 'true', 'yes'])
+def test_force_color_not_tty(mocker, on):
+    mocker.patch.dict(os.environ, {'FORCE_COLOR': on})
+
+    assert '\x1b[30;41m\x1b[0m' == clr.color('', 'black', 'red')
+
+
+def test_force_color_no_color(mocker):
+    mocker.patch.dict(os.environ, {'FORCE_COLOR': '1'})
+
+    assert '' == clr.color('', 'black', 'red', no_color=True)
