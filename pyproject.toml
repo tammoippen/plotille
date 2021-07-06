@@ -1,7 +1,7 @@
 [tool.poetry]
 
 name = "plotille"
-version = "3.7.2"
+version = "3.8.0"
 description = "Plot in the terminal using braille dots."
 authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
 license = "MIT"
