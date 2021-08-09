@@ -29,7 +29,7 @@ import sys
 import six
 
 
-def color(text, fg=None, bg=None, mode='names', no_color=False):
+def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):
     """Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -78,6 +78,7 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
         bg: multiple     Specify the background color.
         color_mode: str  Specify color input mode; 'names' (default), 'byte' or 'rgb'
         no_color: bool   Remove color optionally. default=False
+        full_reset: bool Reset all codes or only color codes. default=True
 
     Returns:
         str: `text` enclosed with corresponding coloring controls
@@ -117,7 +118,11 @@ def color(text, fg=None, bg=None, mode='names', no_color=False):
         raise ValueError('Invalid mode "{}". Use one of "names", "byte" or "rgb".'.format(mode))
 
     if start:
-        return start + text + '\x1b[0m'
+        res = start + text
+        if full_reset:
+            return res + '\x1b[0m'
+        else:
+            return res + '\x1b[39;49m'
 
     # should not be reachable
 
@@ -223,7 +228,15 @@ _BACKGROUNDS = {
     'bright_blue': '104',
     'bright_magenta': '105',
     'bright_cyan': '106',
-    'bright_white': '107',
+    'bright_white_old': '1;47',
+    'bright_black_old': '1;40',
+    'bright_red_old': '1;41',
+    'bright_green_old': '1;42',
+    'bright_yellow_old': '1;43',
+    'bright_blue_old': '1;44',
+    'bright_magenta_old': '1;45',
+    'bright_cyan_old': '1;46',
+    'bright_white_old': '1;47',
 }
 
 _FOREGROUNDS = {
@@ -235,12 +248,20 @@ _FOREGROUNDS = {
     'magenta': '35',
     'cyan': '36',
     'white': '37',
-    'bright_black': '1;30',
-    'bright_red': '1;31',
-    'bright_green': '1;32',
-    'bright_yellow': '1;33',
-    'bright_blue': '1;34',
-    'bright_magenta': '1;35',
-    'bright_cyan': '1;36',
-    'bright_white': '1;37',
+    'bright_black': '90',
+    'bright_red': '91',
+    'bright_green': '92',
+    'bright_yellow': '93',
+    'bright_blue': '94',
+    'bright_magenta': '95',
+    'bright_cyan': '96',
+    'bright_white': '97',
+    'bright_black_old': '1;30',
+    'bright_red_old': '1;31',
+    'bright_green_old': '1;32',
+    'bright_yellow_old': '1;33',
+    'bright_blue_old': '1;34',
+    'bright_magenta_old': '1;35',
+    'bright_cyan_old': '1;36',
+    'bright_white_old': '1;37',
 }
