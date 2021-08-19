@@ -681,10 +681,10 @@ class Span:
         assert ydelta > 0
 
         canvas.rect(
-            self.xmin * (canvas.xmin + xdelta),
-            self.ymin * (canvas.ymin + ydelta),
-            self.xmax * (canvas.xmin + xdelta),
-            self.ymax * (canvas.ymin + ydelta),
+            canvas.xmin + self.xmin * xdelta,
+            canvas.ymin + self.ymin * ydelta,
+            canvas.xmin + self.xmax * xdelta,
+            canvas.ymin + self.ymax * ydelta,
             color=color,
         )
 
