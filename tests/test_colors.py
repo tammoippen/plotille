@@ -208,3 +208,9 @@ def test_force_color_no_color(mocker):
     mocker.patch.dict(os.environ, {'FORCE_COLOR': '1'})
 
     assert '' == clr.color('', 'black', 'red', no_color=True)
+
+
+def test_reset_color_codes(tty):
+    assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None)
+    assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None, full_reset=True)
+    assert '\x1b[31m \x1b[39;49m' == clr.color(' ', 'red', None, full_reset=False)
