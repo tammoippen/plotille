@@ -42,9 +42,9 @@ class Dots(object):
     Dot ordering: \u2800 '⠀' - \u28FF '⣿'' Coding according to ISO/TR 11548-1
 
         Hence, each dot on or off is 8bit, i.e. 256 posibilities. With dot number
-        one being the msb and 8 is lsb:
+        one being the lsb and 8 is msb:
 
-        idx:  1 2 3 4 5 6 7 8
+        idx:  8 7 6 5 4 3 2 1
         bits: 0 0 0 0 0 0 0 0
 
         Ordering of dots:
@@ -85,10 +85,10 @@ class Dots(object):
         assert self._dots.bit_length() <= 8
         dots = []
         x = self._dots
-        bit = 0
+        bit = 1
         while x != 0:
             if x & 1 == 1:
-                dots.append(8 - bit)
+                dots.append(bit)
             bit += 1
             x >>= 1
         return sorted(dots)
@@ -113,7 +113,7 @@ class Dots(object):
         if self.marker:
             res = self.marker
         else:
-            res = braille_from(self.dots)
+            res = six.unichr(0x2800 + self._dots)
 
         return color(res, fg=self.fg, bg=self.bg, **self.color_kwargs)
 
