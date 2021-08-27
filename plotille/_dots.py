@@ -27,6 +27,14 @@ import six
 
 from ._colors import color
 
+# I plot upside down, hence the different order
+_xy2dot = [
+    [1 << 6, 1 << 7],
+    [1 << 2, 1 << 5],
+    [1 << 1, 1 << 4],
+    [1 << 0, 1 << 3],
+]
+
 
 class Dots(object):
     """A Dots object is responsible for printing requested braille dots and colors
@@ -46,7 +54,7 @@ class Dots(object):
         3  6
         7  8
     """
-    def __init__(self, dots=None, marker=None, fg=None, bg=None, **color_kwargs):
+    def __init__(self, marker=None, fg=None, bg=None, **color_kwargs):
         """Create a Dots object
 
         Parameters:
@@ -60,9 +68,7 @@ class Dots(object):
             Dots
         """
         assert marker is None or len(marker) == 1
-        if dots is None:
-            dots = []
-        self._dots = dots
+        self._dots = 0
         self._marker = marker
         self.fg = fg
         self.bg = bg
@@ -76,13 +82,16 @@ class Dots(object):
 
     @property
     def dots(self):
-        return list(self._dots)
-
-    @dots.setter
-    def dots(self, value):
-        assert isinstance(value, (list, tuple))
-        assert all(map(lambda x: 1 <= x <= 8, value))
-        self._dots = list(value)
+        assert self._dots.bit_length() <= 8
+        dots = []
+        x = self._dots
+        bit = 0
+        while x != 0:
+            if x & 1 == 1:
+                dots.append(8 - bit)
+            bit += 1
+            x >>= 1
+        return sorted(dots)
 
     @property
     def marker(self):
@@ -109,10 +118,10 @@ class Dots(object):
         return color(res, fg=self.fg, bg=self.bg, **self.color_kwargs)
 
     def fill(self):
-        self.dots = [1, 2, 3, 4, 5, 6, 7, 8]
+        self._dots = 0xFF
 
     def clear(self):
-        self.dots = []
+        self._dots = 0
         self.marker = None
 
     def update(self, x, y, set_=True, marker=None):
@@ -124,18 +133,13 @@ class Dots(object):
             set_: bool  True, sets dot, False, removes dot
             marker: str Instead of braille dots set a marker char.
         """
-        xy2dot = [[7, 8],  # I plot upside down, hence the different order
-                  [3, 6],
-                  [2, 5],
-                  [1, 4]]
+
         if set_:
-            self.dots = sorted(set(self.dots) | {xy2dot[y][x]})
+            self._dots |= _xy2dot[y][x]
             if marker:
                 self.marker = marker
         else:
-            idx = xy2dot[y][x]
-            if idx in self._dots:
-                self._dots.remove(idx)
+            self._dots = self._dots & (_xy2dot[y][x] ^ 0xFF)
             self.marker = None
 
 
