@@ -29,23 +29,39 @@ def test_names(tty):
 
     for i, fg in enumerate(names):
         assert '\x1b[{}m'.format(30 + i) == clr._names(fg, None)
-        assert '\x1b[1;{}m'.format(30 + i) == clr._names('bright_' + fg, None)
+        assert '\x1b[{}m'.format(90 + i) == clr._names('bright_' + fg, None)
+        assert '\x1b[1;{}m'.format(30 + i) == clr._names('bright_' + fg + '_old', None)
 
         assert '\x1b[{}m \x1b[0m'.format(30 + i) == clr.color(' ', fg, None)
-        assert '\x1b[1;{}m \x1b[0m'.format(30 + i) == clr.color(' ', 'bright_' + fg, None)
+        assert '\x1b[{}m \x1b[0m'.format(90 + i) == clr.color(' ', 'bright_' + fg, None)
+        assert '\x1b[1;{}m \x1b[0m'.format(30 + i) == clr.color(' ', 'bright_' + fg + '_old', None)
 
         for j, bg in enumerate(names):
             assert '\x1b[{}m'.format(40 + j) == clr._names(None, bg)
             assert '\x1b[{}m'.format(100 + j) == clr._names(None, 'bright_' + bg)
+            assert '\x1b[1;{}m'.format(40 + j) == clr._names(None, 'bright_' + bg + '_old')
 
             assert '\x1b[{}m \x1b[0m'.format(40 + j) == clr.color(' ', None, bg)
             assert '\x1b[{}m \x1b[0m'.format(100 + j) == clr.color(' ', None, 'bright_' + bg)
+            assert '\x1b[1;{}m \x1b[0m'.format(40 + j) == clr.color(' ', None, 'bright_' + bg + '_old')
 
             assert '\x1b[{};{}m'.format(30 + i, 40 + j) == clr._names(fg, bg)
-            assert '\x1b[1;{};{}m'.format(30 + i, 100 + j) == clr._names('bright_' + fg, 'bright_' + bg)
+            assert '\x1b[{};{}m'.format(90 + i, 100 + j) == clr._names('bright_' + fg, 'bright_' + bg)
+            assert '\x1b[1;{};1;{}m'.format(30 + i, 40 + j) == clr._names(
+                'bright_' + fg + '_old', 'bright_' + bg + '_old',
+            )
 
             assert '\x1b[{};{}m \x1b[0m'.format(30 + i, 40 + j) == clr.color(' ', fg, bg)
-            assert '\x1b[1;{};{}m \x1b[0m'.format(30 + i, 100 + j) == clr.color(' ', 'bright_' + fg, 'bright_' + bg)
+            assert '\x1b[{};{}m \x1b[0m'.format(90 + i, 100 + j) == clr.color(' ', 'bright_' + fg, 'bright_' + bg)
+            assert '\x1b[{};1;{}m \x1b[0m'.format(90 + i, 40 + j) == clr.color(
+                ' ', 'bright_' + fg, 'bright_' + bg + '_old',
+            )
+            assert '\x1b[1;{};{}m \x1b[0m'.format(30 + i, 100 + j) == clr.color(
+                ' ', 'bright_' + fg + '_old', 'bright_' + bg
+            )
+            assert '\x1b[1;{};1;{}m \x1b[0m'.format(30 + i, 40 + j) == clr.color(
+                ' ', 'bright_' + fg + '_old', 'bright_' + bg + '_old',
+                )
 
     with pytest.raises(ValueError):
         clr._names('olive', None)

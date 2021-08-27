@@ -117,14 +117,12 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
     else:
         raise ValueError('Invalid mode "{}". Use one of "names", "byte" or "rgb".'.format(mode))
 
-    if start:
-        res = start + text
-        if full_reset:
-            return res + '\x1b[0m'
-        else:
-            return res + '\x1b[39;49m'
-
-    # should not be reachable
+    assert start
+    res = start + text
+    if full_reset:
+        return res + '\x1b[0m'
+    else:
+        return res + '\x1b[39;49m'
 
 
 def _isatty():
@@ -228,7 +226,7 @@ _BACKGROUNDS = {
     'bright_blue': '104',
     'bright_magenta': '105',
     'bright_cyan': '106',
-    'bright_white_old': '1;47',
+    'bright_white': '107',
     'bright_black_old': '1;40',
     'bright_red_old': '1;41',
     'bright_green_old': '1;42',
