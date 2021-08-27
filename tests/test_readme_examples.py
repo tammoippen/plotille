@@ -210,7 +210,6 @@ try:
         assert expected == plotille.histogram(x)
         assert expected == plotille.histogram(list(x))
 
-
     def test_hist_log(seed):
         x = np.random.normal(size=10000)
         expected = """        bucket       | ________________________________________________________________________________ Total Counts
