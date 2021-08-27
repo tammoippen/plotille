@@ -96,7 +96,8 @@ class Dots(object):
 
     def __repr__(self):
         return 'Dots(dots={}, marker={}, fg={}, bg={}, color_kwargs={})'.format(
-            self.dots, self.marker, self.fg, self.bg, self.color_kwargs,
+            self.dots, self.marker, self.fg, self.bg,
+            ' '.join('{}: {}'.format(k, v) for k, v in self.color_kwargs.items()),
         )
 
     def __str__(self):
