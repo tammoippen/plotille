@@ -46,7 +46,7 @@ class Dots(object):
         3  6
         7  8
     """
-    def __init__(self, dots=None, marker=None, fg=None, bg=None, color_mode='names'):
+    def __init__(self, dots=None, marker=None, fg=None, bg=None, **color_kwargs):
         """Create a Dots object
 
         Parameters:
@@ -54,7 +54,7 @@ class Dots(object):
             marker: str      Set a marker instead of braille dots.
             fg: str          Color of dots
             bg: str          Color of background
-            color_mode: str  Define the used color mode. See `plotille.color()`.
+            **color_kwargs:  More arguments to the color-function. See `plotille.color()`.
 
         Returns:
             Dots
@@ -66,11 +66,13 @@ class Dots(object):
         self._marker = marker
         self.fg = fg
         self.bg = bg
-        self._mode = color_mode
+        self._color_kwargs = color_kwargs
+        if 'mode' not in self._color_kwargs:
+            self._color_kwargs['mode'] = 'names'
 
     @property
-    def mode(self):
-        return self._mode
+    def color_kwargs(self):
+        return self._color_kwargs
 
     @property
     def dots(self):
@@ -93,8 +95,8 @@ class Dots(object):
         self._marker = value
 
     def __repr__(self):
-        return 'Dots(dots={}, marker={}, fg={}, bg={}, color_mode={})'.format(
-            self.dots, self.marker, self.fg, self.bg, self.mode,
+        return 'Dots(dots={}, marker={}, fg={}, bg={}, color_kwargs={})'.format(
+            self.dots, self.marker, self.fg, self.bg, self.color_kwargs,
         )
 
     def __str__(self):
@@ -103,7 +105,7 @@ class Dots(object):
         else:
             res = braille_from(self.dots)
 
-        return color(res, fg=self.fg, bg=self.bg, mode=self.mode)
+        return color(res, fg=self.fg, bg=self.bg, **self.color_kwargs)
 
     def fill(self):
         self.dots = [1, 2, 3, 4, 5, 6, 7, 8]

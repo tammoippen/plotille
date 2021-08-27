@@ -75,6 +75,36 @@ def test_color_mode():
         fig.color_mode = 'names'
 
 
+def test_color_full_reset(mocker):
+    fig = Figure()
+    fig.background = 'red'
+
+    mock = mocker.patch('plotille._dots.color', return_value=' ')
+
+    assert fig.color_full_reset is True
+    fig.show()
+    assert mock.called
+    assert all(args.kwargs['full_reset'] is True for args in mock.call_args_lists)
+    mock.reset_mock()
+
+    fig.color_full_reset = True
+    assert fig.color_full_reset is True
+    fig.show()
+    assert mock.called
+    assert all(args.kwargs['full_reset'] is True for args in mock.call_args_lists)
+    mock.reset_mock()
+
+    fig.color_full_reset = False
+    assert fig.color_full_reset is False
+    fig.show()
+    assert mock.called
+    assert all(args.kwargs['full_reset'] is False for args in mock.call_args_lists)
+    mock.reset_mock()
+
+    with pytest.raises(ValueError):
+        fig.color_full_reset = 'no'
+
+
 def test_with_colors():
     fig = Figure()
 

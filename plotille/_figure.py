@@ -74,7 +74,7 @@ class Figure(object):
         self._x_max = None
         self._y_min = None
         self._y_max = None
-        self._color_mode = None
+        self._color_kwargs = {'mode': 'names'}
         self._with_colors = True
         self._origin = True
         self.linesep = os.linesep
@@ -115,9 +115,7 @@ class Figure(object):
 
     @property
     def color_mode(self):
-        if self._color_mode is not None:
-            return self._color_mode
-        return 'names'
+        return self._color_kwargs['mode']
 
     @color_mode.setter
     def color_mode(self, value):
@@ -125,7 +123,17 @@ class Figure(object):
             raise ValueError('Only supports: names, byte, rgb!')
         if self._plots != []:
             raise RuntimeError('Change color mode only, when no plots are prepared.')
-        self._color_mode = value
+        self._color_kwargs['mode'] = value
+
+    @property
+    def color_full_reset(self):
+        return self._color_kwargs.get('full_reset', True)
+
+    @color_full_reset.setter
+    def color_full_reset(self, value):
+        if not isinstance(value, bool):
+            raise ValueError('Only supports bool.')
+        self._color_kwargs['full_reset'] = value
 
     @property
     def with_colors(self):
@@ -400,7 +408,7 @@ class Figure(object):
         canvas = Canvas(self.width, self.height,
                         self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
                         self._in_fmt.convert(xmax), self._in_fmt.convert(ymax),
-                        self.background, self.color_mode)
+                        self.background, **self._color_kwargs)
 
         for s in self._spans:
             s.write(canvas, self.with_colors)

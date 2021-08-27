@@ -46,7 +46,7 @@ class Canvas(object):
     only accept coordinates in the reference system. If the coordinates are outside
     the reference system, they are not plotted.
     """
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, color_mode='names'):
+    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, **color_kwargs):
         """Initiate a Canvas object
 
         Parameters:
@@ -55,8 +55,7 @@ class Canvas(object):
             xmin, ymin: float     Lower left corner of reference system.
             xmax, ymax: float     Upper right corner of reference system.
             background: multiple  Background color of the canvas.
-            color_mode: str       The color-mode for all colors of this canvas; either 'names' (default)
-                                  'rgb' or 'byte'. See `plotille.color()`.
+            **color_kwargs:       More arguments to the color-function. See `plotille.color()`.
 
         Returns:
             Canvas object
@@ -85,7 +84,7 @@ class Canvas(object):
         self._x_delta_pt = abs((xmax - xmin) / (width * 2))
         self._y_delta_pt = abs((ymax - ymin) / (height * 4))
         # the canvas to print in
-        self._canvas = [[Dots(bg=background, color_mode=color_mode) for j_ in range(width)] for i_ in range(height)]
+        self._canvas = [[Dots(bg=background, **color_kwargs) for j_ in range(width)] for i_ in range(height)]
 
     def __str__(self):
         return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(

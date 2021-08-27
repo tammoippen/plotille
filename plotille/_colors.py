@@ -98,7 +98,7 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
         if force_color in ('0', 'false', 'none'):
             return text
 
-    if not (force_color or _isatty()):
+    if not force_color and not _isatty():
         # only color if tty (not a redirect / pipe)
         return text
 

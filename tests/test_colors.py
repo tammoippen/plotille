@@ -57,11 +57,11 @@ def test_names(tty):
                 ' ', 'bright_' + fg, 'bright_' + bg + '_old',
             )
             assert '\x1b[1;{};{}m \x1b[0m'.format(30 + i, 100 + j) == clr.color(
-                ' ', 'bright_' + fg + '_old', 'bright_' + bg
+                ' ', 'bright_' + fg + '_old', 'bright_' + bg,
             )
             assert '\x1b[1;{};1;{}m \x1b[0m'.format(30 + i, 40 + j) == clr.color(
                 ' ', 'bright_' + fg + '_old', 'bright_' + bg + '_old',
-                )
+            )
 
     with pytest.raises(ValueError):
         clr._names('olive', None)
