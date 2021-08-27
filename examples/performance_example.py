@@ -24,7 +24,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from random import random
-from time import perf_counter
+from time import time
 
 import plotille
 
@@ -35,10 +35,10 @@ def main():
         y.append(random())
     x = list(range(1000))
 
-    t0 = perf_counter()
+    t0 = time()
     for _ in range(100):
         plotille.plot(x, y, height=30, width=60)
-    print('Took {:.3f} sec'.format(perf_counter() - t0))
+    print('Took {:.3f} sec'.format(time() - t0))
 
 
 if __name__ == '__main__':
