@@ -279,7 +279,7 @@ class Canvas(object):
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
     def mono_image(self, pixels, threshold=0.5, set_=True):
-        """Print an image into the canvas.
+        """Print a monochrome image into the canvas.
 
         The pixels and braille dots ind the canvas are a 1-to-1 mapping, hence
         a 80 x 80 pixel image will need a 40 x 20 canvas.
