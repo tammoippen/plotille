@@ -278,6 +278,40 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
+    def mono_image(self, pixels, threshold=0.5, set_=True):
+        """Print an image into the canvas.
+
+        The pixels and braille dots ind the canvas are a 1-to-1 mapping, hence
+        a 80 x 80 pixel image will need a 40 x 20 canvas.
+
+        Example:
+            from PIL import Image
+            import plotille as plt
+
+            img = Image.open("/path/to/image")
+            img = img.convert('L')
+            img = img.resize((80, 80))
+            cvs = plt.Canvas(80, 40)
+            cvs.mono_image(img.getdata(), 125)
+            print(cvs.plot())
+
+        Parameters:
+            pixels: list[number]  All pixels of the image in one list.
+            threshold: float      All pixels above this threshold will be
+                                  drawn.
+            set_: bool            Whether to plot or remove the rect.
+        """
+        assert len(pixels) == self.width * 2 * self.height * 4
+        row_size = self.width * 2
+
+        for idx, value in enumerate(pixels):
+            if value < threshold:
+                continue
+            y = row_size - idx // row_size
+            x = idx % row_size  # noqa: S001
+
+            self._set(x, y, set_)
+
     def plot(self, linesep=linesep):
         """Transform canvas into `print`-able string
 
