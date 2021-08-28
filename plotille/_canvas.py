@@ -291,7 +291,7 @@ class Canvas(object):
             img = Image.open("/path/to/image")
             img = img.convert('L')
             img = img.resize((80, 80))
-            cvs = plt.Canvas(80, 40)
+            cvs = plt.Canvas(40, 20)
             cvs.mono_image(img.getdata(), 125)
             print(cvs.plot())
 

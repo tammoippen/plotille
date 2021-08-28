@@ -12,6 +12,12 @@ try:
 except ImportError:
     have_numpy = False
 
+try:
+    from PIL import Image
+    have_pillow = True
+except ImportError:
+    have_pillow = False
+
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
 def test_transform():
@@ -212,3 +218,36 @@ def test_unset_keep_color_dots(tty, other_color):
     assert '{}⡀{}'.format(prefix, postfix) == six.text_type(c._canvas[0][0])
     c.point(0, 0, set_=False, color=other_color)
     assert '{}⠀{}'.format(prefix, postfix) == six.text_type(c._canvas[0][0])
+
+
+@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
+def test_mono_image():
+    img = Image.open('imgs/ich.jpg')
+    img = img.convert('L')
+    img = img.resize((80, 80))
+    cvs = Canvas(40, 20)
+    cvs.mono_image(img.getdata(), 125)
+
+    expected = """\
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠉⠉⠉⠈⠛⠛⠿⠟⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠀⡀⠀⠀⠈⣹⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⣀⣀⣠⣀⣀⡀⢀⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⠀⠀⣼⣿⣿⣿⣿⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠀⠀⠀⢠⡿⠿⠿⣿⣿⣿⣿⣿⠛⠛⠛⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡉
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⣬⡴⠿⠶⠬⣿⣿⡏⠁⣠⡴⠂⡀⠀⠀⠀⠈⠙⣿⣿⣿⣿⣿⣿⣿⣧
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠓⠀⠀⣰⣿⣠⣎⣉⣷⣦⣿⣿⣶⣿⠁⡄⠀⠀⠈⠀⠀⡀⠈⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣥⡦⢠⣿⣿⣿⣿⣿⣿⣿⣿⣯⠘⢿⠀⢀⠀⠀⠄⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠈⣿⣿⣿⣿⣿⡿⢿⣿⣿⡄⠀⠀⠀⠐⢶⠆⠒⠀⠀⠀⠀⠽⢿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠂⠘⢿⣿⣿⣿⠧⠤⣈⣠⣄⡴⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠈⣿⠛⣁⣠⣤⣭⣄⠀⠁⠀⠀⠀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠏⣸⣯⣭⣍⣉⣛⣻⣦⢁⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⢿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠙⣿⣿⣿⣿⣿⡿⡿⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠹⠿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈
+⣿⣿⣿⣿⣿⣿⠿⠛⠉⣼⣿⣿⣏⠀⠀⠀⠐⣤⣄⣀⣀⣴⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⣿⠿⠟⠛⠉⠀⠀⠀⠀⠙⢿⣿⣿⣆⠀⠀⠀⠈⠛⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
+
+    assert expected == cvs.plot()
