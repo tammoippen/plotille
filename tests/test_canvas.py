@@ -1,11 +1,41 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import numpy as np
 import pytest
 import six
 
 from plotille import Canvas
+
+try:
+    import numpy as np
+
+    def test_transform():
+        c = Canvas(40, 20)
+
+        assert 0 == c._transform_x(0)
+        assert 0 == c._transform_y(0)
+
+        assert 40 * 2 == c._transform_x(1)
+        assert 20 * 4 == c._transform_y(1)
+
+        assert 40 == c._transform_x(0.5)
+        assert 20 * 2 == c._transform_y(0.5)
+
+        for v in np.random.random(100):
+            assert 0 <= c._transform_x(v) <= 40 * 2
+            assert isinstance(c._transform_x(v), int)
+
+            assert 0 <= c._transform_y(v) <= 20 * 4
+            assert isinstance(c._transform_y(v), int)
+
+        assert -40 == c._transform_x(-0.5)
+        assert -20 * 2 == c._transform_y(-0.5)
+
+        assert 40 * 2 + 40 == c._transform_x(1.5)
+        assert 20 * 4 + 20 * 2 == c._transform_y(1.5)
+
+except ImportError:
+    pass
 
 
 def test_invalids():
@@ -26,32 +56,6 @@ def test_str():
     c = Canvas(40, 20)
     assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == six.text_type(c)
     assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == repr(c)
-
-
-def test_transform():
-    c = Canvas(40, 20)
-
-    assert 0 == c._transform_x(0)
-    assert 0 == c._transform_y(0)
-
-    assert 40 * 2 == c._transform_x(1)
-    assert 20 * 4 == c._transform_y(1)
-
-    assert 40 == c._transform_x(0.5)
-    assert 20 * 2 == c._transform_y(0.5)
-
-    for v in np.random.random(100):
-        assert 0 <= c._transform_x(v) <= 40 * 2
-        assert isinstance(c._transform_x(v), int)
-
-        assert 0 <= c._transform_y(v) <= 20 * 4
-        assert isinstance(c._transform_y(v), int)
-
-    assert -40 == c._transform_x(-0.5)
-    assert -20 * 2 == c._transform_y(-0.5)
-
-    assert 40 * 2 + 40 == c._transform_x(1.5)
-    assert 20 * 4 + 20 * 2 == c._transform_y(1.5)
 
 
 def test_set():
