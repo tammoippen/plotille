@@ -307,10 +307,21 @@ class Canvas(object):
         for idx, value in enumerate(pixels):
             if value < threshold:
                 continue
-            y = row_size - idx // row_size
+            y = self.height * 4 - idx // row_size - 1
             x = idx % row_size  # noqa: S001
 
             self._set(x, y, set_)
+
+    def image(self, pixels):
+        assert len(pixels) == self.width * self.height
+        # RGB values
+        assert all(len(elem) == 3 for elem in pixels)
+
+        for idx, values in enumerate(pixels):
+            y = self.height - idx // self.width - 1
+            x = idx % self.width  # noqa: S001
+
+            self._canvas[y][x].bg = values
 
     def plot(self, linesep=linesep):
         """Transform canvas into `print`-able string
