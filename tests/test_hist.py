@@ -4,24 +4,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import datetime as orig_datetime
 
 from pendulum import datetime, duration
+import pytest
 
 from plotille import hist
 
 try:
     import numpy as np
-
-    def test_timehist_numpy():
-        day = np.timedelta64(1, 'D')
-        now = np.datetime64('2018-01-16T11:09:42.0001')
-        x = [now - i * day for i in range(10)]
-
-        res = hist(x, bins=8)
-
-        print()
-        print(res)
-        assert _hist == res
+    have_numpy = True
 except ImportError:
-    pass
+    have_numpy = False
 
 
 _hist = """\
@@ -35,6 +26,19 @@ _hist = """\
 [14T05:09, 15T08:09) | ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 1
 [15T08:09, 16T11:09) | ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀ 2
 ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"""
+
+
+@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+def test_timehist_numpy():
+    day = np.timedelta64(1, 'D')
+    now = np.datetime64('2018-01-16T11:09:42.0001')
+    x = [now - i * day for i in range(10)]
+
+    res = hist(x, bins=8)
+
+    print()
+    print(res)
+    assert _hist == res
 
 
 def test_timehist_pendulum():

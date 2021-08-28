@@ -12,23 +12,24 @@ from plotille._figure import Histogram, Plot
 
 try:
     import numpy as np
-
-    def test_timehistogram_numpy():
-        fig = Figure()
-        fig.with_colors = False
-
-        day = np.timedelta64(1, 'D')
-        now = np.datetime64('2018-01-16T11:09:42.000100')
-        x = [now - i * day for i in range(10)]
-
-        fig.histogram(x, bins=8)
-
-        print(fig.show())
-        assert _histogram == fig.show()
-
-
+    have_numpy = True
 except ImportError:
-    pass
+    have_numpy = False
+
+
+@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+def test_timehistogram_numpy():
+    fig = Figure()
+    fig.with_colors = False
+
+    day = np.timedelta64(1, 'D')
+    now = np.datetime64('2018-01-16T11:09:42.000100')
+    x = [now - i * day for i in range(10)]
+
+    fig.histogram(x, bins=8)
+
+    print(fig.show())
+    assert _histogram == fig.show()
 
 
 def test_width():

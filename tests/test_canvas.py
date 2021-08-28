@@ -8,34 +8,36 @@ from plotille import Canvas
 
 try:
     import numpy as np
-
-    def test_transform():
-        c = Canvas(40, 20)
-
-        assert 0 == c._transform_x(0)
-        assert 0 == c._transform_y(0)
-
-        assert 40 * 2 == c._transform_x(1)
-        assert 20 * 4 == c._transform_y(1)
-
-        assert 40 == c._transform_x(0.5)
-        assert 20 * 2 == c._transform_y(0.5)
-
-        for v in np.random.random(100):
-            assert 0 <= c._transform_x(v) <= 40 * 2
-            assert isinstance(c._transform_x(v), int)
-
-            assert 0 <= c._transform_y(v) <= 20 * 4
-            assert isinstance(c._transform_y(v), int)
-
-        assert -40 == c._transform_x(-0.5)
-        assert -20 * 2 == c._transform_y(-0.5)
-
-        assert 40 * 2 + 40 == c._transform_x(1.5)
-        assert 20 * 4 + 20 * 2 == c._transform_y(1.5)
-
+    have_numpy = True
 except ImportError:
-    pass
+    have_numpy = False
+
+
+@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+def test_transform():
+    c = Canvas(40, 20)
+
+    assert 0 == c._transform_x(0)
+    assert 0 == c._transform_y(0)
+
+    assert 40 * 2 == c._transform_x(1)
+    assert 20 * 4 == c._transform_y(1)
+
+    assert 40 == c._transform_x(0.5)
+    assert 20 * 2 == c._transform_y(0.5)
+
+    for v in np.random.random(100):
+        assert 0 <= c._transform_x(v) <= 40 * 2
+        assert isinstance(c._transform_x(v), int)
+
+        assert 0 <= c._transform_y(v) <= 20 * 4
+        assert isinstance(c._transform_y(v), int)
+
+    assert -40 == c._transform_x(-0.5)
+    assert -20 * 2 == c._transform_y(-0.5)
+
+    assert 40 * 2 + 40 == c._transform_x(1.5)
+    assert 20 * 4 + 20 * 2 == c._transform_y(1.5)
 
 
 def test_invalids():
