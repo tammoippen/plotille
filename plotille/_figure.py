@@ -697,6 +697,32 @@ class Span:
         )
 
 
+class Heat:
+    def __init__(self, X, Y, Z):
+        assert len(X) == len(Y) == len(Z)
+        self._X = X
+        self._Y = Y
+        self._Z = Z
+
+    @property
+    def X(self):  # noqa: N802
+        return self._X
+
+    @property
+    def Y(self):  # noqa: N802
+        return self._Y
+
+    def width_vals(self):
+        return self.X
+
+    def height_vals(self):
+        return self.Y
+
+    def write(self, canvas, with_colors, in_fmt):
+        assert len(self.X) == len(self.Y) == len(self.Z)
+        min_z, max_z = min(self.Z), max(self.Z)
+
+
 def _limit(values):
     _min = 0
     _max = 1
