@@ -326,3 +326,31 @@ def test_braille_image_inverse_thresholds(threshold):
     cvs.braille_image(img.getdata(), threshold=threshold, inverse=True, set_=False)
     # empty canvas
     assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
+
+
+@pytest.mark.parametrize('r', [0, 50, 100, 123, 255])
+@pytest.mark.parametrize('g', [0, 50, 100, 123, 255])
+@pytest.mark.parametrize('b', [0, 50, 100, 123, 255])
+def test_image_one_px(tty, r, g, b):
+    cvs = Canvas(1, 1, mode='rgb')
+    cvs.image([(r, g, b)])
+
+    assert '\x1b[48;2;{};{};{}m⠀\x1b[0m'.format(r, g, b) == cvs.plot()
+
+    cvs.image([(r, g, b)], set_=False)
+    # empty canvas
+    assert '⠀' == cvs.plot()
+
+
+def test_image(tty):
+    img = Image.open('imgs/ich.jpg')
+    img = img.convert('RGB')
+    img = img.resize((40, 40))
+    cvs = Canvas(40, 40, mode='rgb')
+    cvs.image(img.getdata())
+
+    assert '\n'.join(['⠀' * 40] * 40) != cvs.plot()
+
+    cvs.image(img.getdata(), set_=False)
+    # empty canvas
+    assert '\n'.join(['⠀' * 40] * 40) == cvs.plot()

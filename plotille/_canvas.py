@@ -299,7 +299,7 @@ class Canvas(object):
             pixels: list[number]  All pixels of the image in one list.
             threshold: float      All pixels above this threshold will be
                                   drawn.
-            inverse: bool         Wether to invert the image.
+            inverse: bool         Whether to invert the image.
             set_: bool            Whether to plot or remove the dots.
         """
         assert len(pixels) == self.width * 2 * self.height * 4
@@ -316,7 +316,7 @@ class Canvas(object):
 
             self._set(x, y, set_=set_)
 
-    def image(self, pixels):
+    def image(self, pixels, color_mode='rgb', set_=True):
         """Print an image using background colors into the canvas.
 
         The pixels of the image and the characters in the canvas are a
@@ -329,12 +329,14 @@ class Canvas(object):
             img = Image.open("/path/to/image")
             img = img.convert('RGB')
             img = img.resize((40, 40))
-            cvs = plt.Canvas(40, 40)
+            cvs = plt.Canvas(40, 40, mode='rgb')
             cvs.image(img.getdata())
             print(cvs.plot())
 
         Parameters:
             pixels: list[(R,G,B)]  All pixels of the image in one list.
+            set_: bool             Whether to plot or remove the background
+                                   colors.
         """
         assert len(pixels) == self.width * self.height
         # RGB values
@@ -344,7 +346,14 @@ class Canvas(object):
             y = self.height - idx // self.width - 1
             x = idx % self.width  # noqa: S001
 
-            self._canvas[y][x].bg = values
+            if set_ is False:
+                value = None
+            elif color_mode == 'rgb':
+                value = values
+            else:
+                raise NotImplementedError('Only color_modes rgb and ... are supported.')
+
+            self._canvas[y][x].bg = value
 
     def plot(self, linesep=linesep):
         """Transform canvas into `print`-able string
