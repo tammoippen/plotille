@@ -345,6 +345,8 @@ class Canvas(object):
         for idx, values in enumerate(pixels):
             # RGB
             assert len(values) == 3
+            assert all(0 <= v <= 255 for v in values)
+
             y = self.height - idx // self.width - 1
             x = idx % self.width  # noqa: S001
 
