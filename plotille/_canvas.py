@@ -278,10 +278,10 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def mono_image(self, pixels, threshold=0.5, set_=True):
-        """Print a monochrome image into the canvas.
+    def braille_image(self, pixels, threshold=127, inverse=False, set_=True):
+        """Print an image using braille dots into the canvas.
 
-        The pixels and braille dots ind the canvas are a 1-to-1 mapping, hence
+        The pixels and braille dots in the canvas are a 1-to-1 mapping, hence
         a 80 x 80 pixel image will need a 40 x 20 canvas.
 
         Example:
@@ -292,27 +292,50 @@ class Canvas(object):
             img = img.convert('L')
             img = img.resize((80, 80))
             cvs = plt.Canvas(40, 20)
-            cvs.mono_image(img.getdata(), 125)
+            cvs.braille_image(img.getdata(), 125)
             print(cvs.plot())
 
         Parameters:
             pixels: list[number]  All pixels of the image in one list.
             threshold: float      All pixels above this threshold will be
                                   drawn.
-            set_: bool            Whether to plot or remove the rect.
+            inverse: bool         Wether to invert the image.
+            set_: bool            Whether to plot or remove the dots.
         """
         assert len(pixels) == self.width * 2 * self.height * 4
         row_size = self.width * 2
 
         for idx, value in enumerate(pixels):
-            if value < threshold:
+            do_dot = value >= threshold
+            if inverse:
+                do_dot = not do_dot
+            if not do_dot:
                 continue
             y = self.height * 4 - idx // row_size - 1
             x = idx % row_size  # noqa: S001
 
-            self._set(x, y, set_)
+            self._set(x, y, set_=set_)
 
     def image(self, pixels):
+        """Print an image using background colors into the canvas.
+
+        The pixels of the image and the characters in the canvas are a
+        1-to-1 mapping, hence a 80 x 80 image will need a 4 x 80 canvas.
+
+        Example:
+            from PIL import Image
+            import plotille as plt
+
+            img = Image.open("/path/to/image")
+            img = img.convert('RGB')
+            img = img.resize((40, 40))
+            cvs = plt.Canvas(40, 40)
+            cvs.image(img.getdata())
+            print(cvs.plot())
+
+        Parameters:
+            pixels: list[(R,G,B)]  All pixels of the image in one list.
+        """
         assert len(pixels) == self.width * self.height
         # RGB values
         assert all(len(elem) == 3 for elem in pixels)
