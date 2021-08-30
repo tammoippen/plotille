@@ -214,3 +214,31 @@ def test_reset_color_codes(tty):
     assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None)
     assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None, full_reset=True)
     assert '\x1b[31m \x1b[39;49m' == clr.color(' ', 'red', None, full_reset=False)
+
+
+def test_rgb2byte_gray(tty):
+    for v in range(0, 256):
+        print(clr.color(' ' * 20, bg=clr.rgb2byte(v, v, v), mode='byte'), end=' ')
+        print(clr.color(' ' * 20, bg=(v, v, v), mode='rgb'))
+
+
+def test_rgb2byte_color(tty):
+    for r in range(0, 256, 16):
+        for g in range(0, 256, 16):
+            for b in range(0, 256, 16):
+                print(clr.color(' ' * 20, bg=clr.rgb2byte(r, g, b), mode='byte'), end=' ')
+                print(clr.color(' ' * 20, bg=(r, g, b), mode='rgb'))
+
+
+def test_rgb2byte_inverse():
+    # according to this nice write up https://stackoverflow.com/a/27165165
+    for r in range(0, 5):
+        for g in range(0, 5):
+            for b in range(0, 5):
+                idx = 16 + 36 * r + 6 * g + b
+                assert idx == clr.rgb2byte(
+                    # some additions, s.t. they are not equal / gray
+                    (55 + r * 40) if r > 0 else 0,
+                    (56 + g * 40) if g > 0 else 1,
+                    (57 + b * 40) if b > 0 else 2,
+                )

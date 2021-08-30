@@ -125,6 +125,27 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
         return res + '\x1b[39;49m'
 
 
+def rgb2byte(r, g, b):
+    if r == g == b < 244:
+        # gray:
+        gray_idx = _value_to_index(min(238, r), off=8, steps=10)
+        return gray_idx + 232
+
+    # here we also have some gray values ...
+    r_idx = _value_to_index(r)
+    g_idx = _value_to_index(g)
+    b_idx = _value_to_index(b)
+
+    return 16 + 36 * r_idx + 6 * g_idx + b_idx
+
+
+def _value_to_index(v, off=55, steps=40):
+    idx = (v - off) / steps
+    if idx < 0:
+        return 0
+    return round(idx)
+
+
 def _isatty():
     return sys.stdout.isatty()
 

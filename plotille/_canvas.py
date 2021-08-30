@@ -27,6 +27,7 @@ from os import linesep
 
 import six
 
+from ._colors import rgb2byte
 from ._dots import Dots
 from ._util import roundeven
 
@@ -84,6 +85,7 @@ class Canvas(object):
         self._x_delta_pt = abs((xmax - xmin) / (width * 2))
         self._y_delta_pt = abs((ymax - ymin) / (height * 4))
         # the canvas to print in
+        self._color_mode = color_kwargs.get('mode', 'names')
         self._canvas = [[Dots(bg=background, **color_kwargs) for j_ in range(width)] for i_ in range(height)]
 
     def __str__(self):
@@ -316,7 +318,7 @@ class Canvas(object):
 
             self._set(x, y, set_=set_)
 
-    def image(self, pixels, color_mode='rgb', set_=True):
+    def image(self, pixels, set_=True):
         """Print an image using background colors into the canvas.
 
         The pixels of the image and the characters in the canvas are a
@@ -339,19 +341,21 @@ class Canvas(object):
                                    colors.
         """
         assert len(pixels) == self.width * self.height
-        # RGB values
-        assert all(len(elem) == 3 for elem in pixels)
 
         for idx, values in enumerate(pixels):
+            # RGB
+            assert len(values) == 3
             y = self.height - idx // self.width - 1
             x = idx % self.width  # noqa: S001
 
             if set_ is False:
                 value = None
-            elif color_mode == 'rgb':
+            elif self._color_mode == 'rgb':
                 value = values
+            elif self._color_mode == 'byte':
+                value = rgb2byte(*values)
             else:
-                raise NotImplementedError('Only color_modes rgb and ... are supported.')
+                raise NotImplementedError('Only color_modes rgb and byte are supported.')
 
             self._canvas[y][x].bg = value
 

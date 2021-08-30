@@ -342,7 +342,7 @@ def test_image_one_px(tty, r, g, b):
     assert '⠀' == cvs.plot()
 
 
-def test_image(tty):
+def test_image_rgb(tty):
     img = Image.open('imgs/ich.jpg')
     img = img.convert('RGB')
     img = img.resize((40, 40))
@@ -350,6 +350,26 @@ def test_image(tty):
     cvs.image(img.getdata())
 
     assert '\n'.join(['⠀' * 40] * 40) != cvs.plot()
+
+    print()
+    print(cvs.plot())
+
+    cvs.image(img.getdata(), set_=False)
+    # empty canvas
+    assert '\n'.join(['⠀' * 40] * 40) == cvs.plot()
+
+
+def test_image_byte(tty):
+    img = Image.open('imgs/ich.jpg')
+    img = img.convert('RGB')
+    img = img.resize((40, 40))
+    cvs = Canvas(40, 40, mode='byte')
+    cvs.image(img.getdata())
+
+    assert '\n'.join(['⠀' * 40] * 40) != cvs.plot()
+
+    print()
+    print(cvs.plot())
 
     cvs.image(img.getdata(), set_=False)
     # empty canvas
