@@ -328,6 +328,7 @@ def test_braille_image_inverse_thresholds(threshold):
     assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
 
 
+@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 @pytest.mark.parametrize('r', [0, 50, 100, 123, 255])
 @pytest.mark.parametrize('g', [0, 50, 100, 123, 255])
 @pytest.mark.parametrize('b', [0, 50, 100, 123, 255])
@@ -342,6 +343,7 @@ def test_image_one_px(tty, r, g, b):
     assert '⠀' == cvs.plot()
 
 
+@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_image_rgb(tty):
     img = Image.open('imgs/ich.jpg')
     img = img.convert('RGB')
@@ -359,6 +361,7 @@ def test_image_rgb(tty):
     assert '\n'.join(['⠀' * 40] * 40) == cvs.plot()
 
 
+@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_image_byte(tty):
     img = Image.open('imgs/ich.jpg')
     img = img.convert('RGB')
