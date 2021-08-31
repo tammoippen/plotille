@@ -1,5 +1,7 @@
+import math
 from numbers import Number
 
+import six
 from six.moves import zip
 
 from ._colors import hsl
@@ -240,14 +242,173 @@ class Span:
         )
 
 
+class Colormap:
+    """
+    Baseclass for all scalar to RGBA mappings.
+
+    Typically, Colormap instances are used to convert data values (floats)
+    from the interval ``[0, 1]`` to the RGBA color that the respective
+    Colormap represents. For scaling of data into the ``[0, 1]`` interval see
+    `Normalize`.
+    """
+    def __init__(self, name, N=256):
+        """
+        Parameters
+        ----------
+        name : str
+            The name of the colormap.
+        N : int
+            The number of rgb quantization levels.
+        """
+        assert N > 0
+        self.name = name
+        self._n = N
+        self._lut = None
+        self.bad = (0, 0, 0)
+        self.over = None
+        self.under = None
+
+    def _init(self):
+        """Generate the lookup table, ``self._lut``."""
+        raise NotImplementedError('Abstract class only')
+
+    def __call__(self, X):  # noqa: N802
+        """
+        Parameters
+        ----------
+        X : float or iterable of floats
+            The data value(s) to convert to RGB.
+            For floats, X should be in the interval ``[0.0, 1.0]`` to
+            return the RGB values ``X*100`` percent along the Colormap line.
+
+        Returns
+        -------
+        Tuple of RGB values if X is scalar, otherwise an array of
+        RGB values with a shape of ``X.shape + (3, )``.
+        """
+        try:
+            return [self._process_value(x) for x in X]
+        except TypeError:
+            # not iterable
+            return self._process_value(X)
+
+    def _process_value(self, x):
+        if not isinstance(x, Number):
+            return self.bad
+        if x < 0:
+            return self.under
+        if x > 1:
+            return self.over
+        idx = round(x * (len(self._lut) - 1))
+        return self._lut[idx]
+
+
+class ListedColormap(Colormap):
+    def __init__(self, name, colors):
+        super(ListedColormap).__init__(name, len(colors))
+        self._lut = colors
+
+
+_default_colormaps = [
+    # TODO: names-colormaps ?
+    # TODO: byte-colormaps ?
+    ListedColormap('grayscale', [(idx, idx, idx) for idx in range(256)]),
+    ListedColormap('red2green', [hsl(round(120.0 / 256 * idx), 1.0, 0.5) for idx in range(256)]),
+    ListedColormap('green2red', [hsl(120.0 - round(120.0 / 256 * idx), 1.0, 0.5) for idx in range(256)]),
+]
+_default_colormaps_by_name = {cmap.name: cmap for cmap in _default_colormaps}
+
+
+class Normalize:
+    """A class which, when called, linearly normalizes data into the
+    ``[0.0, 1.0]`` interval.
+    """
+    def __init__(self, vmin, vmax, clip=False):
+        """
+        Parameters
+        ----------
+        vmin, vmax : float
+            Normalize according to these values.
+
+        clip : bool, default: False
+            If ``True`` values falling outside the range ``[vmin, vmax]``,
+            are mapped to 0 or 1, whichever is closer, and masked values are
+            set to 1.  If ``False`` masked values remain masked.
+
+            Clipping silently defeats the purpose of setting the over, under,
+            and masked colors in a colormap, so it is likely to lead to
+            surprises; therefore the default is ``clip=False``.
+
+        Notes
+        -----
+        Returns 0 if ``vmin == vmax``.
+        """
+        assert vmin is not None
+        assert vmax is not None
+        assert vmin > vmax, 'minvalue must be less than or equal to maxvalue'
+        self.vmin = vmin
+        self.vmax = vmax
+        self.clip = clip
+
+    def __call__(self, value, clip=None):
+        """
+        Normalize *value* data in the ``[vmin, vmax]`` interval into the
+        ``[0.0, 1.0]`` interval and return it.
+
+        Parameters
+        ----------
+        value
+            Data to normalize.
+        clip : bool
+            If ``None``, defaults to ``self.clip`` (which defaults to
+            ``False``).
+
+        Notes
+        -----
+        If not already initialized, ``self.vmin`` and ``self.vmax`` are
+        initialized using ``self.autoscale_None(value)``.
+        """
+        if clip is None:
+            clip = self.clip
+
+        try:
+            return [self._process_value(v, clip) for v in value]
+        except TypeError:
+            # not iterable
+            return self._process_value(value, clip)
+
+    def _process_value(self, value, clip):
+        if self.vmin == self.vmax:
+            return 0.0
+        if not isinstance(value, Number):
+            return value
+
+        value *= 1.0
+        if math.isnan(value) or math.isinf(value):
+            if clip:
+                return 1.0
+            return value
+
+        value -= self.vmin
+        value /= (self.vmax - self.vmin)
+        return value
+
+
 class Heat:
-    def __init__(self, X, cmap):
+    def __init__(self, X, cmap, norm=None):
         assert len(X)
         assert isinstance(cmap, Colormap)
         len_first = len(X[0])
         assert all(len(x) == len_first for x in X)
         self._X = X
+
+        if isinstance(cmap, six.string_types):
+            cmap = _default_colormaps_by_name[cmap]
         self.cmap = cmap
+
+        if norm is None:
+            norm = Normalize(min(X), max(X))
+        self.norm = norm
 
     @property
     def X(self):  # noqa: N802
@@ -267,32 +428,4 @@ class Heat:
                         for r, g, b in flat]
             canvas.image(flat)
         else:
-            canvas.image(self.cmap(flat))
-
-
-class Colormap:
-    def __init__(self, name, N=256):
-        assert N > 0
-        self.name = name
-        # red to green
-        self.colors = [hsl(120 / N * i, 1.0, 0.5) for i in range(N)]
-        self.bad = hsl(0, 0, 0)
-        self.over = hsl(0, 0, 1)
-        self.under = hsl(0, 0, 1)
-
-    def __call__(self, X):  # noqa: N802
-        try:
-            return [self._convert(x) for x in X]
-        except TypeError:
-            # not iterable
-            return self._convert(X)
-
-    def _convert(self, x):
-        if not isinstance(x, Number):
-            return self.bad
-        if x < 0:
-            return self.under
-        if x > 1:
-            return self.over
-        idx = round(x * (len(self.colors) - 1))
-        return self.colors[idx]
+            canvas.image(self.cmap(self.norm(v) for v in flat))

@@ -88,6 +88,7 @@ class Figure(object):
         self._plots = []
         self._texts = []
         self._spans = []
+        self._heats = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -392,6 +393,34 @@ class Figure(object):
         """
         self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
 
+    def imgshow(self, X, cmap=None, norm=None):
+        """Display data as an image, i.e., on a 2D regular raster.
+
+        Parameters:
+            X: array-like
+                The image data. Supported array shapes are:
+                - (M, N): an image with scalar data. The values are mapped
+                          to colors using normalization and a colormap.
+                          See parameters norm, cmap.
+                - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
+
+                The first two dimensions (M, N) define the rows and columns of the image.
+                Out-of-range RGB values are clipped.
+
+            cmap: cmapstr or Colormap
+                The Colormap instance or registered colormap name used
+                to map scalar data to colors. This parameter is ignored
+                for RGB data.
+
+            norm: Normalize, optional
+                The Normalize instance used to scale scalar data to the [0, 1]
+                range before mapping to colors using cmap. By default, a linear
+                scaling mapping the lowest value to 0 and the highest to 1 is used.
+                This parameter is ignored for RGB data.
+        """
+        if len(X) > 0:
+            self._heats += [Heat(X, cmap, norm)]
+
     def show(self, legend=False):
         """Compute the plot.
 
@@ -405,6 +434,11 @@ class Figure(object):
         ymin, ymax = self.y_limits()
         if all(isinstance(p, Histogram) for p in self._plots):
             ymin = 0
+
+        if self._heats and self._width is None and self._height is None:
+            self.height = len(self._heats[0].X)
+            self.width = len(self._heats[0].X[0])
+
         # create canvas
         canvas = Canvas(self.width, self.height,
                         self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
@@ -422,6 +456,9 @@ class Figure(object):
 
         for t in self._texts:
             t.write(canvas, self.with_colors, self._in_fmt)
+
+        for h in self._heats:
+            h.write(canvas, self.with_colors, self._in_fmt)
 
         if self.origin and plot_origin:
             # print X / Y origin axis
