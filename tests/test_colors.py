@@ -217,17 +217,29 @@ def test_reset_color_codes(tty):
 
 
 def test_rgb2byte_gray(tty):
+    # print()
     for v in range(0, 256):
-        print(clr.color(' ' * 20, bg=clr.rgb2byte(v, v, v), mode='byte'), end=' ')
-        print(clr.color(' ' * 20, bg=(v, v, v), mode='rgb'))
+        res = clr.color(' ' * 20, bg=clr.rgb2byte(v, v, v), mode='byte')
+        assert str(clr.rgb2byte(v, v, v)) in res
+        # print(res, end=' ')
+        res = clr.color(' ' * 20, bg=(v, v, v), mode='rgb')
+        assert str(v) in res
+        # print(res)
 
 
 def test_rgb2byte_color(tty):
+    # print()
     for r in range(0, 256, 16):
         for g in range(0, 256, 16):
             for b in range(0, 256, 16):
-                print(clr.color(' ' * 20, bg=clr.rgb2byte(r, g, b), mode='byte'), end=' ')
-                print(clr.color(' ' * 20, bg=(r, g, b), mode='rgb'))
+                res = clr.color(' ' * 20, bg=clr.rgb2byte(r, g, b), mode='byte')
+                assert str(clr.rgb2byte(r, g, b)) in res
+                # print(res, end=' ')
+                res = clr.color(' ' * 20, bg=(r, g, b), mode='rgb')
+                assert str(r) in res
+                assert str(g) in res
+                assert str(b) in res
+                # print(res)
 
 
 def test_rgb2byte_inverse():

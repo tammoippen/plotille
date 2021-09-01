@@ -691,7 +691,7 @@ def test_min_max_y():
     fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
 
     res = fig.show()
-    print(res)
+    # print(res)
     assert res.split('\n')[1].startswith('         1 |')
     assert res.split('\n')[-3].startswith('         0 |')
 
@@ -758,7 +758,7 @@ def test_date_min_max_y():
     fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], y)
 
     res = fig.show()
-    print(res)
+    # print(res)
     assert res.split('\n')[1].startswith('  21T11:09 |')
     assert res.split('\n')[-3].startswith('  16T11:09 |')
 
