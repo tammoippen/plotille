@@ -30,7 +30,7 @@ import os
 from six.moves import zip
 
 from ._canvas import Canvas
-from ._colors import color
+from ._colors import color, rgb2byte
 from ._figure_data import Heat, Histogram, Plot, Span, Text
 from ._input_formatter import InputFormatter
 from ._util import mk_timedelta, timestamp
@@ -58,13 +58,13 @@ class Figure(object):
         x_label, y_label: str Define the X / Y axis label.
     """
     _COLOR_SEQ = [
-        {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
-        {'names': 'red', 'rgb': (255, 0, 0), 'byte': 0x1},
-        {'names': 'green', 'rgb': (0, 255, 0), 'byte': 0x2},
-        {'names': 'yellow', 'rgb': (255, 255, 0), 'byte': 0x3},
-        {'names': 'blue', 'rgb': (0, 0, 255), 'byte': 0x4},
-        {'names': 'magenta', 'rgb': (255, 0, 255), 'byte': 0x5},
-        {'names': 'cyan', 'rgb': (0, 255, 255), 'byte': 0x6},
+        {'names': 'white', 'rgb': (255, 255, 255), 'byte': rgb2byte(255, 255, 255)},
+        {'names': 'red', 'rgb': (255, 0, 0), 'byte': rgb2byte(255, 0, 0)},
+        {'names': 'green', 'rgb': (0, 255, 0), 'byte': rgb2byte(0, 255, 0)},
+        {'names': 'yellow', 'rgb': (255, 255, 0), 'byte': rgb2byte(255, 255, 0)},
+        {'names': 'blue', 'rgb': (0, 0, 255), 'byte': rgb2byte(0, 0, 255)},
+        {'names': 'magenta', 'rgb': (255, 0, 255), 'byte': rgb2byte(255, 0, 255)},
+        {'names': 'cyan', 'rgb': (0, 255, 255), 'byte': rgb2byte(0, 255, 255)},
     ]
 
     def __init__(self):
