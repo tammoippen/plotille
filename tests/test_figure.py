@@ -19,7 +19,7 @@ except ImportError:
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_timehistogram_numpy():
+def test_timehistogram_numpy(histogram):
     fig = Figure()
     fig.with_colors = False
 
@@ -485,7 +485,8 @@ def test_show():
     # print(fig.show())
     assert inspect.cleandoc(expected) == fig.show()  # no legend, origin
 
-    assert fig.show(legend=True) == inspect.cleandoc(expected) + '\n\nLegend:\n-------\n⠤⠤ Label 0'  # no label for histograms
+    # no label for histograms
+    assert fig.show(legend=True) == inspect.cleandoc(expected) + '\n\nLegend:\n-------\n⠤⠤ Label 0'
 
 
 @pytest.fixture()
