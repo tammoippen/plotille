@@ -144,7 +144,7 @@ class Span:
 
 class Colormap:
     """
-    Baseclass for all scalar to RGBA mappings.
+    Baseclass for all scalar to RGB mappings.
 
     Typically, Colormap instances are used to convert data values (floats)
     from the interval ``[0, 1]`` to the RGBA color that the respective
@@ -167,10 +167,6 @@ class Colormap:
         self.bad = (0, 0, 0)
         self.over = None
         self.under = None
-
-    def _init(self):
-        """Generate the lookup table, ``self._lut``."""
-        raise NotImplementedError('Abstract class only')
 
     def __call__(self, X):  # noqa: N802
         """
