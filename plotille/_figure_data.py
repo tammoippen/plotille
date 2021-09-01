@@ -10,45 +10,17 @@ from ._util import hist
 
 class Plot:
     def __init__(self, X, Y, lc, interp, label, marker):
-        self._X = X
-        self._Y = Y
-        self._lc = lc
-        self._interp = interp
-        self._label = label
-        self._marker = marker
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def Y(self):  # noqa: N802
-        return self._Y
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @property
-    def interp(self):
-        return self._interp
-
-    @property
-    def label(self):
-        return self._label
-
-    @property
-    def marker(self):
-        return self._marker
-
-    @classmethod
-    def create(cls, X, Y, lc, interp, label, marker):
         if len(X) != len(Y):
             raise ValueError('X and Y dim have to be the same.')
         if interp not in ('linear', None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        return cls(X, Y, lc, interp, label, marker)
+        self.X = X
+        self.Y = Y
+        self.lc = lc
+        self.interp = interp
+        self.label = label
+        self.marker = marker
 
     def width_vals(self):
         return self.X
@@ -78,38 +50,13 @@ class Plot:
 
 
 class Histogram:
-    def __init__(self, X, bins, frequencies, buckets, lc):
-        self._X = X
-        self._bins = bins
-        self._frequencies = frequencies
-        self._buckets = buckets
-        self._lc = lc
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def bins(self):
-        return self._bins
-
-    @property
-    def frequencies(self):
-        return self._frequencies
-
-    @property
-    def buckets(self):
-        return self._buckets
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, X, bins, lc):
+    def __init__(self, X, bins, lc):
         frequencies, buckets = hist(X, bins)
-
-        return cls(X, bins, frequencies, buckets, lc)
+        self.X = X
+        self.bins = bins
+        self.frequencies = frequencies
+        self.buckets = buckets
+        self.lc = lc
 
     def width_vals(self):
         return self.X
@@ -139,33 +86,13 @@ class Histogram:
 
 class Text:
     def __init__(self, X, Y, texts, lc):
-        self._X = X
-        self._Y = Y
-        self._texts = texts
-        self._lc = lc
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def Y(self):  # noqa: N802
-        return self._Y
-
-    @property
-    def texts(self):
-        return self._texts
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, X, Y, texts, lc):
         if len(X) != len(Y) != len(texts):
             raise ValueError('X, Y and texts dim have to be the same.')
 
-        return cls(X, Y, texts, lc)
+        self.X = X
+        self.Y = Y
+        self.texts = texts
+        self.lc = lc
 
     def width_vals(self):
         return self.X
@@ -185,43 +112,16 @@ class Text:
 
 
 class Span:
-    def __init__(self, xmin, xmax, ymin, ymax, lc):
-        assert 0 <= xmin <= xmax <= 1
-        assert 0 <= ymin <= ymax <= 1
-        self._xmin = xmin
-        self._xmax = xmax
-        self._ymin = ymin
-        self._ymax = ymax
-        self._lc = lc
-
-    @property
-    def xmin(self):
-        return self._xmin
-
-    @property
-    def xmax(self):
-        return self._xmax
-
-    @property
-    def ymin(self):
-        return self._ymin
-
-    @property
-    def ymax(self):
-        return self._ymax
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, xmin, xmax, ymin, ymax, lc=None):
+    def __init__(self, xmin, xmax, ymin, ymax, lc=None):
         if not (0 <= xmin <= xmax <= 1):
             raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
         if not (0 <= ymin <= ymax <= 1):
             raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
-
-        return cls(xmin, xmax, ymin, ymax, lc)
+        self.xmin = xmin
+        self.xmax = xmax
+        self.ymin = ymin
+        self.ymax = ymax
+        self.lc = lc
 
     def write(self, canvas, with_colors):
         color = self.lc if with_colors else None
@@ -305,7 +205,7 @@ class Colormap:
 
 class ListedColormap(Colormap):
     def __init__(self, name, colors):
-        super(ListedColormap).__init__(name, len(colors))
+        super(ListedColormap, self).__init__(name, len(colors))
         self._lut = colors
 
 
@@ -428,4 +328,4 @@ class Heat:
                         for r, g, b in flat]
             canvas.image(flat)
         else:
-            canvas.image(self.cmap(self.norm(v) for v in flat))
+            canvas.image(self.cmap(self.norm(flat)))

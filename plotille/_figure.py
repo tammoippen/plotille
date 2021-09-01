@@ -286,7 +286,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label, marker)]
+            self._plots += [Plot(X, Y, lc, interp, label, marker)]
 
     def scatter(self, X, Y, lc=None, label=None, marker=None):
         """Create a scatter plot with X , Y values
@@ -301,7 +301,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, None, label, marker)]
+            self._plots += [Plot(X, Y, lc, None, label, marker)]
 
     def histogram(self, X, bins=160, lc=None):
         """Compute and plot the histogram over X.
@@ -314,7 +314,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Histogram.create(X, bins, lc)]
+            self._plots += [Histogram(X, bins, lc)]
 
     def text(self, X, Y, texts, lc=None):
         """Plot texts at coordinates X, Y.
@@ -331,7 +331,7 @@ class Figure(object):
             lc: multiple       The (text) line color.
         """
         if len(X) > 0:
-            self._texts += [Text.create(X, Y, texts, lc)]
+            self._texts += [Text(X, Y, texts, lc)]
 
     def axvline(self, x, ymin=0, ymax=1, lc=None):
         """Plot a vertical line at x.
@@ -345,7 +345,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(x, x, ymin, ymax, lc))
+        self._spans.append(Span(x, x, ymin, ymax, lc))
 
     def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
         """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
@@ -361,7 +361,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+        self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
     def axhline(self, y, xmin=0, xmax=1, lc=None):
         """Plot a horizontal line at y.
@@ -375,7 +375,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, y, y, lc))
+        self._spans.append(Span(xmin, xmax, y, y, lc))
 
     def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
         """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
@@ -391,7 +391,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+        self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
     def imgshow(self, X, cmap=None, norm=None):
         """Display data as an image, i.e., on a 2D regular raster.
