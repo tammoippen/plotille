@@ -343,6 +343,8 @@ class Canvas(object):
         assert len(pixels) == self.width * self.height
 
         for idx, values in enumerate(pixels):
+            if values is None:
+                continue
             # RGB
             assert len(values) == 3
             assert all(0 <= v <= 255 for v in values)
