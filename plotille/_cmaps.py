@@ -107,3 +107,5 @@ for (name, data) in (
 cmaps['gray'] = ListedColormap(
     name='gray', colors=[(idx, idx, idx) for idx in range(256)],
 )
+
+# for more, have a look at https://matplotlib.org/stable/tutorials/colors/colormaps.html
