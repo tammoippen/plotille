@@ -4,7 +4,7 @@ from numbers import Number
 import six
 from six.moves import zip
 
-from ._colors import hsl
+from . import _cmaps
 from ._util import hist
 
 
@@ -142,79 +142,6 @@ class Span:
         )
 
 
-class Colormap:
-    """
-    Baseclass for all scalar to RGB mappings.
-
-    Typically, Colormap instances are used to convert data values (floats)
-    from the interval ``[0, 1]`` to the RGBA color that the respective
-    Colormap represents. For scaling of data into the ``[0, 1]`` interval see
-    `Normalize`.
-    """
-    def __init__(self, name, N=256):
-        """
-        Parameters
-        ----------
-        name : str
-            The name of the colormap.
-        N : int
-            The number of rgb quantization levels.
-        """
-        assert N > 0
-        self.name = name
-        self._n = N
-        self._lut = None
-        self.bad = (0, 0, 0)
-        self.over = None
-        self.under = None
-
-    def __call__(self, X):  # noqa: N802
-        """
-        Parameters
-        ----------
-        X : float or iterable of floats
-            The data value(s) to convert to RGB.
-            For floats, X should be in the interval ``[0.0, 1.0]`` to
-            return the RGB values ``X*100`` percent along the Colormap line.
-
-        Returns
-        -------
-        Tuple of RGB values if X is scalar, otherwise an array of
-        RGB values with a shape of ``X.shape + (3, )``.
-        """
-        try:
-            return [self._process_value(x) for x in X]
-        except TypeError:
-            # not iterable
-            return self._process_value(X)
-
-    def _process_value(self, x):
-        if not isinstance(x, Number):
-            return self.bad
-        if x < 0:
-            return self.under
-        if x > 1:
-            return self.over
-        idx = round(x * (len(self._lut) - 1))
-        return self._lut[idx]
-
-
-class ListedColormap(Colormap):
-    def __init__(self, name, colors):
-        super(ListedColormap, self).__init__(name, len(colors))
-        self._lut = colors
-
-
-_default_colormaps = [
-    # TODO: names-colormaps ?
-    # TODO: byte-colormaps ?
-    ListedColormap('grayscale', [(idx, idx, idx) for idx in range(256)]),
-    ListedColormap('red2green', [hsl(round(120.0 / 256 * idx), 1.0, 0.5) for idx in range(256)]),
-    ListedColormap('green2red', [hsl(120.0 - round(120.0 / 256 * idx), 1.0, 0.5) for idx in range(256)]),
-]
-_default_colormaps_by_name = {cmap.name: cmap for cmap in _default_colormaps}
-
-
 class Normalize:
     """A class which, when called, linearly normalizes data into the
     ``[0.0, 1.0]`` interval.
@@ -291,15 +218,15 @@ class Normalize:
 
 
 class Heat:
-    def __init__(self, X, cmap, norm=None):
+    def __init__(self, X, cmap='viridis', norm=None):
         assert len(X)
-        assert isinstance(cmap, Colormap)
+        assert isinstance(cmap, _cmaps.Colormap)
         len_first = len(X[0])
         assert all(len(x) == len_first for x in X)
         self._X = X
 
         if isinstance(cmap, six.string_types):
-            cmap = _default_colormaps_by_name[cmap]
+            cmap = _cmaps.cmaps[cmap]
         self.cmap = cmap
 
         if norm is None:
