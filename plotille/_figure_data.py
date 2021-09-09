@@ -166,12 +166,15 @@ class Span:
 
 
 class Heat:
-    def __init__(self, X, cmap='viridis', norm=None):
+    def __init__(self, X, cmap=None, norm=None):
         assert len(X)
-        assert isinstance(cmap, (six.string_types, _cmaps.Colormap))
+        assert cmap is None or isinstance(cmap, six.string_types) or isinstance(cmap, _cmaps.Colormap)
         len_first = len(X[0])
         assert all(len(x) == len_first for x in X)
         self._X = X
+
+        if cmap is None:
+            cmap = 'viridis'
 
         if isinstance(cmap, six.string_types):
             cmap = _cmaps.cmaps[cmap]
@@ -187,7 +190,7 @@ class Heat:
     def X(self):  # noqa: N802
         return self._X
 
-    def write(self, canvas, with_colors, in_fmt):
+    def write(self, canvas):
         assert len(self.X)
         assert canvas.height == len(self.X)
         assert canvas.width == len(self.X[0])

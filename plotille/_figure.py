@@ -458,7 +458,7 @@ class Figure(object):
             t.write(canvas, self.with_colors, self._in_fmt)
 
         for h in self._heats:
-            h.write(canvas, self.with_colors, self._in_fmt)
+            h.write(canvas)
 
         if self.origin and plot_origin:
             # print X / Y origin axis

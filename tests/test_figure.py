@@ -9,6 +9,7 @@ from pendulum import datetime, duration
 import pytest
 
 from plotille import Figure
+from plotille._colors import hsl
 from plotille._figure import Histogram, Plot
 
 try:
@@ -1231,3 +1232,28 @@ def test_axhspan_center_center():
 
     # print(fig.show())
     assert inspect.cleandoc(expected) == fig.show()
+
+
+def test_all_components(tty):
+    fig = Figure()
+    fig.width = 20
+    fig.height = 20
+    fig.color_mode = 'rgb'
+
+    fig.plot([0, 1], [0, 1])
+    fig.scatter([0.3, 0.5], [0.5, 0.3])
+    fig.axhspan(0.25, 0.75, xmin=0.25, xmax=0.75)
+    fig.text([0.4], [0.8], ['Hello'], lc=hsl(120, 1, 0.5))
+
+    xs = []
+    for y in range(fig.height):
+        row = []
+        y_val = (1.0 * y - fig.height / 2) / fig.height
+        for x in range(fig.width):
+            x_val = (1.0 * x - fig.width / 2) / fig.width
+            row.append(-1 * (x_val * x_val + y_val * y_val))
+        xs.append(row)
+
+    fig.imgshow(xs)
+
+    # print(fig.show())

@@ -24,7 +24,7 @@ def test_heat_by_name(tty, name, mode):
     heat = Heat(xs, cmap=name)
     cvs = Canvas(width, height, mode=mode)
 
-    heat.write(cvs, True, None)
+    heat.write(cvs)
 
     # print()
     # print(cvs.plot())
@@ -47,7 +47,7 @@ def test_heat_by_cmap(tty, name, mode):
     heat = Heat(xs, cmap=cmaps[name])
     cvs = Canvas(width, height, mode=mode)
 
-    heat.write(cvs, True, None)
+    heat.write(cvs)
 
     # print()
     # print(cvs.plot())
@@ -73,7 +73,7 @@ def test_heat_of_image(tty, mode, normalized):
     heat = Heat(xs)
     cvs = Canvas(width, height, mode=mode)
 
-    heat.write(cvs, True, None)
+    heat.write(cvs)
 
     # print()
     # print(cvs.plot())
