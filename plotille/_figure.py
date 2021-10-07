@@ -641,8 +641,6 @@ class Text:
 
 class Span:
     def __init__(self, xmin, xmax, ymin, ymax, lc):
-        assert 0 <= xmin <= xmax <= 1
-        assert 0 <= ymin <= ymax <= 1
         self._xmin = xmin
         self._xmax = xmax
         self._ymin = ymin
@@ -671,28 +669,16 @@ class Span:
 
     @classmethod
     def create(cls, xmin, xmax, ymin, ymax, lc=None):
-        if not (0 <= xmin <= xmax <= 1):
-            raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
-        if not (0 <= ymin <= ymax <= 1):
-            raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
-
         return cls(xmin, xmax, ymin, ymax, lc)
 
     def write(self, canvas, with_colors):
         color = self.lc if with_colors else None
 
-        # plot texts with color
-        xdelta = canvas.xmax_inside - canvas.xmin
-        assert xdelta > 0
-
-        ydelta = canvas.ymax_inside - canvas.ymin
-        assert ydelta > 0
-
         canvas.rect(
-            canvas.xmin + self.xmin * xdelta,
-            canvas.ymin + self.ymin * ydelta,
-            canvas.xmin + self.xmax * xdelta,
-            canvas.ymin + self.ymax * ydelta,
+            self.xmin,
+            self.ymin,
+            self.xmax,
+            self.ymax,
             color=color,
         )
 
