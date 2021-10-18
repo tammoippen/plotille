@@ -432,7 +432,7 @@ class Figure(object):
         """
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
-        if all(isinstance(p, Histogram) for p in self._plots):
+        if self._plots and all(isinstance(p, Histogram) for p in self._plots):
             ymin = 0
 
         if self._heats and self._width is None and self._height is None:
