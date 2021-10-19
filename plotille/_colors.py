@@ -177,7 +177,7 @@ def _value_to_index(v, off=55, steps=40):
     idx = (v - off) / steps
     if idx < 0:
         return 0
-    return round(idx)
+    return int(round(idx))
 
 
 def _isatty():

@@ -28,7 +28,7 @@ from numbers import Number
 from . import _cmaps_data
 
 
-class Colormap:
+class Colormap(object):
     """
     Baseclass for all scalar to RGB mappings.
 
@@ -81,7 +81,7 @@ class Colormap:
             return self.under
         if x > 1:
             return self.over
-        idx = round(x * (len(self._lut) - 1))
+        idx = int(round(x * (len(self._lut) - 1)))
         return self._lut[idx]
 
 
