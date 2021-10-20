@@ -23,6 +23,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import math
 from numbers import Number
 
 from . import _cmaps_data
@@ -75,7 +76,7 @@ class Colormap(object):
             return self._process_value(X)
 
     def _process_value(self, x):
-        if not isinstance(x, Number):
+        if not isinstance(x, Number) or math.isnan(x) or math.isinf(x):
             return self.bad
         if x < 0:
             return self.under

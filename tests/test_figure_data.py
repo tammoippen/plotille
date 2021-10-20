@@ -1,3 +1,4 @@
+from math import inf, nan
 from random import random
 
 import pytest
@@ -5,6 +6,7 @@ import pytest
 from plotille._canvas import Canvas
 from plotille._cmaps import cmaps
 from plotille._figure_data import Heat
+from plotille._normalize import Normalize
 
 
 @pytest.mark.parametrize('mode', ['rgb', 'byte'])
@@ -77,3 +79,37 @@ def test_heat_of_image(tty, mode, normalized):
 
     # print()
     # print(cvs.plot())
+
+
+def test_heat_bad_values(tty):
+    width = 3
+    height = 2
+    xs = [[nan, inf, None], [-1, 3.8, 1.1]]
+
+    heat = Heat(xs, norm=Normalize(0, 1))
+    cvs = Canvas(width, height, mode='rgb')
+
+    heat.write(cvs)
+
+    res = cvs.plot()
+    # print()
+    # print(res)
+    assert res == '\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\n⠀⠀⠀'
+
+
+def test_heat_bad_values_clip(tty):
+    width = 3
+    height = 2
+    xs = [[nan, inf, None], [-1, 3.8, 1.1]]
+
+    heat = Heat(xs, norm=Normalize(0, 1, clip=True))
+    cvs = Canvas(width, height, mode='rgb')
+
+    heat.write(cvs)
+
+    res = cvs.plot()
+    # print()
+    # print(res)
+    assert res == """\
+\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m
+\x1b[48;2;68;1;84m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m"""

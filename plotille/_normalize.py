@@ -97,6 +97,11 @@ class Normalize:
                 return 1.0
             return value
 
+        if clip and value < self.vmin:
+            return 0.0
+        if clip and value > self.vmax:
+            return 1.0
+
         value -= self.vmin
         value /= (self.vmax - self.vmin)
         return value
