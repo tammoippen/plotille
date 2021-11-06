@@ -19,10 +19,10 @@ pip install plotille
 
 Similar to other libraries:
 
-* like [drawille](https://github.com/asciimoo/drawille), but focused on graphing – plus X/Y-axis.
-* like [termplot](https://github.com/justnoise/termplot), but with braille (finer dots), left to right histogram and linear interpolation for plotting function.
-* like [termgraph](https://github.com/sgeisler/termgraph) (not on pypi), but very different style.
-* like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
+- like [drawille](https://github.com/asciimoo/drawille), but focused on graphing – plus X/Y-axis.
+- like [termplot](https://github.com/justnoise/termplot), but with braille (finer dots), left to right histogram and linear interpolation for plotting function.
+- like [termgraph](https://github.com/sgeisler/termgraph) (not on pypi), but very different style.
+- like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
 
 Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime`, `pendulum.datetime` or `numpy.datetime64` values. Labels are generated respecting the difference of `x_limits` and `y_limits`.
 
@@ -99,12 +99,15 @@ Figure.axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None)
 Figure.axhline(self, y, xmin=0, xmax=1, lc=None)
 # plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
 Figure.axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None)
+
+# Display data as an image, i.e., on a 2D regular raster.
+Figure.imgshow(self, X, cmap=None, norm=None)
 ```
 
 Other interesting functions are:
 
 ```python
-# remove all plots, texts and spans from the figure
+# remove all plots, texts, spans and images from the figure
 Figure.clear(self)
 # Create a canvas, plot the registered plots and return the string for displaying the plot
 Figure.show(self, legend=False)
@@ -126,7 +129,7 @@ plotille.plot(
     height=40,
     X_label='X',
     Y_label='Y',
-    linesep='\n',
+    linesep=os.linesep,
     interp='linear',
     x_min=None,
     x_max=None,
@@ -320,7 +323,7 @@ In [11]: print(plotille.histogram(np.random.normal(size=10000)))
 The underlying plotting area is modeled as the `Canvas` class:
 
 ```python
-In [12]: plotille.Canvas?
+In [12]:  plotille.Canvas?
 Init signature:
 plotille.Canvas(
     width,
@@ -330,7 +333,7 @@ plotille.Canvas(
     xmax=1,
     ymax=1,
     background=None,
-    color_mode='names',
+    **color_kwargs,
 )
 Docstring:
 A canvas object for plotting braille dots
@@ -355,8 +358,7 @@ Parameters:
     xmin, ymin: float     Lower left corner of reference system.
     xmax, ymax: float     Upper right corner of reference system.
     background: multiple  Background color of the canvas.
-    color_mode: str       The color-mode for all colors of this canvas; either 'names' (default)
-                          'rgb' or 'byte'. See `plotille.color()`.
+    **color_kwargs:       More arguments to the color-function. See `plotille.color()`.
 
 Returns:
     Canvas object
@@ -364,7 +366,7 @@ Returns:
 
 The most interesting functions are:
 
-*point:*
+_point:_
 
 ```python
 In [11]: plotille.Canvas.point?
@@ -380,7 +382,7 @@ Parameters:
     marker: str      Instead of braille dots set a marker char.
 ```
 
-*line:*
+_line:_
 
 ```python
 In [14]: plotille.Canvas.line?
@@ -395,7 +397,7 @@ Parameters:
     color: multiple  Color of the line.
 ```
 
-*rect:*
+_rect:_
 
 ```python
 In [15]: plotille.Canvas.rect?
@@ -410,7 +412,7 @@ Parameters:
     color: multiple    Color of the rect.
 ```
 
-*text:*
+_text:_
 
 ```python
 In [16]: plotille.Canvas.text?
@@ -426,7 +428,72 @@ Parameters:
     color: multiple  Color of the point.
 ```
 
-*plot:*
+_braille_image:_
+
+```python
+In [17]: plotille.Canvas.braille_image?
+Signature:
+plotille.Canvas.braille_image(
+    self,
+    pixels,
+    threshold=127,
+    inverse=False,
+    set_=True,
+)
+Docstring:
+Print an image using braille dots into the canvas.
+
+The pixels and braille dots in the canvas are a 1-to-1 mapping, hence
+a 80 x 80 pixel image will need a 40 x 20 canvas.
+
+Example:
+    from PIL import Image
+    import plotille as plt
+
+    img = Image.open("/path/to/image")
+    img = img.convert('L')
+    img = img.resize((80, 80))
+    cvs = plt.Canvas(40, 20)
+    cvs.braille_image(img.getdata(), 125)
+    print(cvs.plot())
+
+Parameters:
+    pixels: list[number]  All pixels of the image in one list.
+    threshold: float      All pixels above this threshold will be
+                          drawn.
+    inverse: bool         Whether to invert the image.
+    set_: bool            Whether to plot or remove the dots.
+```
+
+_image:_
+
+```python
+In [18]: plotille.Canvas.image?
+Signature: plotille.Canvas.image(self, pixels, set_=True)
+Docstring:
+Print an image using background colors into the canvas.
+
+The pixels of the image and the characters in the canvas are a
+1-to-1 mapping, hence a 80 x 80 image will need a 80 x 80 canvas.
+
+Example:
+    from PIL import Image
+    import plotille as plt
+
+    img = Image.open("/path/to/image")
+    img = img.convert('RGB')
+    img = img.resize((40, 40))
+    cvs = plt.Canvas(40, 40, mode='rgb')
+    cvs.image(img.getdata())
+    print(cvs.plot())
+
+Parameters:
+    pixels: list[(R,G,B)]  All pixels of the image in one list.
+    set_: bool             Whether to plot or remove the background
+                           colors.
+```
+
+_plot:_
 
 ```python
 In [16]: plotille.Canvas.plot?

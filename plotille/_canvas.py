@@ -322,7 +322,7 @@ class Canvas(object):
         """Print an image using background colors into the canvas.
 
         The pixels of the image and the characters in the canvas are a
-        1-to-1 mapping, hence a 80 x 80 image will need a 4 x 80 canvas.
+        1-to-1 mapping, hence a 80 x 80 image will need a 80 x 80 canvas.
 
         Example:
             from PIL import Image

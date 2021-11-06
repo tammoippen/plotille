@@ -139,6 +139,7 @@ class Figure(object):
 
     @property
     def with_colors(self):
+        """Whether to plot with or without color."""
         return self._with_colors
 
     @with_colors.setter
@@ -149,6 +150,7 @@ class Figure(object):
 
     @property
     def origin(self):
+        """Show or not show the origin in the plot."""
         return self._origin
 
     @origin.setter
@@ -271,6 +273,7 @@ class Figure(object):
         self._plots = []
         self._texts = []
         self._spans = []
+        self._heats = []
 
     def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
         """Create plot with X , Y values.
