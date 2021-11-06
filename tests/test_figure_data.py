@@ -49,7 +49,7 @@ def test_heat_by_cmap(tty, name, mode):
             row.append(-1 * (x_val * x_val + y_val * y_val))
         xs.append(row)
 
-    heat = Heat(xs, cmap=cmaps[name])
+    heat = Heat(xs, cmap=cmaps[name]())
     cvs = Canvas(width, height, mode=mode)
 
     heat.write(cvs)
@@ -90,6 +90,7 @@ def test_heat_bad_values(tty):
     xs = [[nan, inf, None], [-1, 3.8, 1.1]]
 
     heat = Heat(xs, norm=Normalize(0, 1))
+    heat.cmap.bad = (0, 0, 0)
     cvs = Canvas(width, height, mode='rgb')
 
     heat.write(cvs)
@@ -106,6 +107,7 @@ def test_heat_bad_values_clip(tty):
     xs = [[nan, inf, None], [-1, 3.8, 1.1]]
 
     heat = Heat(xs, norm=Normalize(0, 1, clip=True))
+    heat.cmap.bad = (0, 0, 0)
     cvs = Canvas(width, height, mode='rgb')
 
     heat.write(cvs)

@@ -34,7 +34,7 @@ class Colormap(object):
     Baseclass for all scalar to RGB mappings.
 
     Typically, Colormap instances are used to convert data values (floats)
-    from the interval ``[0, 1]`` to the RGBA color that the respective
+    from the interval ``[0, 1]`` to the RGB color that the respective
     Colormap represents. For scaling of data into the ``[0, 1]`` interval see
     `Normalize`.
     """
@@ -50,8 +50,8 @@ class Colormap(object):
         assert N > 0
         self.name = name
         self._n = N
-        self._lut = None
-        self.bad = (0, 0, 0)
+        self._lookup_table = None
+        self.bad = None
         self.over = None
         self.under = None
 
@@ -82,30 +82,31 @@ class Colormap(object):
             return self.under
         if x > 1:
             return self.over
-        idx = int(round(x * (len(self._lut) - 1)))
-        return self._lut[idx]
+        idx = int(round(x * (len(self._lookup_table) - 1)))
+        return self._lookup_table[idx]
 
 
 class ListedColormap(Colormap):
     def __init__(self, name, colors):
         super(ListedColormap, self).__init__(name, len(colors))
-        self._lut = colors
+        self._lookup_table = colors
+
+    @classmethod
+    def from_relative(cls, name, colors):
+        return cls(
+            name, [(round(255 * r), round(255 * g), round(255 * b)) for r, g, b in colors],
+        )
 
 
+# Always generate a new cmap, such that you can override bad / over under values easily.
 cmaps = {}
-for (name, data) in (
-    ('magma', _cmaps_data.magma_data),
-    ('inferno', _cmaps_data.inferno_data),
-    ('plasma', _cmaps_data.plasma_data),
-    ('viridis', _cmaps_data.viridis_data),
-    ('jet', _cmaps_data.jet_data),
-    ('copper', _cmaps_data.copper_data),
-):
-    cmaps[name] = ListedColormap(
-        colors=[(round(255 * r), round(255 * g), round(255 * b))for r, g, b in data], name=name,
-    )
-
-cmaps['gray'] = ListedColormap(
+cmaps['magma'] = lambda: ListedColormap.from_relative('magma', _cmaps_data.magma_data)
+cmaps['inferno'] = lambda: ListedColormap.from_relative('inferno', _cmaps_data.inferno_data)
+cmaps['plasma'] = lambda: ListedColormap.from_relative('plasma', _cmaps_data.plasma_data)
+cmaps['viridis'] = lambda: ListedColormap.from_relative('viridis', _cmaps_data.viridis_data)
+cmaps['jet'] = lambda: ListedColormap.from_relative('jet', _cmaps_data.jet_data)
+cmaps['copper'] = lambda: ListedColormap.from_relative('copper', _cmaps_data.copper_data)
+cmaps['gray'] = lambda: ListedColormap(
     name='gray', colors=[(idx, idx, idx) for idx in range(256)],
 )
 

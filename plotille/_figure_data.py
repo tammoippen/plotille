@@ -177,12 +177,12 @@ class Heat:
             cmap = 'viridis'
 
         if isinstance(cmap, six.string_types):
-            cmap = _cmaps.cmaps[cmap]
+            cmap = _cmaps.cmaps[cmap]()
         self.cmap = cmap
 
         if norm is None:
             norm = Normalize(
-                min(x for xs in X for x in xs), max(x for xs in X for x in xs),
+                min(x for xs in X for x in xs if x is not None), max(x for xs in X for x in xs if x is not None),
             )
         self.norm = norm
 
