@@ -449,7 +449,7 @@ class Figure(object):
         if len(X) > 0:
             self._heats += [Heat(X, cmap)]
 
-    def show(self, legend=False):
+    def show(self, legend=False):  # noqa: C901 complex (12)
         """Compute the plot.
 
         Parameters:

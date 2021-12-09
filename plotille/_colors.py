@@ -30,7 +30,7 @@ import sys
 import six
 
 
-def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):
+def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):  # noqa: C901 complex (12)
     """Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code

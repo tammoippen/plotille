@@ -5,3 +5,7 @@ style:
 
 tests:
 	poetry run pytest -s -vvv
+
+install:
+	poetry install
+	poetry run pip -r tests/requirements.txt

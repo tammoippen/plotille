@@ -42,8 +42,7 @@ jobs:
       - name: Install
         run: |
           poetry config experimental.new-installer false
-          poetry install
-          poetry run pip install -r tests/requirements.txt
+          make install
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
