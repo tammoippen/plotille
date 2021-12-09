@@ -18,10 +18,10 @@ jobs:
         include:
         - os: ubuntu-latest
           path: ~/.cache/pypoetry/virtualenvs
-        - os: macos-latest
-          path: ~/Library/Caches/pypoetry/virtualenvs
-        - os: windows-latest
-          path: ~\AppData\Local\pypoetry\Cache\virtualenvs
+        # - os: macos-latest
+        #   path: ~/Library/Caches/pypoetry/virtualenvs
+        # - os: windows-latest
+        #   path: ~\AppData\Local\pypoetry\Cache\virtualenvs
 
     runs-on: ${{ matrix.os }}
     steps:
