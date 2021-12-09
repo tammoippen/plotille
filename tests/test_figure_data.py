@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from math import inf, nan
+try:
+    from math import inf, nan
+except ImportError:
+    inf = float('inf')
+    nan = float('nan')
 from random import random
 
 import pytest
