@@ -281,7 +281,13 @@ class Figure(object):
             starts = ['-' * 11 + '|-', ' ' * 11 + '| ']
         res = []
 
-        res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
+        res += [
+            starts[0]
+            + '|---------' * (self.width // 10)
+            + '|'
+            + '-' * (self.width % 10)
+            + '-> (' + label + ')',
+        ]
         bottom = []
 
         for i in range(self.width // 10 + 1):
