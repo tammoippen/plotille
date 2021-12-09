@@ -8,4 +8,4 @@ tests:
 
 install:
 	poetry install
-	poetry run pip -r tests/requirements.txt
+	poetry run pip install -r tests/requirements.txt
