@@ -31,6 +31,12 @@ jobs:
         with:
           poetry-version: 1.1
 
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
+
       - name: Install
         run: |
           poetry config experimental.new-installer false
