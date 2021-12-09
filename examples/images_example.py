@@ -25,8 +25,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 try:
     from PIL import Image
-except ImportError as e:
-    raise Exception('Need to have PIL / pillow installed for this example.') from e
+except ImportError:
+    raise Exception('Need to have PIL / pillow installed for this example.')
 
 from plotille import Canvas, Figure
 
