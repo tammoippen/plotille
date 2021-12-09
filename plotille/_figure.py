@@ -396,33 +396,27 @@ class Figure(object):
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
-    def imgshow(self, X, cmap=None, norm=None):
+    def imgshow(self, X, cmap=None):
         """Display data as an image, i.e., on a 2D regular raster.
 
         Parameters:
             X: array-like
                 The image data. Supported array shapes are:
                 - (M, N): an image with scalar data. The values are mapped
-                          to colors using normalization and a colormap.
-                          See parameters norm, cmap.
+                        to colors using a colormap. The values have to be in
+                        the 0-1 (float) range. Out of range, invalid type and
+                        None values are handled by the cmap.
                 - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
 
                 The first two dimensions (M, N) define the rows and columns of the image.
-                Out-of-range RGB values are clipped.
 
             cmap: cmapstr or Colormap
                 The Colormap instance or registered colormap name used
                 to map scalar data to colors. This parameter is ignored
                 for RGB data.
-
-            norm: Normalize, optional
-                The Normalize instance used to scale scalar data to the [0, 1]
-                range before mapping to colors using cmap. By default, a linear
-                scaling mapping the lowest value to 0 and the highest to 1 is used.
-                This parameter is ignored for RGB data.
         """
         if len(X) > 0:
-            self._heats += [Heat(X, cmap, norm)]
+            self._heats += [Heat(X, cmap)]
 
     def show(self, legend=False):
         """Compute the plot.

@@ -101,7 +101,7 @@ Figure.axhline(self, y, xmin=0, xmax=1, lc=None)
 Figure.axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None)
 
 # Display data as an image, i.e. on a 2D regular raster.
-Figure.imgshow(self, X, cmap=None, norm=None)
+Figure.imgshow(self, X, cmap=None)
 ```
 
 Other interesting functions are:

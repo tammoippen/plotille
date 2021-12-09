@@ -9,7 +9,6 @@ import pytest
 from plotille._canvas import Canvas
 from plotille._cmaps import cmaps
 from plotille._figure_data import Heat
-from plotille._normalize import Normalize
 
 
 @pytest.mark.parametrize('mode', ['rgb', 'byte'])
@@ -89,8 +88,7 @@ def test_heat_bad_values(tty):
     height = 2
     xs = [[nan, inf, None], [-1, 3.8, 1.1]]
 
-    heat = Heat(xs, norm=Normalize(0, 1))
-    heat.cmap.bad = (0, 0, 0)
+    heat = Heat(xs)
     cvs = Canvas(width, height, mode='rgb')
 
     heat.write(cvs)
@@ -98,16 +96,18 @@ def test_heat_bad_values(tty):
     res = cvs.plot()
     # print()
     # print(res)
-    assert res == '\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\n⠀⠀⠀'
+    assert res == '⠀⠀⠀\n⠀⠀⠀'
 
 
-def test_heat_bad_values_clip(tty):
+def test_heat_bad_values_own_values(tty):
     width = 3
     height = 2
     xs = [[nan, inf, None], [-1, 3.8, 1.1]]
 
-    heat = Heat(xs, norm=Normalize(0, 1, clip=True))
+    heat = Heat(xs)
     heat.cmap.bad = (0, 0, 0)
+    heat.cmap.over = (255, 0, 0)
+    heat.cmap.under = (0, 255, 0)
     cvs = Canvas(width, height, mode='rgb')
 
     heat.write(cvs)
@@ -115,6 +115,7 @@ def test_heat_bad_values_clip(tty):
     res = cvs.plot()
     # print()
     # print(res)
-    assert res == """\
-\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m
-\x1b[48;2;68;1;84m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m\x1b[48;2;253;231;37m⠀\x1b[0m"""
+    assert res == (
+        '\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\n'
+        '\x1b[48;2;0;255;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m'
+    )

@@ -27,7 +27,6 @@ import six
 from six.moves import zip
 
 from . import _cmaps
-from ._normalize import Normalize
 from ._util import hist
 
 
@@ -166,7 +165,26 @@ class Span:
 
 
 class Heat:
-    def __init__(self, X, cmap=None, norm=None):
+    def __init__(self, X, cmap=None):
+        """Initialize a Heat-class.
+
+        Parameters
+        ----------
+        X: array-like
+            The image data. Supported array shapes are:
+            - (M, N): an image with scalar data. The values are mapped
+                      to colors using a colormap. The values have to be in
+                      the 0-1 (float) range. Out of range, invalid type and
+                      None values are handled by the cmap.
+            - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
+
+            The first two dimensions (M, N) define the rows and columns of the image.
+
+        cmap: cmapstr or Colormap, default: 'viridis'
+            The Colormap instance or registered colormap name used
+            to map scalar data to colors. This parameter is ignored
+            for RGB data.
+        """
         assert len(X)
         assert cmap is None or isinstance(cmap, six.string_types) or isinstance(cmap, _cmaps.Colormap)
         len_first = len(X[0])
@@ -179,12 +197,6 @@ class Heat:
         if isinstance(cmap, six.string_types):
             cmap = _cmaps.cmaps[cmap]()
         self.cmap = cmap
-
-        if norm is None:
-            norm = Normalize(
-                min(x for xs in X for x in xs if x is not None), max(x for xs in X for x in xs if x is not None),
-            )
-        self.norm = norm
 
     @property
     def X(self):  # noqa: N802
@@ -206,4 +218,4 @@ class Heat:
             canvas.image(flat)
         except TypeError:
             # cannot call len on a float
-            canvas.image(self.cmap(self.norm(flat)))
+            canvas.image(self.cmap(flat))

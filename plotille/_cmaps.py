@@ -34,9 +34,9 @@ class Colormap(object):
     Baseclass for all scalar to RGB mappings.
 
     Typically, Colormap instances are used to convert data values (floats)
-    from the interval ``[0, 1]`` to the RGB color that the respective
-    Colormap represents. For scaling of data into the ``[0, 1]`` interval see
-    `Normalize`.
+    from the interval `[0, 1]` to the RGB color that the respective
+    Colormap represents. Scaling the data into the `[0, 1]` interval is
+    responsibility of the caller.
     """
     def __init__(self, name, N=256):
         """
@@ -61,13 +61,13 @@ class Colormap(object):
         ----------
         X : float or iterable of floats
             The data value(s) to convert to RGB.
-            For floats, X should be in the interval ``[0.0, 1.0]`` to
-            return the RGB values ``X*100`` percent along the Colormap line.
+            For floats, X should be in the interval `[0.0, 1.0]` to
+            return the RGB values `X*100` percent along the Colormap line.
 
         Returns
         -------
         Tuple of RGB values if X is scalar, otherwise an array of
-        RGB values with a shape of ``X.shape + (3, )``.
+        RGB values with a shape of `X.shape + (3, )`.
         """
         try:
             return [self._process_value(x) for x in X]
