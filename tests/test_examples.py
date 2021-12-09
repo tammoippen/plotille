@@ -25,7 +25,7 @@ except ImportError:
 def change_to_examples_dir(request):
     os.chdir(request.fspath.dirname + '/../examples')
     yield
-    os.chdir(request.config.invocation_dir)
+    os.chdir(str(request.config.invocation_dir))
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
