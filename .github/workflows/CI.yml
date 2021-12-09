@@ -13,13 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest] # , macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest] #, windows-latest]
         python-version: ['pypy-2.7', 2.7, 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9] #, '3.10']
         include:
         - os: ubuntu-latest
           path: ~/.cache/pypoetry/virtualenvs
-        # - os: macos-latest
-        #   path: ~/Library/Caches/pypoetry/virtualenvs
+        - os: macos-latest
+          path: ~/Library/Caches/pypoetry/virtualenvs
         # - os: windows-latest
         #   path: ~\AppData\Local\pypoetry\Cache\virtualenvs
 
@@ -38,7 +38,7 @@ jobs:
         with:
           poetry-version: 1.1
 
-      - name: Cache multiple paths
+      - name: Cache Install
         uses: actions/cache@v2
         with:
           path: |
@@ -48,6 +48,7 @@ jobs:
 
       - name: Install
         run: |
+          env
           poetry config experimental.new-installer false
           make install
 
