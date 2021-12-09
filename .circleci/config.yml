@@ -64,7 +64,9 @@ commands:
       - run:
           name: CodeCov
           command: |
-            bash <(curl -s https://codecov.io/bash) \
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x codecov
+            ./codecov -t ${CODECOV_TOKEN} \
               -n coverage-$CIRCLE_JOB \
               -F unittests
 
