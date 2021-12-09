@@ -160,9 +160,34 @@ class Figure(object):
         self._origin = value
 
     def register_label_formatter(self, type_, formatter):
+        """Register a formatter for labels of a certain type.
+
+        See `plotille._input_formatter` for examples.
+
+        Parameters
+        ----------
+        type_
+            A python typte, that can be used for isinstance tests.
+        formatter: (val: type_, chars: int, delta, left: bool = False) -> str
+            Function that formats `val` into a string.
+            chars: int => number of chars you should fill
+            delta      => the difference between the smallest and largest X/Y value
+            left: bool => align left or right.
+        """
         self._in_fmt.register_formatter(type_, formatter)
 
     def register_float_converter(self, type_, converter):
+        """Register a converter from some type_ to float.
+
+        See `plotille._input_formatter` for examples.
+
+        Parameters
+        ----------
+        type_
+            A python type, that can be used for isinstance tests.
+        formatter: (val: type_) -> float
+            Function that formats `val` into a float.
+        """
         self._in_fmt.register_converter(type_, converter)
 
     def x_limits(self):
