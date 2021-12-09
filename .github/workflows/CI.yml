@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest] # , macos-latest, windows-latest]
-        python-version: ['pypy-2.7', 2.7, 'pypy-3.6', 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9] #, '3.10']
+        python-version: ['pypy-2.7', 2.7, 'pypy-3.6', 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9, '3.10']
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -35,12 +35,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('tests/requirements.txt') }}
 
       - name: Install
         run: |
           poetry config experimental.new-installer false
           poetry install
+          poetry run pip install -r tests/requirements.txt
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
