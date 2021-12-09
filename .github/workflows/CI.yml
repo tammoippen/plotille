@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest] # , macos-latest, windows-latest]
-        python-version: ['pypy-2.7', 2.7, 'pypy-3.6', 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9, '3.10']
+        python-version: ['pypy-2.7', 2.7, 'pypy-3.6', 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9] #, '3.10']
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -43,6 +43,7 @@ jobs:
           poetry install
 
       - name: Style
+        if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
         run: poetry run flake8 tests/ plotille/ examples/
 
       - name: Tests
