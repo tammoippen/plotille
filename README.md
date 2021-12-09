@@ -75,7 +75,7 @@ In [21] fig.plot(X, (X+2)**2 , lc=200, label='square')
 In [22] print(fig.show(legend=True))
 ```
 
-![Example figure](https://github.com/tammoippen/plotille/raw/master/imgs/figure.png)
+![Example figure](./imgs/figure.png)
 
 The available plotting functions are:
 
@@ -100,7 +100,7 @@ Figure.axhline(self, y, xmin=0, xmax=1, lc=None)
 # plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
 Figure.axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None)
 
-# Display data as an image, i.e., on a 2D regular raster.
+# Display data as an image, i.e. on a 2D regular raster.
 Figure.imgshow(self, X, cmap=None, norm=None)
 ```
 
@@ -112,6 +112,8 @@ Figure.clear(self)
 # Create a canvas, plot the registered plots and return the string for displaying the plot
 Figure.show(self, legend=False)
 ```
+
+Please have a look at the [`examples/`](./examples) folder.
 
 ### Graphing
 
@@ -168,7 +170,7 @@ Returns:
 In [5]: print(plotille.plot(X, np.sin(X), height=30, width=60))
 ```
 
-![Example plot](https://github.com/tammoippen/plotille/raw/master/imgs/plot.png)
+![Example plot](./imgs/plot.png)
 
 #### Scatter
 
@@ -222,7 +224,7 @@ Returns:
 In [7]: print(plotille.scatter(X, np.sin(X), height=30, width=60))
 ```
 
-![Example scatter](https://github.com/tammoippen/plotille/raw/master/imgs/scatter.png)
+![Example scatter](./imgs/scatter.png)
 
 #### Hist
 
@@ -264,7 +266,7 @@ Returns:
 In [9]: print(plotille.hist(np.random.normal(size=10000)))
 ```
 
-![Example hist](https://github.com/tammoippen/plotille/raw/master/imgs/hist.png)
+![Example hist](./imgs/hist.png)
 
 #### Histogram
 
@@ -316,7 +318,7 @@ Returns:
 In [11]: print(plotille.histogram(np.random.normal(size=10000)))
 ```
 
-![Example histogram](https://github.com/tammoippen/plotille/raw/master/imgs/histogram.png)
+![Example histogram](./imgs/histogram.png)
 
 ### Canvas
 
@@ -520,7 +522,33 @@ In [22]: c.line(0.35, 0.8, 0.6, 0.6)
 In [23]: print(c.plot())
 ```
 
-![House](https://github.com/tammoippen/plotille/raw/master/imgs/house.png)
+![House](./imgs/house.png)
+
+Or you could render images with braille dots:
+
+```python
+In [24]: img = Image.open('./imgs/ich.jpg')
+In [25]: img = img.convert('L')
+In [26]: img = img.resize((80, 80))
+In [27]: cvs = Canvas(40, 20)
+In [28]: cvs.braille_image(img.getdata())
+In [29]: print(cvs.plot())
+```
+
+![Me with dots](./imgs/ich-dots.png)
+
+Or you could render images with the background color of characters:
+
+```python
+In [24]: img = Image.open('./imgs/ich.jpg')
+In [25]: img = img.convert('RGB')
+In [25]: img = img.resize((80, 40))
+In [27]: cvs = Canvas(80, 40, mode="rgb")
+In [28]: cvs.image(img.getdata())
+In [29]: print(cvs.plot())
+```
+
+![Me with chars](./imgs/ich-chars.png)
 
 ## Stargazers over time
 
