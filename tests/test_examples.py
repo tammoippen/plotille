@@ -32,6 +32,8 @@ def change_to_examples_dir(request):
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_examples(change_to_examples_dir):
     sys.path.insert(0, '.')
+    if sys.version.startswith('3.'):
+        from importlib import reload
     reload(sys)
     sys.setdefaultencoding('UTF8')
     for fname in glob('*_example.py'):
