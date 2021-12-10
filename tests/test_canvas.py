@@ -275,7 +275,7 @@ def test_braille_image():
     ⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
 
-    if sys.version.startswith('2.'):
+    if sys.version_info[0] == 2:
         assert inspect.cleandoc(expected_27) == cvs.plot()
     else:
         assert inspect.cleandoc(expected_3) == cvs.plot()
@@ -355,7 +355,7 @@ def test_braille_image_inverse():
     ⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
 
-    if sys.version.startswith('2.'):
+    if sys.version_info[0] == 2:
         assert inspect.cleandoc(expected_27) == cvs.plot()
     else:
         assert inspect.cleandoc(expected_3) == cvs.plot()

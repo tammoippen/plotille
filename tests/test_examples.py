@@ -37,8 +37,9 @@ def change_to_examples_dir(request):
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_examples(change_to_examples_dir):
     sys.path.insert(0, '.')
-    reload(sys)
-    sys.setdefaultencoding('UTF8')
+    if sys.version_info[0] == 2:
+        reload(sys)
+        sys.setdefaultencoding('UTF8')
     for fname in glob('*_example.py'):
         print(fname)
         name = fname.split('.')[0]
