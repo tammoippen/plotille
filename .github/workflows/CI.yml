@@ -28,6 +28,10 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Install build deps
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: brew install zlib
+
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
