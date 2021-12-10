@@ -22,15 +22,18 @@ jobs:
           path: ~/Library/Caches/pypoetry/virtualenvs
         # - os: windows-latest
         #   path: ~\AppData\Local\pypoetry\Cache\virtualenvs
+        exclude:
+        - os: macos-latest
+          python-version: 'pypy-2.7'
+        - os: macos-latest
+          python-version: 'pypy-3.7'
+        - os: macos-latest
+          python-version: 'pypy-3.8'
 
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-
-      - name: Install build deps
-        if: ${{ matrix.os == 'macos-latest' }}
-        run: brew install zlib
 
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
