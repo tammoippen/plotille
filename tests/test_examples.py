@@ -33,7 +33,7 @@ def change_to_examples_dir(request):
 def test_examples(change_to_examples_dir):
     sys.path.insert(0, '.')
     reload(sys)
-    sys.setdefaultencoding("UTF8")
+    sys.setdefaultencoding('UTF8')
     for fname in glob('*_example.py'):
         print(fname)
         name = fname.split('.')[0]
