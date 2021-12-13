@@ -61,7 +61,7 @@ jobs:
         uses: snok/install-poetry@v1
         if: steps.restore-cache.outputs.cache-hit != 'true'
         with:
-          version: 1.1
+          version: 1.1.12
           virtualenvs-create: false
       - run: poetry config experimental.new-installer false
 
