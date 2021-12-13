@@ -2,15 +2,10 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from glob import glob
-import os
+import subprocess
 import sys
 
 import pytest
-
-try:
-    from importlib import reload
-except ImportError:
-    pass
 
 try:
     import numpy  # noqa: F401
@@ -26,22 +21,11 @@ except ImportError:
     have_pillow = False
 
 
-@pytest.fixture
-def change_to_examples_dir(request):
-    os.chdir(request.fspath.dirname + '/../examples')
-    yield
-    os.chdir(str(request.config.invocation_dir))
-
-
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-def test_examples(change_to_examples_dir):
-    sys.path.insert(0, '.')
-    if sys.version_info[0] == 2:
-        reload(sys)
-        sys.setdefaultencoding('UTF8')
-    for fname in glob('*_example.py'):
-        print(fname)
-        name = fname.split('.')[0]
-        example_module = __import__(name)
-        example_module.main()
+def test_examples():
+    for fname in glob('./examples/*_example.py'):
+        p = subprocess.Popen([sys.executable, fname[11:]], cwd='./examples', shell=False,
+                             stderr=subprocess.PIPE)
+        p.wait()
+        assert p.returncode == 0, 'stderr:\n  ' + '  '.join(line for line in p.stderr)
