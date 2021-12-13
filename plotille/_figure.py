@@ -511,7 +511,7 @@ class Figure(object):
         )
 
         if legend:
-            res += '\n\nLegend:\n-------\n'
+            res += '{0}{0}Legend:{0}-------{0}'.format(self.linesep)
             lines = []
             for i, p in enumerate(self._plots):
                 if isinstance(p, Plot):
@@ -525,7 +525,7 @@ class Figure(object):
                             no_color=not self.with_colors,
                         ),
                     ]
-            res += '\n'.join(lines)
+            res += self.linesep.join(lines)
         return res
 
 
