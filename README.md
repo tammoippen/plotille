@@ -1,6 +1,6 @@
 # Plotille
 
-[![CircleCI](https://circleci.com/gh/tammoippen/plotille.svg?style=svg)](https://circleci.com/gh/tammoippen/plotille)
+[![CI](https://github.com/tammoippen/plotille/actions/workflows/CI.yml/badge.svg)](https://github.com/tammoippen/plotille/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/tammoippen/plotille/branch/master/graph/badge.svg?token=OGWI832JNM)](https://codecov.io/gh/tammoippen/plotille)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tammoippen/plotille.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tammoippen/plotille/context:python)
 [![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.8-brightgreen.svg)
