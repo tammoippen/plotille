@@ -23,6 +23,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import os
+
 try:
     from PIL import Image
 except ImportError:
@@ -31,9 +33,12 @@ except ImportError:
 from plotille import Canvas, Figure
 
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+
 def canvas_dots():
     # Canvas on its own can draw an image using dots
-    img = Image.open('../imgs/ich.jpg')
+    img = Image.open(current_dir + '/../imgs/ich.jpg')
     img = img.convert('L')
     img = img.resize((80, 80))
     cvs = Canvas(40, 20)
@@ -47,7 +52,7 @@ def figure_image():
     # Figure can draw an image using the background color of characters
     width = 80
     height = 40
-    img = Image.open('../imgs/ich.jpg')
+    img = Image.open(current_dir + '/../imgs/ich.jpg')
     img = img.convert('RGB')
     img = img.resize((width, height))
     # we need the data as height x width array of rgb values
@@ -70,7 +75,7 @@ def figure_cmap():
     # Figure can draw an image using the background color of characters
     width = 80
     height = 40
-    img = Image.open('../imgs/ich.jpg')
+    img = Image.open(current_dir + '/../imgs/ich.jpg')
     # only luminance here
     img = img.convert('L')
     img = img.resize((width, height))
