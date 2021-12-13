@@ -17,11 +17,11 @@ jobs:
         python-version: ['pypy-2.7', 2.7, 3.6, 'pypy-3.7', 3.7, 'pypy-3.8', 3.8, 3.9] #, '3.10']
         include:
         - os: ubuntu-latest
-          path: ~/.cache/pypoetry/virtualenvs
+          path: ~/.cache/pip
         - os: macos-latest
-          path: ~/Library/Caches/pypoetry/virtualenvs
+          path: ~/Library/Caches/pip
         - os: windows-latest
-          path: ~\AppData\Local\pypoetry\Cache\virtualenvs
+          path: ~\AppData\Local\pip\Cache
         exclude:
         - os: macos-latest
           python-version: 'pypy-2.7'
@@ -48,23 +48,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: 1.1
-
       - name: Cache Install
+        id: restore-cache
         uses: actions/cache@v2
         with:
           path: |
             ${{ matrix.path }}
             poetry.lock
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('tests/requirements.txt') }}
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('tests/requirements.txt') }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        with:
+          version: 1.1
+          virtualenvs-create: false
+        run: poetry config experimental.new-installer false
 
       - name: Install
-        run: |
-          poetry config experimental.new-installer false
-          make install
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: make install
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
