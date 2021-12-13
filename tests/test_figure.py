@@ -2,7 +2,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import datetime as orig_datetime
-import inspect
+import os
 
 from mock import call
 from pendulum import datetime, duration
@@ -379,7 +379,7 @@ def test_histogram(get_canvas, mocker):
     assert canvas.line.call_count == 3  # 1 dot between 1 and 2
 
 
-def test_show():
+def test_show(cleandoc):
     fig = Figure()
     fig.with_colors = False
 
@@ -431,9 +431,9 @@ def test_show():
                | 0.8000000 1.1000000 1.4000000 1.7000000 2         2.3000000 2.6000000 2.9000000 3.2000000"""
 
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
-    assert fig.show(legend=True) == inspect.cleandoc(expected) + '\n\nLegend:\n-------\n'  # no label for histograms
+    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}'.format(os.linesep)  # no label for histograms
 
     fig.clear()
     fig.plot([-0.1, 0.2], [-0.2, 0.3])
@@ -484,15 +484,15 @@ def test_show():
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | -0.130000 -0.085000 -0.040000 0.0050000 0.0500000 0.0950000 0.1400000 0.1850000 0.2300000"""
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()  # no legend, origin
+    assert cleandoc(expected) == fig.show()  # no legend, origin
 
     # no label for histograms
-    assert fig.show(legend=True) == inspect.cleandoc(expected) + '\n\nLegend:\n-------\n⠤⠤ Label 0'
+    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}⠤⠤ Label 0'.format(os.linesep)
 
 
 @pytest.fixture()
-def timeseries():
-    return inspect.cleandoc("""
+def timeseries(cleandoc):
+    return cleandoc("""
        (Y)     ^
     0.60000000 |
     0.57000000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -572,8 +572,8 @@ def test_timeseries_orig_dt(timeseries):
 
 
 @pytest.fixture()
-def histogram():
-    return inspect.cleandoc("""
+def histogram(cleandoc):
+    return cleandoc("""
        (Y)     ^
     2.10000000 |
     2.04750000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -764,7 +764,7 @@ def test_date_min_max_y():
     assert res.split('\n')[-3].startswith('  16T11:09 |')
 
 
-def test_lbl_formatter():
+def test_lbl_formatter(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -800,10 +800,10 @@ def test_lbl_formatter():
     -----------|-|---------|---------|---------|-> (X)
                | -9        29        69        108      """
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_float_converter():
+def test_float_converter(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -839,10 +839,10 @@ def test_float_converter():
     -----------|-|---------|---------|---------|-> (X)
                | -9.900000 29.700000 69.300000 108.90000"""
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvline_center():
+def test_axvline_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -867,10 +867,10 @@ def test_axvline_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvline_center_center():
+def test_axvline_center_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -895,10 +895,10 @@ def test_axvline_center_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvline_left():
+def test_axvline_left(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -923,10 +923,10 @@ def test_axvline_left():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvline_right():
+def test_axvline_right(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -951,10 +951,10 @@ def test_axvline_right():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvspan_border():
+def test_axvspan_border(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -979,10 +979,10 @@ def test_axvspan_border():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvspan_center():
+def test_axvspan_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1007,10 +1007,10 @@ def test_axvspan_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axvspan_center_center():
+def test_axvspan_center_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1035,10 +1035,10 @@ def test_axvspan_center_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhline_center():
+def test_axhline_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1063,10 +1063,10 @@ def test_axhline_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhline_center_center():
+def test_axhline_center_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1091,10 +1091,10 @@ def test_axhline_center_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhline_bottom():
+def test_axhline_bottom(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1119,10 +1119,10 @@ def test_axhline_bottom():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhline_top():
+def test_axhline_top(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1147,10 +1147,10 @@ def test_axhline_top():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhspan_border():
+def test_axhspan_border(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1175,10 +1175,10 @@ def test_axhspan_border():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhspan_center():
+def test_axhspan_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1203,10 +1203,10 @@ def test_axhspan_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_axhspan_center_center():
+def test_axhspan_center_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 30
@@ -1231,7 +1231,7 @@ def test_axhspan_center_center():
                | 0         0.3333333 0.6666667 1        """
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
 def test_all_components(tty):
@@ -1259,7 +1259,7 @@ def test_all_components(tty):
     # print(fig.show())
 
 
-def test_irregular_width_and_height():
+def test_irregular_width_and_height(cleandoc):
     fig = Figure()
     fig.with_colors = False
     fig.width = 24
@@ -1282,4 +1282,4 @@ def test_irregular_width_and_height():
                | 0         0.4166667 0.8333333"""
 
     # print(fig.show())
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()

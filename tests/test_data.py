@@ -75,7 +75,7 @@ def test_circle(radius):
         assert equal <= 2
 
 
-def test_ellipse_rotation_show():
+def test_ellipse_rotation_show(cleandoc):
     x1, y1 = plt_data.ellipse(0, 0, angle=0.25 * math.pi, x_amplitude=2, y_amplitude=1, n=100)
     fig = plt.Figure()
     fig.with_colors = False
@@ -130,4 +130,4 @@ def test_ellipse_rotation_show():
                | -2        -1.500000 -1        -0.500000 0         0.5000000 1         1.5000000 2        """
 
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()

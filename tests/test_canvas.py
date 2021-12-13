@@ -2,6 +2,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import inspect
+import os
 import sys
 
 import pytest
@@ -224,7 +225,7 @@ def test_unset_keep_color_dots(tty, other_color):
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-def test_braille_image():
+def test_braille_image(cleandoc):
     img = Image.open('imgs/ich.jpg')
     img = img.convert('L')
     img = img.resize((80, 80))
@@ -276,13 +277,13 @@ def test_braille_image():
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
 
     if sys.version_info[0] == 2:
-        assert inspect.cleandoc(expected_27) == cvs.plot()
+        assert cleandoc(expected_27) == cvs.plot()
     else:
-        assert inspect.cleandoc(expected_3) == cvs.plot()
+        assert cleandoc(expected_3) == cvs.plot()
 
     cvs.braille_image(img.getdata(), set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
@@ -294,17 +295,17 @@ def test_braille_image_thresholds(threshold):
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), threshold=threshold)
 
-    assert '\n'.join(['⠀' * 40] * 20) != cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) != cvs.plot()
     # print()
     # print(cvs.plot())
 
     cvs.braille_image(img.getdata(), threshold=threshold, set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-def test_braille_image_inverse():
+def test_braille_image_inverse(cleandoc):
     img = Image.open('imgs/ich.jpg')
     img = img.convert('L')
     img = img.resize((80, 80))
@@ -356,13 +357,13 @@ def test_braille_image_inverse():
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
 
     if sys.version_info[0] == 2:
-        assert inspect.cleandoc(expected_27) == cvs.plot()
+        assert cleandoc(expected_27) == cvs.plot()
     else:
-        assert inspect.cleandoc(expected_3) == cvs.plot()
+        assert cleandoc(expected_3) == cvs.plot()
 
     cvs.braille_image(img.getdata(), inverse=True, set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
@@ -374,11 +375,11 @@ def test_braille_image_inverse_thresholds(threshold):
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), threshold=threshold, inverse=True)
 
-    assert '\n'.join(['⠀' * 40] * 20) != cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) != cvs.plot()
 
     cvs.braille_image(img.getdata(), threshold=threshold, inverse=True, set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
@@ -404,14 +405,14 @@ def test_image_rgb(tty):
     cvs = Canvas(40, 40, mode='rgb')
     cvs.image(img.getdata())
 
-    assert '\n'.join(['⠀' * 40] * 40) != cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 40) != cvs.plot()
 
     # print()
     # print(cvs.plot())
 
     cvs.image(img.getdata(), set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 40) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 40) == cvs.plot()
 
 
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
@@ -422,11 +423,11 @@ def test_image_byte(tty):
     cvs = Canvas(40, 40, mode='byte')
     cvs.image(img.getdata())
 
-    assert '\n'.join(['⠀' * 40] * 40) != cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 40) != cvs.plot()
 
     # print()
     # print(cvs.plot())
 
     cvs.image(img.getdata(), set_=False)
     # empty canvas
-    assert '\n'.join(['⠀' * 40] * 40) == cvs.plot()
+    assert os.linesep.join(['⠀' * 40] * 40) == cvs.plot()

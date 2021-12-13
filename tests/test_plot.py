@@ -6,7 +6,7 @@ import inspect
 from plotille import plot
 
 
-def test_constant_y():
+def test_constant_y(cleandoc):
     expected = """
        (Y)     ^
     0.55000000 |
@@ -53,10 +53,10 @@ def test_constant_y():
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0.7000000 1.1500000 1.6000000 2.0500000 2.5000000 2.9500000 3.4000000 3.8500000 4.3000000"""
     # print(plot([1, 4], [0.5, 0.5]))
-    assert inspect.cleandoc(expected) == plot([1, 4], [0.5, 0.5])
+    assert cleandoc(expected) == plot([1, 4], [0.5, 0.5])
 
 
-def test_constant_x():
+def test_constant_x(cleandoc):
     expected = """
        (Y)     ^
     4.30000000 |
@@ -103,10 +103,10 @@ def test_constant_x():
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0.4500000 0.4625000 0.4750000 0.4875000 0.5000000 0.5125000 0.5250000 0.5375000 0.5500000"""
     # print(plot([0.5, 0.5], [1, 4]))
-    assert inspect.cleandoc(expected) == plot([0.5, 0.5], [1, 4])
+    assert cleandoc(expected) == plot([0.5, 0.5], [1, 4])
 
 
-def test_constant_x_y():
+def test_constant_x_y(cleandoc):
     expected = """
        (Y)     ^
     0.55000000 |
@@ -153,10 +153,10 @@ def test_constant_x_y():
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0.4500000 0.4625000 0.4750000 0.4875000 0.5000000 0.5125000 0.5250000 0.5375000 0.5500000"""
     # print(plot([0.5, 0.5], [0.5, 0.5]))
-    assert inspect.cleandoc(expected) == plot([0.5, 0.5], [0.5, 0.5])
+    assert cleandoc(expected) == plot([0.5, 0.5], [0.5, 0.5])
 
 
-def test_single_value():
+def test_single_value(cleandoc):
     expected = """
        (Y)     ^
     0.55000000 |
@@ -203,4 +203,4 @@ def test_single_value():
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0.4500000 0.4625000 0.4750000 0.4875000 0.5000000 0.5125000 0.5250000 0.5375000 0.5500000"""
     # print(plot([0.5], [0.5]))
-    assert inspect.cleandoc(expected) == plot([0.5], [0.5])
+    assert cleandoc(expected) == plot([0.5], [0.5])
