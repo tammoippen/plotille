@@ -37,6 +37,8 @@ jobs:
           python-version: 'pypy-3.8'
 
     runs-on: ${{ matrix.os }}
+    env:
+      PYTHONIOENCODING: UTF-8
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
