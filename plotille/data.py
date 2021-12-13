@@ -49,7 +49,7 @@ def ellipse(x_center, y_center, angle=0,
     assert isinstance(n, six.integer_types)
     assert n > 0
     assert isinstance(x_amplitude, six.integer_types) or isinstance(x_amplitude, float)
-    assert x_amplitude > 0 or x_amplitude > 0
+    assert x_amplitude > 0
     assert isinstance(y_amplitude, six.integer_types) or isinstance(y_amplitude, float)
     assert y_amplitude > 0
 
