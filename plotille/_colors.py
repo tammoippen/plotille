@@ -23,13 +23,14 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import colorsys
 import os
 import sys
 
 import six
 
 
-def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):
+def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):  # noqa: C901 complex (12)
     """Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -123,6 +124,60 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
         return res + '\x1b[0m'
     else:
         return res + '\x1b[39;49m'
+
+
+def hsl(hue, saturation, lightness):
+    """Convert HSL color space into RGB color space.
+
+    In contrast to colorsys.hls_to_rgb, this works directly in
+    360 deg Hue and give RGB values in the range of 0 to 255.
+
+    Parameters:
+        hue: float         Position in the spectrum. 0 to 360.
+        saturation: float  Color saturation. 0 to 1.
+        lightness: float   Color lightness. 0 to 1.
+    """
+    assert 0 <= hue <= 360
+    assert 0 <= saturation <= 1
+    assert 0 <= lightness <= 1
+
+    r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, saturation)
+    return round(r * 255), round(g * 255), round(b * 255)
+
+
+def rgb2byte(r, g, b):
+    """Convert RGB values into an index for the byte color-mode.
+
+    Parameters:
+        r: int    Red value. Between 0 and 255.
+        g: int    Green value. Between 0 and 255.
+        b: int    Blue value. Between 0 and 255.
+
+    Returns
+        idx: int  Index of approximate color in the byte color-mode.
+    """
+    assert 0 <= r <= 255
+    assert 0 <= g <= 255
+    assert 0 <= b <= 255
+
+    if r == g == b < 244:
+        # gray:
+        gray_idx = _value_to_index(min(238, r), off=8, steps=10)
+        return gray_idx + 232
+
+    # here we also have some gray values ...
+    r_idx = _value_to_index(r)
+    g_idx = _value_to_index(g)
+    b_idx = _value_to_index(b)
+
+    return 16 + 36 * r_idx + 6 * g_idx + b_idx
+
+
+def _value_to_index(v, off=55, steps=40):
+    idx = (v - off) / steps
+    if idx < 0:
+        return 0
+    return int(round(idx))
 
 
 def _isatty():

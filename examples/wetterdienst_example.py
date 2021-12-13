@@ -58,7 +58,7 @@ def regression(x, y):
 
 
 def main():
-    current_dir = os.path.dirname(__file__)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
 
     with gzip.open(current_dir + os.sep + 'wetter-data.json.gz', 'r') as f:
         data = json.load(f)

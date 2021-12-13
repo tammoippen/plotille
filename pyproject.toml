@@ -35,15 +35,21 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "~2.7 || ^3.6"
 
-six = "^1.12"
+six = "^1.16"
 
 
 [tool.poetry.dev-dependencies]
 
-flake8 = "^3.9.1"
+flake8 = [
+    { version = "^3.9.1", python = "~2.7" },
+    { version = "^4.0.1", python = "^3.6" }
+]
 flake8-bugbear = { version = "^21", python = "^3.6" }
 flake8-commas = "^2.0.0"
-flake8-comprehensions = "^1"
+flake8-comprehensions = [
+    { version = "^1", python = "~2.7" },
+    { version = "^3", python = "^3.6" }
+]
 flake8-import-order = "^0.18"
 flake8-pep3101 = "^1.3.0"
 flake8-polyfill = "^1.0.2"
@@ -51,11 +57,32 @@ flake8-quotes = "^3.2.0"
 funcsigs = { version = "^1.0", python = "~2.7" }
 mock = "^3"
 more_itertools = { version = "5.0.0", python = "~2.7" }  # last release for 2.7
-numpy = "1.16.6"  # release for 2.7
+# remove tests/requirements.txt, if this works
+# numpy = "1.16.6"  # release for 2.7
+# numpy = [
+#     { version = "1.16.6", python = "~2.7" },
+#     { version = "~1.20", python = "~3.6" }
+#     { version = "^1.21.4", python = "^3.7" }
+# ]
 pendulum = "^2.1"
 pep8-naming = "^0.11"
+Pillow = [
+    { version = "6.2.2", python = "~2.7" },
+    { version = "8.4.0", python = "^3.6" }
+]
 pytest = "^4"
-pytest-cov = "^2.11.1"
-pytest-mccabe = "^1"
+# required for py3.10:
+# pytest = [
+#     { version = "4.6.11", python = "~2.7" },
+#     { version = "6.2.5", python = "^3.7" }
+# ]
+pytest-cov = [
+    { version = "2.12.1", python = "~2.7" },
+    { version = "3.0.0", python = "^3.6" }
+]
 pytest-mock = "^2"
+# pytest-mock = [
+#     { version = "1.13.0", python = "~2.7" },
+#     { version = "3.6.1", python = "^3.6" }
+# ]
 pytest-pythonpath =  "^0.7.3"

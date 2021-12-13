@@ -30,9 +30,10 @@ import os
 from six.moves import zip
 
 from ._canvas import Canvas
-from ._colors import color
+from ._colors import color, rgb2byte
+from ._figure_data import Heat, Histogram, Plot, Span, Text
 from ._input_formatter import InputFormatter
-from ._util import hist, mk_timedelta, timestamp
+from ._util import mk_timedelta, timestamp
 
 # TODO documentation!!!
 # TODO tests
@@ -57,13 +58,13 @@ class Figure(object):
         x_label, y_label: str Define the X / Y axis label.
     """
     _COLOR_SEQ = [
-        {'names': 'white', 'rgb': (255, 255, 255), 'byte': 0X7},
-        {'names': 'red', 'rgb': (255, 0, 0), 'byte': 0x1},
-        {'names': 'green', 'rgb': (0, 255, 0), 'byte': 0x2},
-        {'names': 'yellow', 'rgb': (255, 255, 0), 'byte': 0x3},
-        {'names': 'blue', 'rgb': (0, 0, 255), 'byte': 0x4},
-        {'names': 'magenta', 'rgb': (255, 0, 255), 'byte': 0x5},
-        {'names': 'cyan', 'rgb': (0, 255, 255), 'byte': 0x6},
+        {'names': 'white', 'rgb': (255, 255, 255), 'byte': rgb2byte(255, 255, 255)},
+        {'names': 'red', 'rgb': (255, 0, 0), 'byte': rgb2byte(255, 0, 0)},
+        {'names': 'green', 'rgb': (0, 255, 0), 'byte': rgb2byte(0, 255, 0)},
+        {'names': 'yellow', 'rgb': (255, 255, 0), 'byte': rgb2byte(255, 255, 0)},
+        {'names': 'blue', 'rgb': (0, 0, 255), 'byte': rgb2byte(0, 0, 255)},
+        {'names': 'magenta', 'rgb': (255, 0, 255), 'byte': rgb2byte(255, 0, 255)},
+        {'names': 'cyan', 'rgb': (0, 255, 255), 'byte': rgb2byte(0, 255, 255)},
     ]
 
     def __init__(self):
@@ -87,6 +88,7 @@ class Figure(object):
         self._plots = []
         self._texts = []
         self._spans = []
+        self._heats = []
         self._in_fmt = InputFormatter()
 
     @property
@@ -137,6 +139,7 @@ class Figure(object):
 
     @property
     def with_colors(self):
+        """Whether to plot with or without color."""
         return self._with_colors
 
     @with_colors.setter
@@ -147,6 +150,7 @@ class Figure(object):
 
     @property
     def origin(self):
+        """Show or not show the origin in the plot."""
         return self._origin
 
     @origin.setter
@@ -156,9 +160,34 @@ class Figure(object):
         self._origin = value
 
     def register_label_formatter(self, type_, formatter):
+        """Register a formatter for labels of a certain type.
+
+        See `plotille._input_formatter` for examples.
+
+        Parameters
+        ----------
+        type_
+            A python typte, that can be used for isinstance tests.
+        formatter: (val: type_, chars: int, delta, left: bool = False) -> str
+            Function that formats `val` into a string.
+            chars: int => number of chars you should fill
+            delta      => the difference between the smallest and largest X/Y value
+            left: bool => align left or right.
+        """
         self._in_fmt.register_formatter(type_, formatter)
 
     def register_float_converter(self, type_, converter):
+        """Register a converter from some type_ to float.
+
+        See `plotille._input_formatter` for examples.
+
+        Parameters
+        ----------
+        type_
+            A python type, that can be used for isinstance tests.
+        formatter: (val: type_) -> float
+            Function that formats `val` into a float.
+        """
         self._in_fmt.register_converter(type_, converter)
 
     def x_limits(self):
@@ -252,7 +281,13 @@ class Figure(object):
             starts = ['-' * 11 + '|-', ' ' * 11 + '| ']
         res = []
 
-        res += [starts[0] + '|---------' * (self.width // 10) + '|-> (' + label + ')']
+        res += [
+            starts[0]
+            + '|---------' * (self.width // 10)
+            + '|'
+            + '-' * (self.width % 10)
+            + '-> (' + label + ')',
+        ]
         bottom = []
 
         for i in range(self.width // 10 + 1):
@@ -269,6 +304,7 @@ class Figure(object):
         self._plots = []
         self._texts = []
         self._spans = []
+        self._heats = []
 
     def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
         """Create plot with X , Y values.
@@ -284,7 +320,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, interp, label, marker)]
+            self._plots += [Plot(X, Y, lc, interp, label, marker)]
 
     def scatter(self, X, Y, lc=None, label=None, marker=None):
         """Create a scatter plot with X , Y values
@@ -299,7 +335,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot.create(X, Y, lc, None, label, marker)]
+            self._plots += [Plot(X, Y, lc, None, label, marker)]
 
     def histogram(self, X, bins=160, lc=None):
         """Compute and plot the histogram over X.
@@ -312,7 +348,7 @@ class Figure(object):
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Histogram.create(X, bins, lc)]
+            self._plots += [Histogram(X, bins, lc)]
 
     def text(self, X, Y, texts, lc=None):
         """Plot texts at coordinates X, Y.
@@ -329,7 +365,7 @@ class Figure(object):
             lc: multiple       The (text) line color.
         """
         if len(X) > 0:
-            self._texts += [Text.create(X, Y, texts, lc)]
+            self._texts += [Text(X, Y, texts, lc)]
 
     def axvline(self, x, ymin=0, ymax=1, lc=None):
         """Plot a vertical line at x.
@@ -343,7 +379,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(x, x, ymin, ymax, lc))
+        self._spans.append(Span(x, x, ymin, ymax, lc))
 
     def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
         """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
@@ -359,7 +395,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+        self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
     def axhline(self, y, xmin=0, xmax=1, lc=None):
         """Plot a horizontal line at y.
@@ -373,7 +409,7 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, y, y, lc))
+        self._spans.append(Span(xmin, xmax, y, y, lc))
 
     def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
         """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
@@ -389,9 +425,31 @@ class Figure(object):
                            In the range [0, 1]
             lc: multiple   The line color.
         """
-        self._spans.append(Span.create(xmin, xmax, ymin, ymax, lc))
+        self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
-    def show(self, legend=False):
+    def imgshow(self, X, cmap=None):
+        """Display data as an image, i.e., on a 2D regular raster.
+
+        Parameters:
+            X: array-like
+                The image data. Supported array shapes are:
+                - (M, N): an image with scalar data. The values are mapped
+                        to colors using a colormap. The values have to be in
+                        the 0-1 (float) range. Out of range, invalid type and
+                        None values are handled by the cmap.
+                - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
+
+                The first two dimensions (M, N) define the rows and columns of the image.
+
+            cmap: cmapstr or Colormap
+                The Colormap instance or registered colormap name used
+                to map scalar data to colors. This parameter is ignored
+                for RGB data.
+        """
+        if len(X) > 0:
+            self._heats += [Heat(X, cmap)]
+
+    def show(self, legend=False):  # noqa: C901 complex (12)
         """Compute the plot.
 
         Parameters:
@@ -402,8 +460,13 @@ class Figure(object):
         """
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
-        if all(isinstance(p, Histogram) for p in self._plots):
+        if self._plots and all(isinstance(p, Histogram) for p in self._plots):
             ymin = 0
+
+        if self._heats and self._width is None and self._height is None:
+            self.height = len(self._heats[0].X)
+            self.width = len(self._heats[0].X[0])
+
         # create canvas
         canvas = Canvas(self.width, self.height,
                         self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
@@ -421,6 +484,9 @@ class Figure(object):
 
         for t in self._texts:
             t.write(canvas, self.with_colors, self._in_fmt)
+
+        for h in self._heats:
+            h.write(canvas)
 
         if self.origin and plot_origin:
             # print X / Y origin axis
@@ -445,7 +511,7 @@ class Figure(object):
         )
 
         if legend:
-            res += '\n\nLegend:\n-------\n'
+            res += '{0}{0}Legend:{0}-------{0}'.format(self.linesep)
             lines = []
             for i, p in enumerate(self._plots):
                 if isinstance(p, Plot):
@@ -459,242 +525,8 @@ class Figure(object):
                             no_color=not self.with_colors,
                         ),
                     ]
-            res += '\n'.join(lines)
+            res += self.linesep.join(lines)
         return res
-
-
-class Plot:
-    def __init__(self, X, Y, lc, interp, label, marker):
-        self._X = X
-        self._Y = Y
-        self._lc = lc
-        self._interp = interp
-        self._label = label
-        self._marker = marker
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def Y(self):  # noqa: N802
-        return self._Y
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @property
-    def interp(self):
-        return self._interp
-
-    @property
-    def label(self):
-        return self._label
-
-    @property
-    def marker(self):
-        return self._marker
-
-    @classmethod
-    def create(cls, X, Y, lc, interp, label, marker):
-        if len(X) != len(Y):
-            raise ValueError('X and Y dim have to be the same.')
-        if interp not in ('linear', None):
-            raise ValueError('Only "linear" and None are allowed values for `interp`.')
-
-        return cls(X, Y, lc, interp, label, marker)
-
-    def width_vals(self):
-        return self.X
-
-    def height_vals(self):
-        return self.Y
-
-    def write(self, canvas, with_colors, in_fmt):
-        # make point iterators
-        from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
-        to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
-
-        # remove first point of to_points
-        (x0, y0) = next(to_points)
-
-        color = self.lc if with_colors else None
-
-        # print first point
-        canvas.point(x0, y0, color=color, marker=self.marker)
-
-        # plot other points and lines
-        for (x0, y0), (x, y) in zip(from_points, to_points):
-            canvas.point(x, y, color=color, marker=self.marker)
-            if self.interp == 'linear':
-                # no marker for interpolated values
-                canvas.line(x0, y0, x, y, color=color)
-
-
-class Histogram:
-    def __init__(self, X, bins, frequencies, buckets, lc):
-        self._X = X
-        self._bins = bins
-        self._frequencies = frequencies
-        self._buckets = buckets
-        self._lc = lc
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def bins(self):
-        return self._bins
-
-    @property
-    def frequencies(self):
-        return self._frequencies
-
-    @property
-    def buckets(self):
-        return self._buckets
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, X, bins, lc):
-        frequencies, buckets = hist(X, bins)
-
-        return cls(X, bins, frequencies, buckets, lc)
-
-    def width_vals(self):
-        return self.X
-
-    def height_vals(self):
-        return self.frequencies
-
-    def write(self, canvas, with_colors, in_fmt):
-        # how fat will one bar of the histogram be
-        x_diff = (canvas.dots_between(in_fmt.convert(self.buckets[0]), 0,
-                                      in_fmt.convert(self.buckets[1]), 0)[0] or 1)
-        bin_size = (in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])) / x_diff
-
-        color = self.lc if with_colors else None
-        for i in range(self.bins):
-            # for each bucket
-            if self.frequencies[i] > 0:
-                for j in range(x_diff):
-                    # print bar
-                    x_ = in_fmt.convert(self.buckets[i]) + j * bin_size
-
-                    if canvas.xmin <= x_ <= canvas.xmax:
-                        canvas.line(x_, 0,
-                                    x_, self.frequencies[i],
-                                    color=color)
-
-
-class Text:
-    def __init__(self, X, Y, texts, lc):
-        self._X = X
-        self._Y = Y
-        self._texts = texts
-        self._lc = lc
-
-    @property
-    def X(self):  # noqa: N802
-        return self._X
-
-    @property
-    def Y(self):  # noqa: N802
-        return self._Y
-
-    @property
-    def texts(self):
-        return self._texts
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, X, Y, texts, lc):
-        if len(X) != len(Y) != len(texts):
-            raise ValueError('X, Y and texts dim have to be the same.')
-
-        return cls(X, Y, texts, lc)
-
-    def width_vals(self):
-        return self.X
-
-    def height_vals(self):
-        return self.Y
-
-    def write(self, canvas, with_colors, in_fmt):
-        # make point iterator
-        points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts)
-
-        color = self.lc if with_colors else None
-
-        # plot texts with color
-        for x, y, text in points:
-            canvas.text(x, y, text, color=color)
-
-
-class Span:
-    def __init__(self, xmin, xmax, ymin, ymax, lc):
-        assert 0 <= xmin <= xmax <= 1
-        assert 0 <= ymin <= ymax <= 1
-        self._xmin = xmin
-        self._xmax = xmax
-        self._ymin = ymin
-        self._ymax = ymax
-        self._lc = lc
-
-    @property
-    def xmin(self):
-        return self._xmin
-
-    @property
-    def xmax(self):
-        return self._xmax
-
-    @property
-    def ymin(self):
-        return self._ymin
-
-    @property
-    def ymax(self):
-        return self._ymax
-
-    @property
-    def lc(self):
-        return self._lc
-
-    @classmethod
-    def create(cls, xmin, xmax, ymin, ymax, lc=None):
-        if not (0 <= xmin <= xmax <= 1):
-            raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
-        if not (0 <= ymin <= ymax <= 1):
-            raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
-
-        return cls(xmin, xmax, ymin, ymax, lc)
-
-    def write(self, canvas, with_colors):
-        color = self.lc if with_colors else None
-
-        # plot texts with color
-        xdelta = canvas.xmax_inside - canvas.xmin
-        assert xdelta > 0
-
-        ydelta = canvas.ymax_inside - canvas.ymin
-        assert ydelta > 0
-
-        canvas.rect(
-            canvas.xmin + self.xmin * xdelta,
-            canvas.ymin + self.ymin * ydelta,
-            canvas.xmin + self.xmax * xdelta,
-            canvas.ymin + self.ymax * ydelta,
-            color=color,
-        )
 
 
 def _limit(values):

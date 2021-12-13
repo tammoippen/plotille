@@ -64,7 +64,9 @@ commands:
       - run:
           name: CodeCov
           command: |
-            bash <(curl -s https://codecov.io/bash) \
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x codecov
+            ./codecov -t ${CODECOV_TOKEN} \
               -n coverage-$CIRCLE_JOB \
               -F unittests
 
@@ -98,12 +100,6 @@ jobs:
       image: "circleci/python:3.6"
     steps:
       - tester
-  test_3_6_pypy:
-    executor:
-      name: python
-      image: "pypy:3.6-7.3"
-    steps:
-      - tester
   test_3_7:
     executor:
       name: python
@@ -120,6 +116,12 @@ jobs:
     executor:
       name: python
       image: "circleci/python:3.8"
+    steps:
+      - tester
+  test_3_8_pypy:
+    executor:
+      name: python
+      image: "pypy:3.8-7.3"
     steps:
       - tester
   test_3_9:
@@ -165,10 +167,6 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - test_3_6_pypy:
-          filters:
-            tags:
-              only: /.*/
       - test_3_7:
           filters:
             tags:
@@ -181,6 +179,10 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test_3_8_pypy:
+          filters:
+            tags:
+              only: /.*/
       - test_3_9:
           filters:
             tags:
@@ -190,10 +192,10 @@ workflows:
             - test_2_7
             - test_2_7_pypy
             - test_3_6
-            - test_3_6_pypy
             - test_3_7
             - test_3_7_pypy
             - test_3_8
+            - test_3_8_pypy
             - test_3_9
           filters:
             branches:
