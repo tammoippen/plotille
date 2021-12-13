@@ -433,7 +433,8 @@ def test_show(cleandoc):
     # print(fig.show())  # no legend, no origin
     assert cleandoc(expected) == fig.show()
 
-    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}'.format(os.linesep)  # no label for histograms
+    # no label for histograms
+    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}'.format(os.linesep)
 
     fig.clear()
     fig.plot([-0.1, 0.2], [-0.2, 0.3])

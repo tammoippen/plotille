@@ -23,7 +23,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from os import linesep
+import os
 
 import six
 
@@ -363,7 +363,7 @@ class Canvas(object):
 
             self._canvas[y][x].bg = value
 
-    def plot(self, linesep=linesep):
+    def plot(self, linesep=os.linesep):
         """Transform canvas into `print`-able string
 
         Parameters:

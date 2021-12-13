@@ -1,0 +1,38 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+  workflow_dispatch:
+
+jobs:
+  publish:
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Checkout repo
+      uses: actions/checkout@v2
+
+    - name: Set Up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install Poetry
+      uses: abatilo/actions-poetry@v2.0.0
+      with:
+        poetry-version: 1.1
+
+    - name: Build
+      run: poetry build -vvv -f sdist
+
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        path: dist/*.tar.gz
+
+    # - name: Publish
+    #   run: poetry publish -vvv -n -u tammoippen -p $PYPI_PASS
