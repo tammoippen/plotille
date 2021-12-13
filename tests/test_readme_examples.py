@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import inspect
-
 import pytest
 
 import plotille
@@ -20,7 +18,7 @@ def seed():
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_plot(seed):
+def test_plot(seed, cleandoc):
     x = sorted(np.random.normal(size=1000))
     expected = """
        (Y)     ^
@@ -68,12 +66,12 @@ def test_plot(seed):
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | -3.950667 -2.886567 -1.822468 -0.758368 0.3057321 1.3698319 2.4339317 3.4980315 4.5621314"""
     # print(plotille.plot(x, np.sin(x)))
-    assert inspect.cleandoc(expected) == plotille.plot(x, np.sin(x))
-    assert inspect.cleandoc(expected) == plotille.plot(list(x), list(np.sin(x)))
+    assert cleandoc(expected) == plotille.plot(x, np.sin(x))
+    assert cleandoc(expected) == plotille.plot(list(x), list(np.sin(x)))
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_np_scatter(seed):
+def test_np_scatter(seed, cleandoc):
     x = np.random.normal(size=1000)
     expected = """
        (Y)     ^
@@ -121,12 +119,12 @@ def test_np_scatter(seed):
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | -3.950667 -2.886567 -1.822468 -0.758368 0.3057321 1.3698319 2.4339317 3.4980315 4.5621314"""
     # print(plotille.scatter(x, np.sin(x)))
-    assert inspect.cleandoc(expected) == plotille.scatter(x, np.sin(x))
-    assert inspect.cleandoc(expected) == plotille.scatter(list(x), list(np.sin(x)))
+    assert cleandoc(expected) == plotille.scatter(x, np.sin(x))
+    assert cleandoc(expected) == plotille.scatter(list(x), list(np.sin(x)))
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_hist(seed):
+def test_hist(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
             bucket       | ________________________________________________________________________________ Total Counts
@@ -172,12 +170,12 @@ def test_hist(seed):
     [3.730022, 3.926238) | ⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 2
     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"""
     # print(plotille.hist(x))
-    assert inspect.cleandoc(expected) == plotille.hist(x)
-    assert inspect.cleandoc(expected) == plotille.hist(list(x))
+    assert cleandoc(expected) == plotille.hist(x)
+    assert cleandoc(expected) == plotille.hist(list(x))
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_histogram(seed):
+def test_histogram(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
      (Counts)  ^
@@ -225,12 +223,12 @@ def test_histogram(seed):
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | -4.707264 -3.529968 -2.352673 -1.175377 0.0019187 1.1792144 2.3565101 3.5338058 4.7111015"""
     # print(plotille.histogram(x))
-    assert inspect.cleandoc(expected) == plotille.histogram(x)
-    assert inspect.cleandoc(expected) == plotille.histogram(list(x))
+    assert cleandoc(expected) == plotille.histogram(x)
+    assert cleandoc(expected) == plotille.histogram(list(x))
 
 
 @pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-def test_hist_log(seed):
+def test_hist_log(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
             bucket       | ________________________________________________________________________________ Total Counts
@@ -276,12 +274,12 @@ def test_hist_log(seed):
     [3.730022, 3.926238) | ⣿⣿⣿⣿⣿⣿⣿⣿⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 2
     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"""
     # print(plotille.hist(x, log_scale=True))
-    assert inspect.cleandoc(expected) == plotille.hist(x, log_scale=True)
+    assert cleandoc(expected) == plotille.hist(x, log_scale=True)
 
 
 @pytest.fixture()
-def empty():
-    return inspect.cleandoc("""
+def empty(cleandoc):
+    return cleandoc("""
     {}^
              1 |
     0.97500000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -338,7 +336,7 @@ def test_empty_scatter(empty):
     assert empty.format('   (Y)     ') == plotille.scatter([], [])
 
 
-def test_empty_hist():
+def test_empty_hist(cleandoc):
     expected = """
             bucket       | ________________________________________________________________________________ Total Counts
     [0       , 0.025000) | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 0
@@ -383,10 +381,10 @@ def test_empty_hist():
     [0.975000,        1) | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 0
     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾"""
     # print(plotille.hist([]))
-    assert inspect.cleandoc(expected) == plotille.hist([])
+    assert cleandoc(expected) == plotille.hist([])
 
 
-def test_empty_histogram(empty):
+def test_empty_histogram(empty, cleandoc):
     expected = """
      (Counts)  ^
              1 |
@@ -433,10 +431,10 @@ def test_empty_histogram(empty):
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        """
     # print(plotille.histogram([]))
-    assert inspect.cleandoc(expected) == plotille.histogram([])
+    assert cleandoc(expected) == plotille.histogram([])
 
 
-def test_house():
+def test_house(cleandoc):
     c = plotille.Canvas(width=40, height=20)
     c.rect(0.1, 0.1, 0.6, 0.6)
     c.line(0.1, 0.1, 0.6, 0.6)
@@ -465,5 +463,5 @@ def test_house():
     ⠀⠀⠀⠀⣧⣊⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣈⣢⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
-    assert inspect.cleandoc(expected) == c.plot()
+    assert cleandoc(expected) == c.plot()
     # print(c.plot())
