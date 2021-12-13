@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import inspect
+import os
 import re
 
 import pytest
@@ -10,7 +10,7 @@ from plotille import Canvas, Figure
 from plotille._figure_data import Span
 
 
-def test_full_span():
+def test_full_span(cleandoc):
     fig = Figure()
     fig.with_colors = False
 
@@ -62,17 +62,17 @@ def test_full_span():
                | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        """
 
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
     fig = Figure()
     fig.with_colors = False
 
     fig.axvspan(0, 1)
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_some_span():
+def test_some_span(cleandoc):
     fig = Figure()
     fig.with_colors = False
 
@@ -128,10 +128,10 @@ def test_some_span():
                | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        """
 
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
-def test_some_span_only_in_the_middle():
+def test_some_span_only_in_the_middle(cleandoc):
     fig = Figure()
     fig.with_colors = False
 
@@ -188,13 +188,13 @@ def test_some_span_only_in_the_middle():
                | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        """
 
     # print(fig.show())  # no legend, no origin
-    assert inspect.cleandoc(expected) == fig.show()
+    assert cleandoc(expected) == fig.show()
 
 
 @pytest.mark.parametrize('xmin', range(-3, 3))
 @pytest.mark.parametrize('ymin', range(-3, 3))
 @pytest.mark.parametrize('diff', range(1, 4))
-def test_reference_system_independence_vertical(xmin, ymin, diff):
+def test_reference_system_independence_vertical(xmin, ymin, diff, cleandoc):
     c = Canvas(20, 10, xmin=xmin, ymin=ymin, xmax=xmin + diff, ymax=ymin + diff)
 
     s_vertical = Span(0.5, 0.5, 0, 1)
@@ -224,14 +224,15 @@ def test_reference_system_independence_vertical(xmin, ymin, diff):
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """
+
     # print(c.plot())
-    assert inspect.cleandoc(expect_vertical_right) == c.plot() or inspect.cleandoc(expect_vertical_left) == c.plot()
+    assert cleandoc(expect_vertical_right) == c.plot() or cleandoc(expect_vertical_left) == c.plot()
 
 
 @pytest.mark.parametrize('xmin', range(-3, 3))
 @pytest.mark.parametrize('ymin', range(-3, 3))
 @pytest.mark.parametrize('diff', range(1, 4))
-def test_reference_system_independence_horizontal(xmin, ymin, diff):
+def test_reference_system_independence_horizontal(xmin, ymin, diff, cleandoc):
     c = Canvas(20, 10, xmin=xmin, ymin=ymin, xmax=xmin + diff, ymax=ymin + diff)
 
     s_horizontal = Span(0, 1, 0.5, 0.5)
@@ -262,13 +263,13 @@ def test_reference_system_independence_horizontal(xmin, ymin, diff):
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """
     # print(c.plot())
-    assert inspect.cleandoc(expect_horizontal_top) == c.plot() or inspect.cleandoc(expect_horizontal_down) == c.plot()
+    assert cleandoc(expect_horizontal_top) == c.plot() or cleandoc(expect_horizontal_down) == c.plot()
 
 
 @pytest.mark.parametrize('xmin', range(-3, 3))
 @pytest.mark.parametrize('ymin', range(-3, 3))
 @pytest.mark.parametrize('diff', range(1, 4))
-def test_reference_system_independence_rect(xmin, ymin, diff):
+def test_reference_system_independence_rect(xmin, ymin, diff, cleandoc):
     c = Canvas(20, 10, xmin=xmin, ymin=ymin, xmax=xmin + diff, ymax=ymin + diff)
 
     s_vertical = Span(0.2, 0.8, 0.3, 0.7)
@@ -287,7 +288,7 @@ def test_reference_system_independence_rect(xmin, ymin, diff):
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     """
     # print(c.plot())
-    assert inspect.cleandoc(expect) == c.plot()
+    assert cleandoc(expect) == c.plot()
 
 
 @pytest.mark.parametrize('xmin', range(-3, 3))
@@ -318,10 +319,10 @@ def test_reference_system_independence_figure(xmin, ymin, diff):
            | |         |         | > (X)
            |                              """
     # print(fig.show())
-    assert expect == re.sub('[0-9.-]', ' ', fig.show())
+    assert expect.replace('\n', os.linesep) == re.sub('[0-9.-]', ' ', fig.show())
 
 
-def test_issue_45_1():
+def test_issue_45_1(cleandoc):
     fig = Figure()
     fig.width = 20
     fig.height = 20
@@ -355,10 +356,10 @@ def test_issue_45_1():
     -----------|-|---------|---------|-> (X)
                | -1        0         1        """
     # print(fig.show())
-    assert inspect.cleandoc(expect) == fig.show()
+    assert cleandoc(expect) == fig.show()
 
 
-def test_issue_45_2():
+def test_issue_45_2(cleandoc):
     fig = Figure()
     fig.width = 20
     fig.height = 20
@@ -392,4 +393,4 @@ def test_issue_45_2():
     -----------|-|---------|---------|-> (X)
                | -2        0         2        """
     # print(fig.show())
-    assert inspect.cleandoc(expect) == fig.show()
+    assert cleandoc(expect) == fig.show()
