@@ -25,7 +25,7 @@ except ImportError:
 @pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_examples():
     for fname in glob('./examples/*_example.py'):
-        p = subprocess.Popen([sys.executable, fname[11:]], cwd='./examples', shell=False,
+        p = subprocess.Popen([sys.executable, fname[11:]], cwd='./examples', shell=True,
                              stderr=subprocess.PIPE)
         p.wait()
         assert p.returncode == 0, 'stderr:\n  ' + '  '.join(line.decode('utf-8') for line in p.stderr)
