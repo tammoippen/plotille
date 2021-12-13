@@ -28,4 +28,4 @@ def test_examples():
         p = subprocess.Popen([sys.executable, fname[11:]], cwd='./examples', shell=False,
                              stderr=subprocess.PIPE)
         p.wait()
-        assert p.returncode == 0, 'stderr:\n  ' + '  '.join(line for line in p.stderr)
+        assert p.returncode == 0, 'stderr:\n  ' + '  '.join(line.decode('utf-8') for line in p.stderr)
