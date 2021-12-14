@@ -32,5 +32,5 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-      # - name: Publish
-      #   run: poetry publish -vvv -n -u tammoippen -p $PYPI_PASS
+      - name: Publish
+        run: poetry publish -vvv -n -u tammoippen -p $PYPI_PASS
