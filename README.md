@@ -75,7 +75,7 @@ In [21] fig.plot(X, (X+2)**2 , lc=200, label='square')
 In [22] print(fig.show(legend=True))
 ```
 
-![Example figure](./imgs/figure.png)
+![Example figure](https://github.com/tammoippen/plotille/raw/master/imgs/figure.png)
 
 The available plotting functions are:
 
@@ -170,7 +170,7 @@ Returns:
 In [5]: print(plotille.plot(X, np.sin(X), height=30, width=60))
 ```
 
-![Example plot](./imgs/plot.png)
+![Example plot](https://github.com/tammoippen/plotille/raw/master/imgs/plot.png)
 
 #### Scatter
 
@@ -224,7 +224,7 @@ Returns:
 In [7]: print(plotille.scatter(X, np.sin(X), height=30, width=60))
 ```
 
-![Example scatter](./imgs/scatter.png)
+![Example scatter](https://github.com/tammoippen/plotille/raw/master/imgs/scatter.png)
 
 #### Hist
 
@@ -266,7 +266,7 @@ Returns:
 In [9]: print(plotille.hist(np.random.normal(size=10000)))
 ```
 
-![Example hist](./imgs/hist.png)
+![Example hist](https://github.com/tammoippen/plotille/raw/master/imgs/hist.png)
 
 #### Histogram
 
@@ -318,7 +318,7 @@ Returns:
 In [11]: print(plotille.histogram(np.random.normal(size=10000)))
 ```
 
-![Example histogram](./imgs/histogram.png)
+![Example histogram](https://github.com/tammoippen/plotille/raw/master/imgs/histogram.png)
 
 ### Canvas
 
@@ -522,12 +522,12 @@ In [22]: c.line(0.35, 0.8, 0.6, 0.6)
 In [23]: print(c.plot())
 ```
 
-![House](./imgs/house.png)
+![House](https://github.com/tammoippen/plotille/raw/master/imgs/house.png)
 
 Or you could render images with braille dots:
 
 ```python
-In [24]: img = Image.open('./imgs/ich.jpg')
+In [24]: img = Image.open('https://github.com/tammoippen/plotille/raw/master/imgs/ich.jpg')
 In [25]: img = img.convert('L')
 In [26]: img = img.resize((80, 80))
 In [27]: cvs = Canvas(40, 20)
@@ -535,12 +535,12 @@ In [28]: cvs.braille_image(img.getdata())
 In [29]: print(cvs.plot())
 ```
 
-![Me with dots](./imgs/ich-dots.png)
+![Me with dots](https://github.com/tammoippen/plotille/raw/master/imgs/ich-dots.png)
 
 Or you could render images with the background color of characters:
 
 ```python
-In [24]: img = Image.open('./imgs/ich.jpg')
+In [24]: img = Image.open('https://github.com/tammoippen/plotille/raw/master/imgs/ich.jpg')
 In [25]: img = img.convert('RGB')
 In [25]: img = img.resize((80, 40))
 In [27]: cvs = Canvas(80, 40, mode="rgb")
@@ -548,7 +548,7 @@ In [28]: cvs.image(img.getdata())
 In [29]: print(cvs.plot())
 ```
 
-![Me with chars](./imgs/ich-chars.png)
+![Me with chars](https://github.com/tammoippen/plotille/raw/master/imgs/ich-chars.png)
 
 ## Stargazers over time
 
