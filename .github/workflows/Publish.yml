@@ -2,8 +2,6 @@ name: Publish
 
 on:
   push:
-    branches:
-      - master
     tags:
       - v*
   workflow_dispatch:
@@ -22,9 +20,9 @@ jobs:
           python-version: 3.7
 
       - name: Install Poetry
-        uses: abatilo/actions-poetry@v2.0.0
+        uses: snok/install-poetry@v1
         with:
-          poetry-version: 1.1
+          version: 1.1.12
 
       - name: Build
         run: poetry build -vvv -f sdist
