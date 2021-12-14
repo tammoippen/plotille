@@ -142,7 +142,7 @@ def hsl(hue, saturation, lightness):
     assert 0 <= lightness <= 1
 
     r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, saturation)
-    return round(r * 255), round(g * 255), round(b * 255)
+    return int(round(r * 255)), int(round(g * 255)), int(round(b * 255))
 
 
 def rgb2byte(r, g, b):
