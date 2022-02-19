@@ -1,3 +1,5 @@
+![Hero Plotille](https://github.com/tammoippen/plotille/raw/master/imgs/hero.png)
+
 # Plotille
 
 [![CI](https://github.com/tammoippen/plotille/actions/workflows/CI.yml/badge.svg)](https://github.com/tammoippen/plotille/actions/workflows/CI.yml)

@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2022 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -142,7 +142,7 @@ def hsl(hue, saturation, lightness):
     assert 0 <= lightness <= 1
 
     r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, saturation)
-    return round(r * 255), round(g * 255), round(b * 255)
+    return int(round(r * 255)), int(round(g * 255)), int(round(b * 255))
 
 
 def rgb2byte(r, g, b):

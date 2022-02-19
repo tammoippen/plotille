@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2022 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -280,7 +280,7 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def braille_image(self, pixels, threshold=127, inverse=False, set_=True):
+    def braille_image(self, pixels, threshold=127, inverse=False, color=None, set_=True):
         """Print an image using braille dots into the canvas.
 
         The pixels and braille dots in the canvas are a 1-to-1 mapping, hence
@@ -302,6 +302,7 @@ class Canvas(object):
             threshold: float      All pixels above this threshold will be
                                   drawn.
             inverse: bool         Whether to invert the image.
+            color: multiple       Color of the point.
             set_: bool            Whether to plot or remove the dots.
         """
         assert len(pixels) == self.width * 2 * self.height * 4
@@ -316,7 +317,7 @@ class Canvas(object):
             y = self.height * 4 - idx // row_size - 1
             x = idx % row_size  # noqa: S001
 
-            self._set(x, y, set_=set_)
+            self._set(x, y, color=color, set_=set_)
 
     def image(self, pixels, set_=True):
         """Print an image using background colors into the canvas.
