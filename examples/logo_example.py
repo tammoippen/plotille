@@ -66,7 +66,7 @@ def logo():
     cvs = Canvas(135, 30, background=hsl(0, 0, 0.8), mode='rgb')
     cvs.braille_image(img.getdata(), inverse=True, color=hsl(0, 0.5, 0.4))
 
-    indent = ' ' * 4
+    indent = ' ' * 6
     print(indent + cvs.plot().replace(os.linesep, os.linesep + indent))
 
 
@@ -129,7 +129,7 @@ def heat():
     fig.plot(xy[0], xy[1])
 
     img = []
-    for y in range(height):
+    for _ in range(height):
         img += [[None] * width]
 
     img[int(height / 2)][int(width / 2)] = 1
@@ -137,10 +137,10 @@ def heat():
     img[int(height / 2) - 2][int(width / 2) - 1] = 0.8
     img[int(height / 2) - 2][int(width / 2)] = 0.7
     img[int(height / 2) - 1][int(width / 2) - 1] = 0.2
-    img[int(height / 2)    ][int(width / 2) - 1] = 0.2
+    img[int(height / 2)    ][int(width / 2) - 1] = 0.2  # noqa: E202
     img[int(height / 2) + 1][int(width / 2) - 1] = 0.3
     img[int(height / 2) - 1][int(width / 2) + 1] = 0.4
-    img[int(height / 2)    ][int(width / 2) + 1] = 0.8
+    img[int(height / 2)    ][int(width / 2) + 1] = 0.8  # noqa: E202
     img[int(height / 2) + 1][int(width / 2) + 1] = 0.7
     img[int(height / 2) - 1][int(width / 2)] = 0.7
     img[int(height / 2) + 1][int(width / 2)] = 0.8
@@ -155,12 +155,12 @@ def heat():
 
 
 def main():
+    print('\n\n')
     logo()
     print()
     for lines in zip(histogram(), plot(), heat(), crappyhist()):
         print(' '.join(lines))
-    # print(os.linesep.join(histogram()))
-    # print(os.linesep.join(crappyhist()))
+    print('\n\n')
 
 
 if __name__ == '__main__':
