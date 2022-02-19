@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 # The MIT License
 
-# Copyright (c) 2017 - 2021 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2022 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
