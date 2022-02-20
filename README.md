@@ -11,7 +11,7 @@
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
-Plot, scatter plots and histograms in the terminal using braille dots, with (almost) no dependancies. Plot with color or make complex figures - similar to a very small sibling to matplotlib. Or use the canvas to plot dots and lines yourself.
+Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with (almost) no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
 
 Install:
 
@@ -27,6 +27,8 @@ Similar to other libraries:
 - like [terminalplot](https://github.com/kressi/terminalplot), but with braille, X/Y-axis, histogram, linear interpolation.
 
 Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime`, `pendulum.datetime` or `numpy.datetime64` values. Labels are generated respecting the difference of `x_limits` and `y_limits`.
+
+Support for heatmaps using background colors for figures and displaying images binary with braille, or in color with background colors using the canvas - provided with release 4.0
 
 ## Documentation
 
