@@ -34,12 +34,13 @@ from ._util import hist as compute_hist
 def hist_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
          lc=None, bg=None, color_mode='names'):
     """
-    Create histogram for pre-aggregated data for existing bins and counts for each bin.
+    Create histogram for aggregated data.
 
     Parameters:
-        counts: List[int]         Count for each bucket / bn.
-        bins: List[float]    Bins for the provided counts. In case there are X counts, there should
-                             be X + 1 bins.
+        counts: List[int]    Counts for each bucket.
+        bins: List[float]    Limits for the bins for the provided counts: limits for 
+                             bin `i` are `[bins[i], bins[i+1])`. 
+                             Hence, `len(bins) == len(counts) + 1`.
         width: int           The number of characters for the width (columns).
         log_scale: bool      Scale the histogram with `log` function.
         linesep: str         The requested line seperator. default: os.linesep
