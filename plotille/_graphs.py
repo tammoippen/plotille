@@ -31,6 +31,52 @@ from ._figure import Figure
 from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
+def hist_pre_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
+         lc=None, bg=None, color_mode='names'):
+    """
+    Create histogram for pre-aggregated data for existing bins and counts for each bin.
+
+    Parameters:
+        counts: List[int]         Count for each bucket / bn.
+        bins: List[float]    Bins for the provided counts. In case there are X counts, there should
+                             be X + 1 bins.
+        width: int           The number of characters for the width (columns).
+        log_scale: bool      Scale the histogram with `log` function.
+        linesep: str         The requested line seperator. default: os.linesep
+        lc: multiple         Give the line color.
+        bg: multiple         Give the background color.
+        color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                             see plotille.color.__docs__
+    Returns:
+        str: histogram over `X` from left to right.
+    """
+    def _scale(a):
+        if log_scale and a > 0:
+            return log(a)
+        return a
+
+    h = counts
+    b = bins
+
+    ipf = InputFormatter()
+    h_max = _scale(max(h)) or 1
+    delta = b[-1] - b[0]
+
+    bins_count = len(h)
+
+    canvas = ['        bucket       | {} {}'.format('_' * width, 'Total Counts')]
+    lasts = ['', '⠂', '⠆', '⠇', '⡇', '⡗', '⡷', '⡿']
+    for i in range(bins_count):
+        hight = int(width * 8 * _scale(h[i]) / h_max)
+        canvas += ['[{}, {}) | {} {}'.format(
+            ipf.fmt(b[i], delta=delta, chars=8, left=True),
+            ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
+            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode)
+            + color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
+            h[i])]
+    canvas += ['‾' * (2 * 8 + 2 + 3 + width + 12)]
+    return linesep.join(canvas)
+
 
 def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,
          lc=None, bg=None, color_mode='names'):
