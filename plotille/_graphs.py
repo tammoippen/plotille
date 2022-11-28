@@ -31,7 +31,7 @@ from ._figure import Figure
 from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
-def hist_pre_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
+def hist_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
          lc=None, bg=None, color_mode='names'):
     """
     Create histogram for pre-aggregated data for existing bins and counts for each bin.
