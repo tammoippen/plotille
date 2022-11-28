@@ -272,6 +272,56 @@ In [9]: print(plotille.hist(np.random.normal(size=10000)))
 
 ![Example hist](https://github.com/tammoippen/plotille/raw/master/imgs/hist.png)
 
+#### Hist (aggregated)
+
+This function allows you to create a histogram when your data is already aggregated (aka you don't have access to raw values, but you have access to bins and counts for each bin).
+
+This comes handy when working with APIs such as [OpenTelemetry Metrics API](https://opentelemetry-python.readthedocs.io/en/latest/api/metrics.html)
+where views such as [ExplicitBucketHistogramAggregation](https://opentelemetry-python.readthedocs.io/en/latest/sdk/metrics.view.html#opentelemetry.sdk.metrics.view.ExplicitBucketHistogramAggregation)
+only expose access to aggregated values (counts for each bin / bucket).
+
+```python
+In [8]: plotille.hist_aggregated?
+Signature:
+plotille.hist_aggregated(
+    counts,
+    bins,
+    width=80,
+    log_scale=False,
+    linesep='\n',
+    lc=None,
+    bg=None,
+    color_mode='names',
+)
+Docstring:
+Create histogram for aggregated data.
+
+Parameters:
+    counts: List[int]    Counts for each bucket.
+    bins: List[float]    Limits for the bins for the provided counts: limits for
+                         bin `i` are `[bins[i], bins[i+1])`.
+                         Hence, `len(bins) == len(counts) + 1`.
+    width: int           The number of characters for the width (columns).
+    log_scale: bool      Scale the histogram with `log` function.
+    linesep: str         The requested line seperator. default: os.linesep
+    lc: multiple         Give the line color.
+    bg: multiple         Give the background color.
+    color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
+                         see plotille.color.__docs__
+Returns:
+    str: histogram over `X` from left to right.
+
+In [9]: counts = [1945, 0, 0, 0, 0, 0, 10555, 798, 0, 28351, 0]
+In [10]: bins = [float('-inf'), 10, 50, 100, 200, 300, 500, 800, 1000, 2000, 10000, float('+inf')]
+In [11]: print(plotille.hist_aggregated(counts, bins))
+```
+
+Keep in mind that there must always be n+1 bins (n is a total number of count values, 11 in the example above).
+
+In this example the first bin is from [-inf, 10) with a count of 1945 and the last bin is from [10000, +inf] with a count of 0.
+
+![Example hist](https://github.com/tammoippen/plotille/raw/master/imgs/hist_aggregated.png)
+
 #### Histogram
 
 There is also another more 'usual' histogram function available:
