@@ -67,14 +67,14 @@ jobs:
           virtualenvs-create: false
 
       - name: Install
-        run: make install
+        run: poetry install
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
-        run: make style
+        run: poetry run flake8 tests/ plotille/ examples/
 
       - name: Tests
-        run: make tests
+        run: poetry run pytest -s -vvv
 
       - uses: codecov/codecov-action@v2
         with:
