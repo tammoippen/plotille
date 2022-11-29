@@ -25,8 +25,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import os
 
-import six
-
 from ._colors import rgb2byte
 from ._dots import Dots
 from ._util import roundeven
@@ -374,5 +372,5 @@ class Canvas(object):
             unicode: The canvas as a string.
         """
 
-        return linesep.join(''.join(map(six.text_type, row))
+        return linesep.join(''.join(map(str, row))
                             for row in reversed(self._canvas))

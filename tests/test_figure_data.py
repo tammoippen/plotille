@@ -75,7 +75,7 @@ def test_heat_of_image(tty, mode, normalized):
             x_val = x / width
             rgb = [y_val, x_val, random()]
             if not normalized:
-                rgb = list(map(lambda z: round(z * 255), rgb))
+                rgb = [round(z * 255) for z in rgb]
             row.append(rgb)
         xs.append(row)
 

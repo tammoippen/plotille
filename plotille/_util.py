@@ -31,9 +31,6 @@ import time
 def roundeven(x):
     """Round to next even integer number in case of `X.5`
 
-    In Python3 this is the same as `round(x, 0)`, but since Python2 rounds up
-    in that case and I want consistent behaviour, here is the roundeven function.
-
     Parameters:
         x: float  The number to round.
 
@@ -44,10 +41,7 @@ def roundeven(x):
     """
     if math.isinf(x) or math.isnan(x):
         return x  # same behaviour as in python2
-    x_r = round(x)
-    if abs(x_r - x) == 0.5:
-        return int(2.0 * round(x / 2))
-    return x_r
+    return round(x)
 
 
 def _numpy_to_native(x):

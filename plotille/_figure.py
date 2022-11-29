@@ -27,8 +27,6 @@ from datetime import timedelta
 from itertools import cycle
 import os
 
-from six.moves import zip
-
 from ._canvas import Canvas
 from ._colors import color, rgb2byte
 from ._figure_data import Heat, Histogram, Plot, Span, Text

@@ -3,8 +3,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from itertools import combinations
 
-import six
-
 from plotille._dots import braille_from, Dots, dots_from
 
 
@@ -105,44 +103,44 @@ def test_print():
     d = Dots()
 
     d.update(0, 0)
-    assert '⡀' == six.text_type(d)
+    assert '⡀' == str(d)
     d.update(0, 0, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(0, 1)
-    assert '⠄' == six.text_type(d)
+    assert '⠄' == str(d)
     d.update(0, 1, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(0, 2)
-    assert '⠂' == six.text_type(d)
+    assert '⠂' == str(d)
     d.update(0, 2, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(0, 3)
-    assert '⠁' == six.text_type(d)
+    assert '⠁' == str(d)
     d.update(0, 3, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(1, 0)
-    assert '⢀' == six.text_type(d)
+    assert '⢀' == str(d)
     d.update(1, 0, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(1, 1)
-    assert '⠠' == six.text_type(d)
+    assert '⠠' == str(d)
     d.update(1, 1, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(1, 2)
-    assert '⠐' == six.text_type(d)
+    assert '⠐' == str(d)
     d.update(1, 2, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
     d.update(1, 3)
-    assert '⠈' == six.text_type(d)
+    assert '⠈' == str(d)
     d.update(1, 3, False)
-    assert '⠀' == six.text_type(d)
+    assert '⠀' == str(d)
 
 
 def test_braille_dots_from():
@@ -190,10 +188,10 @@ def test_markers():
     assert repr(d) == 'Dots(dots=[], marker=None, fg=None, bg=None, color_kwargs=mode: names)'
 
     d.update(0, 0)
-    assert '⡀' == six.text_type(d)
+    assert '⡀' == str(d)
 
     d.update(0, 0, marker='x')
-    assert 'x' == six.text_type(d)
+    assert 'x' == str(d)
 
     d.marker = None
-    assert '⡀' == six.text_type(d)
+    assert '⡀' == str(d)

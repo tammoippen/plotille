@@ -27,8 +27,6 @@ from collections import OrderedDict
 from datetime import date, datetime, time, timedelta
 import math
 
-import six
-
 from ._util import roundeven, timestamp
 
 
@@ -37,18 +35,16 @@ class InputFormatter(object):
         self.formatters = OrderedDict()
 
         self.formatters[float] = _num_formatter
-        for int_type in six.integer_types:
-            self.formatters[int_type] = _num_formatter
+        self.formatters[int] = _num_formatter
 
         self.formatters[date] = _date_formatter
         self.formatters[datetime] = _datetime_formatter
 
-        self.formatters[six.text_type] = _text_formatter
+        self.formatters[str] = _text_formatter
 
         self.converters = OrderedDict()
         self.converters[float] = _convert_numbers
-        for int_type in six.integer_types:
-            self.converters[int_type] = _convert_numbers
+        self.converters[int] = _convert_numbers
 
         self.converters[date] = _convert_date
         self.converters[datetime] = _convert_datetime
@@ -132,13 +128,13 @@ def _datetime_formatter(val, chars, delta, left=False):
 
 
 def _num_formatter(val, chars, delta, left=False):
-    if not (isinstance(val, six.integer_types) or isinstance(val, float)):
+    if not isinstance(val, (int, float)):
         raise ValueError('Only accepting numeric (int/long/float) types, not "{}" of type: {}'.format(val, type(val)))
 
     if abs(val - roundeven(val)) < 1e-8:  # about float (f32) machine precision
         val = int(roundeven(val))
 
-    if isinstance(val, six.integer_types):
+    if isinstance(val, int):
         return _int_formatter(val, chars, left)
     elif isinstance(val, float):
         return _float_formatter(val, chars, left)
@@ -174,7 +170,7 @@ def _float_formatter(val, chars, left=False):
 
 
 def _int_formatter(val, chars, left=False):
-    assert isinstance(val, six.integer_types)
+    assert isinstance(val, int)
     if val != 0:
         sign = 1 if val < 0 else 0
         digits = math.ceil(math.log10(abs(val)))
@@ -204,7 +200,7 @@ def _text_formatter(val, chars, delta, left=False):
 
 
 def _convert_numbers(v):
-    assert isinstance(v, float) or isinstance(v, six.integer_types)
+    assert isinstance(v, float) or isinstance(v, int)
     return float(v)
 
 

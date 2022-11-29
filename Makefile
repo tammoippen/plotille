@@ -1,4 +1,4 @@
-.PHONY: style tests
+.PHONY: style tests install
 
 style:
 	poetry run flake8 tests/ plotille/ examples/
@@ -8,4 +8,3 @@ tests:
 
 install:
 	poetry install
-	poetry run pip install -r tests/requirements.txt

@@ -23,8 +23,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import six
-
 from ._colors import color
 
 # I plot upside down, hence the different order
@@ -99,7 +97,7 @@ class Dots(object):
 
     @marker.setter
     def marker(self, value):
-        assert value is None or isinstance(value, six.string_types)
+        assert value is None or isinstance(value, str)
         assert value is None or len(value) == 1
         self._marker = value
 
@@ -113,7 +111,7 @@ class Dots(object):
         if self.marker:
             res = self.marker
         else:
-            res = six.unichr(0x2800 + self._dots)
+            res = chr(0x2800 + self._dots)
 
         return color(res, fg=self.fg, bg=self.bg, **self.color_kwargs)
 
@@ -161,7 +159,7 @@ def braille_from(dots):
 
     code = 0x2800 + int(''.join(bin_code), 2)
 
-    return six.unichr(code)
+    return chr(code)
 
 
 def dots_from(braille):
@@ -178,7 +176,7 @@ def dots_from(braille):
     """
     assert 0x2800 <= ord(braille) <= 0x28ff
 
-    code = six.text_type(bin(ord(braille) - 0x2800))[2:].rjust(8, '0')
+    code = str(bin(ord(braille) - 0x2800))[2:].rjust(8, '0')
 
     dots = []
     for i, c in enumerate(code):
