@@ -11,7 +11,7 @@
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
-Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with (almost) no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
+Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
 
 Install:
 
