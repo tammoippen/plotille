@@ -35,6 +35,9 @@ jobs:
           python-version: 'pypy-3.8'
         - os: windows-latest
           python-version: 'pypy-3.9'
+    defaults:
+      run:
+        shell: bash
 
     runs-on: ${{ matrix.os }}
     env:
