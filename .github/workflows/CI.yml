@@ -44,16 +44,16 @@ jobs:
       PYTHONIOENCODING: UTF-8
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set Up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Cache Install
         id: restore-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             ${{ matrix.path }}
@@ -76,7 +76,7 @@ jobs:
       - name: Tests
         run: poetry run pytest -s -vvv
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           flags: unittests
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}
