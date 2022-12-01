@@ -5,13 +5,13 @@
 [![CI](https://github.com/tammoippen/plotille/actions/workflows/CI.yml/badge.svg)](https://github.com/tammoippen/plotille/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/tammoippen/plotille/branch/master/graph/badge.svg?token=OGWI832JNM)](https://codecov.io/gh/tammoippen/plotille)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/tammoippen/plotille.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/tammoippen/plotille/context:python)
-[![Tested CPython Versions](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/cpython-2.7%2C%203.6%2C%203.7%2C%203.8%2C%203.8-brightgreen.svg)
-[![Tested PyPy Versions](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.7--7.3%2C%203.8--7.3-brightgreen.svg)](https://img.shields.io/badge/pypy-2.7--7.3%2C%203.7--7.3%2C%203.8--7.3-brightgreen.svg)
+[![Tested CPython Versions](https://img.shields.io/badge/cpython-3.7%2C%203.8%2C%203.9%2C%203.10%2C%203.11-brightgreen.svg)](https://img.shields.io/badge/cpython-3.7%2C%203.8%2C%203.9%2C%203.10%2C%203.11-brightgreen.svg)
+[![Tested PyPy Versions](https://img.shields.io/badge/pypy-3.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/pypy-3.8%2C%203.9-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
-Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with (almost) no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
+Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
 
 Install:
 
@@ -29,6 +29,8 @@ Similar to other libraries:
 Basic support for timeseries plotting is provided with release 3.2: for any `X` or `Y` values you can also add `datetime.datetime`, `pendulum.datetime` or `numpy.datetime64` values. Labels are generated respecting the difference of `x_limits` and `y_limits`.
 
 Support for heatmaps using background colors for figures and displaying images binary with braille, or in color with background colors using the canvas - provided with release 4.0
+
+If you are still using python 2.7, please use plotille v4 or before. With v5 I am dropping support for python 2.7, as the effort to maintain the discontinued version is too much.
 
 ## Documentation
 

@@ -27,8 +27,6 @@ import colorsys
 import os
 import sys
 
-import six
-
 
 def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True):  # noqa: C901 complex (12)
     """Surround `text` with control characters for coloring
@@ -109,9 +107,9 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
     elif mode == 'byte':
         start = _byte(fg, bg)
     elif mode == 'rgb':
-        if isinstance(fg, six.string_types):
+        if isinstance(fg, str):
             fg = _hex2rgb(fg)
-        if isinstance(bg, six.string_types):
+        if isinstance(bg, str):
             bg = _hex2rgb(bg)
 
         start = _rgb(fg, bg)
@@ -215,17 +213,17 @@ def _byte(fg, bg):
 
     fg_ = ''
     if fg is not None:
-        fg_ = '38;5;' + six.text_type(fg)
+        fg_ = '38;5;' + str(fg)
     bg_ = ''
     if bg is not None:
-        bg_ = '48;5;' + six.text_type(bg)
+        bg_ = '48;5;' + str(bg)
 
     return _join_codes(fg_, bg_)
 
 
 def _hex2rgb(h):
     """Transform rgb hex representation into rgb tuple of ints representation"""
-    assert isinstance(h, six.string_types)
+    assert isinstance(h, str)
     if h.lower().startswith('0x'):
         h = h[2:]
     if len(h) == 3:
@@ -248,10 +246,10 @@ def _rgb(fg, bg):
 
     fg_ = ''
     if fg is not None:
-        fg_ = '38;2;' + ';'.join(map(six.text_type, fg))
+        fg_ = '38;2;' + ';'.join(map(str, fg))
     bg_ = ''
     if bg is not None:
-        bg_ = '48;2;' + ';'.join(map(six.text_type, bg))
+        bg_ = '48;2;' + ';'.join(map(str, bg))
 
     return _join_codes(fg_, bg_)
 

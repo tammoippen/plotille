@@ -25,8 +25,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from math import cos, pi, sin
 
-import six
-
 
 def ellipse(x_center, y_center, angle=0,
             x_amplitude=1, y_amplitude=1, n=20):
@@ -46,11 +44,11 @@ def ellipse(x_center, y_center, angle=0,
                 The X and Y values for the ellipse.
     """
     # see https://en.wikipedia.org/wiki/Ellipse#Parametric_representation
-    assert isinstance(n, six.integer_types)
+    assert isinstance(n, int)
     assert n > 0
-    assert isinstance(x_amplitude, six.integer_types) or isinstance(x_amplitude, float)
+    assert isinstance(x_amplitude, (int, float))
     assert x_amplitude > 0
-    assert isinstance(y_amplitude, six.integer_types) or isinstance(y_amplitude, float)
+    assert isinstance(y_amplitude, (int, float))
     assert y_amplitude > 0
 
     max_ = 2 * pi
@@ -88,6 +86,6 @@ def circle(x_center, y_center, radius, n=20):
            X, Y: Tuple[List[float], List[float]]
                The X and Y values for the circle.
     """
-    assert isinstance(radius, six.integer_types) or isinstance(radius, float)
+    assert isinstance(radius, (int, float))
     assert radius > 0
     return ellipse(x_center, y_center, x_amplitude=radius, y_amplitude=radius, n=n)

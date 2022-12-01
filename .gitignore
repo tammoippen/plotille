@@ -15,7 +15,6 @@ __pycache__/
 dist/
 README.rst
 .pytest_cache/
-poetry.lock
 Pipfile.lock
 cov_html/
 coverage.xml

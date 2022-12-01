@@ -13,23 +13,23 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set Up Python 3.7
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.7
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.1.12
+          version: 1.2.2
 
       - name: Build
         run: poetry build -vvv -f sdist
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
 

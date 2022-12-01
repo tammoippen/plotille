@@ -23,9 +23,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import six
-from six.moves import zip
-
 from . import _cmaps
 from ._util import hist
 
@@ -186,7 +183,7 @@ class Heat:
             for RGB data.
         """
         assert len(X)
-        assert cmap is None or isinstance(cmap, six.string_types) or isinstance(cmap, _cmaps.Colormap)
+        assert cmap is None or isinstance(cmap, (str, _cmaps.Colormap))
         len_first = len(X[0])
         assert all(len(x) == len_first for x in X)
         self._X = X
@@ -194,7 +191,7 @@ class Heat:
         if cmap is None:
             cmap = 'viridis'
 
-        if isinstance(cmap, six.string_types):
+        if isinstance(cmap, str):
             cmap = _cmaps.cmaps[cmap]()
         self.cmap = cmap
 
