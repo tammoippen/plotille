@@ -66,7 +66,7 @@ def test_circle(radius):
     assert Y[0] == pytest.approx(Y[-1], abs=0.001)
 
     for x, y in zip(X, Y):
-        assert math.sqrt(x**2 + y**2) == pytest.approx(radius**10, abs=0.001)
+        assert math.hypot(x, y) == pytest.approx(radius**10, abs=0.001)
         equal = 0
         for x2, y2 in zip(X, Y):
             if x2 == x and y2 == y:

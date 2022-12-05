@@ -31,7 +31,7 @@ from ._canvas import Canvas
 from ._colors import color, rgb2byte
 from ._figure_data import Heat, Histogram, Plot, Span, Text
 from ._input_formatter import InputFormatter
-from ._util import mk_timedelta, timestamp
+from ._util import mk_timedelta
 
 # TODO documentation!!!
 # TODO tests
@@ -244,7 +244,7 @@ class Figure(object):
     def _y_axis(self, ymin, ymax, label='Y'):
         delta = abs(ymax - ymin)
         if isinstance(delta, timedelta):
-            y_delta = mk_timedelta(timestamp(delta) / self.height)
+            y_delta = mk_timedelta(delta.total_seconds() / self.height)
         else:
             y_delta = delta / self.height
 
@@ -271,7 +271,7 @@ class Figure(object):
     def _x_axis(self, xmin, xmax, label='X', with_y_axis=False):
         delta = abs(xmax - xmin)
         if isinstance(delta, timedelta):
-            x_delta = mk_timedelta(timestamp(delta) / self.width)
+            x_delta = mk_timedelta(delta.total_seconds() / self.width)
         else:
             x_delta = delta / self.width
         starts = ['', '']
@@ -546,7 +546,7 @@ def _diff(low, high):
     else:
         delta = abs(high - low)
         if isinstance(delta, timedelta):
-            return mk_timedelta(timestamp(delta) * 0.1)
+            return mk_timedelta(delta.total_seconds() * 0.1)
         else:
             return delta * 0.1
 
@@ -568,6 +568,7 @@ def _default(low_set, high_set):
             return low_set, 1.0
 
     # Should never get here! => checked in function before
+    raise ValueError('Unexpected inputs!')
 
 
 def _choose(low, high, low_set, high_set):
@@ -600,3 +601,4 @@ def _choose(low, high, low_set, high_set):
             return low_set, high + diff
 
         # Should never get here! => checked in function before
+        raise ValueError('Unexpected inputs!')

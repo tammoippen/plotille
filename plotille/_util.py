@@ -23,9 +23,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from datetime import datetime, timedelta, tzinfo
+from datetime import timedelta, tzinfo
 import math
-import time
 
 
 def roundeven(x):
@@ -78,7 +77,7 @@ def hist(X, bins):
     is_datetime = False
     if isinstance(delta, timedelta):
         is_datetime = True
-        delta = timestamp(delta)
+        delta = delta.total_seconds()
 
     xwidth = delta / bins
 
@@ -87,7 +86,7 @@ def hist(X, bins):
         x_ = _numpy_to_native(x)
         delta = (x_ - xmin)
         if isinstance(delta, timedelta):
-            delta = timestamp(delta)
+            delta = delta.total_seconds()
         x_idx = min(bins - 1, int(delta // xwidth))
         y[x_idx] += 1
 
@@ -109,20 +108,6 @@ class _UTC(tzinfo):
 
     def dst(self, dt):
         return self._ZERO
-
-
-_EPOCH = datetime(1970, 1, 1, tzinfo=_UTC())
-
-
-def timestamp(v):
-    """Get timestamp of `v` datetime in py2/3."""
-    if isinstance(v, datetime):
-        if v.tzinfo is None:
-            return time.mktime(v.timetuple()) + v.microsecond / 1e6
-        else:
-            return (v - _EPOCH).total_seconds()
-    elif isinstance(v, timedelta):
-        return v.total_seconds()
 
 
 def mk_timedelta(v):
