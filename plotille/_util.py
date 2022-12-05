@@ -23,9 +23,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from datetime import datetime, timedelta, tzinfo
+from datetime import timedelta, tzinfo
 import math
-import time
 
 
 def roundeven(x):

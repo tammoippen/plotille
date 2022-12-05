@@ -140,6 +140,7 @@ def _num_formatter(val, chars, delta, left=False):
         return _float_formatter(val, chars, left)
     # unreachable
 
+
 def _float_formatter(val, chars, left=False):
     assert isinstance(val, float)
     if math.isinf(val):
