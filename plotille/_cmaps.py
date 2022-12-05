@@ -38,7 +38,7 @@ class Colormap(object):
     Colormap represents. Scaling the data into the `[0, 1]` interval is
     responsibility of the caller.
     """
-    def __init__(self, name):
+    def __init__(self, name, lookup_table=None):
         """
         Parameters
         ----------
@@ -48,7 +48,7 @@ class Colormap(object):
             The number of rgb quantization levels.
         """
         self.name = name
-        self._lookup_table = None
+        self._lookup_table = lookup_table
         self.bad = None
         self.over = None
         self.under = None
@@ -86,8 +86,7 @@ class Colormap(object):
 
 class ListedColormap(Colormap):
     def __init__(self, name, colors):
-        super(ListedColormap, self).__init__(name)
-        self._lookup_table = colors
+        super(ListedColormap, self).__init__(name, lookup_table=colors)
 
     @classmethod
     def from_relative(cls, name, colors):

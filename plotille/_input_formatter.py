@@ -27,7 +27,7 @@ from collections import OrderedDict
 from datetime import date, datetime, time, timedelta
 import math
 
-from ._util import roundeven, timestamp
+from ._util import roundeven
 
 
 class InputFormatter(object):
@@ -138,7 +138,7 @@ def _num_formatter(val, chars, delta, left=False):
         return _int_formatter(val, chars, left)
     elif isinstance(val, float):
         return _float_formatter(val, chars, left)
-
+    # unreachable
 
 def _float_formatter(val, chars, left=False):
     assert isinstance(val, float)
@@ -206,7 +206,7 @@ def _convert_numbers(v):
 
 def _convert_np_datetime(v):
     # assert isinstance(v, np.datetime64)
-    return timestamp(v.item())
+    return v.item().timestamp()
 
 
 def _convert_date(v):
@@ -216,4 +216,4 @@ def _convert_date(v):
 
 def _convert_datetime(v):
     assert isinstance(v, datetime)
-    return timestamp(v)
+    return v.timestamp()

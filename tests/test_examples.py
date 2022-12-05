@@ -7,19 +7,6 @@ import sys
 
 import pytest
 
-try:
-    import numpy  # noqa: F401
-    have_numpy = True
-except ImportError:
-    have_numpy = False
-
-
-try:
-    from PIL import Image  # noqa: F401
-    have_pillow = True
-except ImportError:
-    have_pillow = False
-
 
 @pytest.fixture
 def change_to_examples_dir(request):
@@ -28,8 +15,6 @@ def change_to_examples_dir(request):
     os.chdir(str(request.config.invocation_dir))
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
 def test_examples(change_to_examples_dir):
     sys.path.insert(0, '.')
     for fname in glob('*_example.py'):
