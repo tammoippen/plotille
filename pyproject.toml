@@ -47,8 +47,14 @@ flake8-pep3101 = "^1"
 flake8-polyfill = "^1"
 flake8-quotes = "^3"
 mock = "^3"
-numpy = "^1"
-pendulum = "^2"
+numpy = [
+    { version = "1.24.4", python = "~3.8" },
+    { version = "^1", python = "^3.9" },
+]
+pendulum = [
+    { version = "^2", python = "<3.12" },
+    { version = "^3", python = "^3.12" },
+]
 pep8-naming = "^0.11"
 Pillow = "^9"
 pytest = "^6"
