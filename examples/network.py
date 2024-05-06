@@ -23,33 +23,38 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import plotille
-import plotille.data as plt_data
+import random
 
-# The module plotille.data contains helper functions for creating interesting
-# data. At the moment you can create ellipsis and circles.
+import plotille
 
 
 def main():
-    fig = plotille.Figure()
-    fig.width = 50
-    fig.height = 20
+    nodes = [(0, 0), (9, 0), (0, 9), (9, 9)]
+    for _ in range(10):
+        nodes.append((random.randint(0, 9), random.randint(0, 9)))
 
-    # the olympic rings
-    fig.set_x_limits(min_=0, max_=600)
-    fig.set_y_limits(min_=0, max_=500)
+    edges = []
+    for _ in range(5):
+        from_ = random.randint(0, len(nodes) - 1)
+        to_ = random.randint(0, len(nodes) - 1)
+        if from_ == to_:
+            to_ = (from_ + 1) % len(nodes)
+        edges.append((from_, to_))
 
-    centers = []
-    centers.append([250, 200, 'blue'])
-    centers.append([375, 200, 'white'])
-    centers.append([500, 200, 'red'])
-    centers.append([310, 250, 'yellow'])
-    centers.append([435, 250, 'green'])
-    for ring in centers:
-        X, Y = plt_data.circle(x_center=ring[0], y_center=500 - ring[1], radius=50)  # noqa: N806
-        fig.plot(X, Y, lc=ring[2])
+    canvas = plotille.Canvas(width=50, height=20, xmax=10, ymax=10)
 
-    print(fig.show(legend=False))
+    for node in nodes:
+        canvas.point(x=node[0], y=node[1], marker='x')
+
+    for edge in edges:
+        from_node = nodes[edge[0]]
+        to_node = nodes[edge[1]]
+        canvas.line(
+            x0=from_node[0], y0=from_node[1],
+            x1=to_node[0], y1=to_node[1],
+        )
+
+    print(canvas.plot())
 
 
 if __name__ == '__main__':

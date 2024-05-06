@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.7, 'pypy-3.8', 3.8, 'pypy-3.9', 3.9, '3.10', '3.11']
+        python-version: ['pypy-3.8', 3.8, 'pypy-3.9', 3.9, '3.10', 'pypy-3.10', '3.11', '3.12']
         include:
         - os: ubuntu-latest
           path: ~/.cache/pip
@@ -27,10 +27,14 @@ jobs:
           python-version: 'pypy-3.8'
         - os: macos-latest
           python-version: 'pypy-3.9'
+        - os: macos-latest
+          python-version: 'pypy-3.10'
         - os: windows-latest
           python-version: 'pypy-3.8'
         - os: windows-latest
           python-version: 'pypy-3.9'
+        - os: windows-latest
+          python-version: 'pypy-3.10'
     defaults:
       run:
         shell: bash
@@ -40,7 +44,7 @@ jobs:
       PYTHONIOENCODING: UTF-8
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -49,7 +53,7 @@ jobs:
 
       - name: Cache Install
         id: restore-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ${{ matrix.path }}
@@ -59,7 +63,7 @@ jobs:
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
-          version: 1.2.2
+          version: ${{ startsWith(matrix.python-version, 'pypy') && '1.2.2' || '1.7.0' }}
           virtualenvs-create: false
 
       - name: Install
@@ -72,7 +76,7 @@ jobs:
       - name: Tests
         run: poetry run pytest -s -vvv
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
         with:
           flags: unittests
           name: coverage-${{ matrix.os }}-${{ matrix.python-version }}

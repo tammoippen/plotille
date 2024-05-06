@@ -1,7 +1,7 @@
 [tool.poetry]
 
 name = "plotille"
-version = "5.0.0"
+version = "5.1.0"
 description = "Plot in the terminal using braille dots."
 authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
 license = "MIT"
@@ -21,11 +21,11 @@ classifiers = [
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Topic :: Scientific/Engineering :: Visualization',
@@ -33,7 +33,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 
 
 [tool.poetry.dev-dependencies]
@@ -48,10 +48,13 @@ flake8-polyfill = "^1"
 flake8-quotes = "^3"
 mock = "^3"
 numpy = [
-    { version = "~1.21.4", python = "~3.7" },
-    { version = "^1", python = "^3.8" },
+    { version = "1.24.4", python = "~3.8" },
+    { version = "^1", python = "^3.9" },
 ]
-pendulum = "^2"
+pendulum = [
+    { version = "^2", python = "<3.12" },
+    { version = "^3", python = "^3.12" },
+]
 pep8-naming = "^0.11"
 Pillow = "^9"
 pytest = "^6"

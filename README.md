@@ -4,8 +4,8 @@
 
 [![CI](https://github.com/tammoippen/plotille/actions/workflows/CI.yml/badge.svg)](https://github.com/tammoippen/plotille/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/tammoippen/plotille/branch/master/graph/badge.svg?token=OGWI832JNM)](https://codecov.io/gh/tammoippen/plotille)
-[![Tested CPython Versions](https://img.shields.io/badge/cpython-3.7%2C%203.8%2C%203.9%2C%203.10%2C%203.11-brightgreen.svg)](https://img.shields.io/badge/cpython-3.7%2C%203.8%2C%203.9%2C%203.10%2C%203.11-brightgreen.svg)
-[![Tested PyPy Versions](https://img.shields.io/badge/pypy-3.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/pypy-3.8%2C%203.9-brightgreen.svg)
+[![Tested CPython Versions](https://img.shields.io/badge/cpython-3.8%2C%203.9%2C%203.10%2C%203.11%2C%203.12-brightgreen.svg)](https://img.shields.io/badge/cpython-3.8%2C%203.9%2C%203.10%2C%203.11%2C%203.12-brightgreen.svg)
+[![Tested PyPy Versions](https://img.shields.io/badge/pypy-3.8%2C%203.9-brightgreen.svg)](https://img.shields.io/badge/pypy-3.8%2C%203.9%2C%203.10-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
