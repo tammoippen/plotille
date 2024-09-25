@@ -27,7 +27,7 @@ from ._canvas import Canvas
 from ._cmaps import Colormap, ListedColormap
 from ._colors import color, hsl
 from ._figure import Figure
-from ._graphs import hist, hist_aggregated, histogram, plot, scatter
+from ._graphs import hbar, hist, hist_aggregated, histogram, plot, scatter
 
 
 __all__ = [
@@ -35,6 +35,7 @@ __all__ = [
     'color',
     'Colormap',
     'Figure',
+    'hbar',
     'hist',
     'hist_aggregated',
     'histogram',
