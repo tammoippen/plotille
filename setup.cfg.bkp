@@ -24,13 +24,15 @@ addopts = --cov=plotille
 universal = 1
 
 [metadata]
+name = plotille
+version = 5.1.0
 license_file = LICENSE.txt
 description = README.md
 
 [options]
-package_dir=
-    plotille=plotille
-packages=find:
+package_dir =
+    plotille = plotille
+packages = find:
 
 [options.packages.find]
 where=plotille
@@ -38,4 +40,3 @@ exclude =
     examples*
     imgs*
     tests*
-
