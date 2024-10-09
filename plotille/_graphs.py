@@ -33,10 +33,10 @@ from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
 
-def hbar(counts, labels=Optional[List[str]], width=80, log_scale=False, linesep=os.linesep,
+def hbar(counts, labels=None, width=80, log_scale=False, linesep=os.linesep,
          lc=None, bg=None, color_mode='names'):
     """
-    Create histogram for aggregated data.
+    Create a horizontal bar chart.
 
     Parameters:
         counts: List[int]    Counts for each bucket.
