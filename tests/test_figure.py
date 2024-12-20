@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
+
+
 
 import datetime as orig_datetime
 import os
 
-from mock import call
+from unittest.mock import call
 from pendulum import datetime, duration
 import pytest
 
