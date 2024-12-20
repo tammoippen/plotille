@@ -63,8 +63,7 @@ jobs:
           virtualenvs-create: false
 
       # pendulum has no 3.13 build (yet), hence install build dependencies
-      - name: Setup Ninja
-        uses: ashutoshvarma/setup-ninja@v1
+      - uses: seanmiddleditch/gha-setup-ninja@v5
         with:
           version: "1.12.1"
 
