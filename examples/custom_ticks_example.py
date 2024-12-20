@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -51,12 +48,12 @@ def mean_y_value(Y, min_, max_):
 
 
 def str_tick(min_, max_):
-    return '{:.3f}'.format(min_ + (max_ - min_) / 2)
+    return "{:.3f}".format(min_ + (max_ - min_) / 2)
 
 
 def main():
-    Y = [0, 10, 20, 20, 21, 25, 30, 32, 40, 44, 50] + [51.3] * 10  # noqa: N806
-    X = list(range(len(Y)))  # noqa: N806
+    Y = [0, 10, 20, 20, 21, 25, 30, 32, 40, 44, 50] + [51.3] * 10
+    X = list(range(len(Y)))
 
     fig = plt.Figure()
     fig.plot(X, Y)
@@ -82,5 +79,5 @@ def main():
     print(fig.show())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

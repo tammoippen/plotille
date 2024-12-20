@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -33,5 +30,5 @@ def main():
     print(plotille.scatter(x, np.sin(x), height=30, width=60))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -37,7 +34,7 @@ _xy2dot = [
 class Dots(object):
     """A Dots object is responsible for printing requested braille dots and colors
 
-    Dot ordering: \u2800 '⠀' - \u28FF '⣿'' Coding according to ISO/TR 11548-1
+    Dot ordering: \u2800 '⠀' - \u28ff '⣿'' Coding according to ISO/TR 11548-1
 
         Hence, each dot on or off is 8bit, i.e. 256 posibilities. With dot number
         one being the lsb and 8 is msb:
@@ -52,6 +49,7 @@ class Dots(object):
         3  6
         7  8
     """
+
     def __init__(self, marker=None, fg=None, bg=None, **color_kwargs):
         """Create a Dots object
 
@@ -60,7 +58,8 @@ class Dots(object):
             marker: str      Set a marker instead of braille dots.
             fg: str          Color of dots
             bg: str          Color of background
-            **color_kwargs:  More arguments to the color-function. See `plotille.color()`.
+            **color_kwargs:  More arguments to the color-function.
+                             See `plotille.color()`.
 
         Returns:
             Dots
@@ -71,8 +70,8 @@ class Dots(object):
         self.fg = fg
         self.bg = bg
         self._color_kwargs = color_kwargs
-        if 'mode' not in self._color_kwargs:
-            self._color_kwargs['mode'] = 'names'
+        if "mode" not in self._color_kwargs:
+            self._color_kwargs["mode"] = "names"
 
     @property
     def color_kwargs(self):
@@ -80,7 +79,7 @@ class Dots(object):
 
     @property
     def dots(self):
-        assert self._dots.bit_length() <= 8
+        assert self._dots.bit_length() <= 8  # noqa: PLR2004
         dots = []
         x = self._dots
         bit = 1
@@ -102,9 +101,12 @@ class Dots(object):
         self._marker = value
 
     def __repr__(self):
-        return 'Dots(dots={}, marker={}, fg={}, bg={}, color_kwargs={})'.format(
-            self.dots, self.marker, self.fg, self.bg,
-            ' '.join('{}: {}'.format(k, v) for k, v in self.color_kwargs.items()),
+        return "Dots(dots={}, marker={}, fg={}, bg={}, color_kwargs={})".format(
+            self.dots,
+            self.marker,
+            self.fg,
+            self.bg,
+            " ".join("{}: {}".format(k, v) for k, v in self.color_kwargs.items()),
         )
 
     def __str__(self):
@@ -153,11 +155,11 @@ def braille_from(dots):
     Returns:
         unicode: braille sign with given dots set. \u2800 - \u28ff
     """
-    bin_code = ['0'] * 8
+    bin_code = ["0"] * 8
     for i in dots:
-        bin_code[8 - i] = '1'
+        bin_code[8 - i] = "1"
 
-    code = 0x2800 + int(''.join(bin_code), 2)
+    code = 0x2800 + int("".join(bin_code), 2)
 
     return chr(code)
 
@@ -174,13 +176,13 @@ def dots_from(braille):
     Returns:
         List[int]: dots that are set in braille sign
     """
-    assert 0x2800 <= ord(braille) <= 0x28ff
+    assert 0x2800 <= ord(braille) <= 0x28FF  # noqa: PLR2004
 
-    code = str(bin(ord(braille) - 0x2800))[2:].rjust(8, '0')
+    code = str(bin(ord(braille) - 0x2800))[2:].rjust(8, "0")
 
     dots = []
     for i, c in enumerate(code):
-        if c == '1':
+        if c == "1":
             dots += [8 - i]
 
     return sorted(dots)

@@ -1,13 +1,11 @@
-
-
-
 import pytest
 
 from plotille._cmaps import cmaps
+
 # from plotille._colors import color
 
 
-@pytest.mark.parametrize('name', cmaps.keys())
+@pytest.mark.parametrize("name", cmaps.keys())
 def test_print_cmaps(name, tty):
     # print()
     current = cmaps[name]()

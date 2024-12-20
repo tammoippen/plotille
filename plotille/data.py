@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -26,22 +23,21 @@
 from math import cos, pi, sin
 
 
-def ellipse(x_center, y_center, angle=0,
-            x_amplitude=1, y_amplitude=1, n=20):
+def ellipse(x_center, y_center, angle=0, x_amplitude=1, y_amplitude=1, n=20):
     r"""Create X and Y values for an ellipse.
 
-        Parameters:
-            x_center: float     X-coordinate of the center of the ellipse.
-            y_center: float     Y-coordinate of the center of the ellipse.
-            angle: float        Rotation angle of the ellipse \in [0 .. 2pi] .
-            x_amplitude: float  The radius in X-direction before rotation.
-            y_amplitude: float  The radius in Y-direction before rotation.
-            n: int              The number of points to return. The ellipse is
-                                closed, hence the function actually return n+1 points.
+    Parameters:
+        x_center: float     X-coordinate of the center of the ellipse.
+        y_center: float     Y-coordinate of the center of the ellipse.
+        angle: float        Rotation angle of the ellipse \in [0 .. 2pi] .
+        x_amplitude: float  The radius in X-direction before rotation.
+        y_amplitude: float  The radius in Y-direction before rotation.
+        n: int              The number of points to return. The ellipse is
+                            closed, hence the function actually return n+1 points.
 
-        Returns:
-            X, Y: Tuple[List[float], List[float]]
-                The X and Y values for the ellipse.
+    Returns:
+        X, Y: Tuple[List[float], List[float]]
+            The X and Y values for the ellipse.
     """
     # see https://en.wikipedia.org/wiki/Ellipse#Parametric_representation
     assert isinstance(n, int)
@@ -75,16 +71,16 @@ def ellipse(x_center, y_center, angle=0,
 def circle(x_center, y_center, radius, n=20):
     """Create X and Y values for a circle.
 
-       Parameters:
-           x_center: float     X-coordinate of the center of the circle.
-           y_center: float     Y-coordinate of the center of the circle.
-           radius: float       The radius of the circle.
-           n: int              The number of points to return. The circle is
-                               closed, hence the function actually return n+1 points.
+    Parameters:
+        x_center: float     X-coordinate of the center of the circle.
+        y_center: float     Y-coordinate of the center of the circle.
+        radius: float       The radius of the circle.
+        n: int              The number of points to return. The circle is
+                            closed, hence the function actually return n+1 points.
 
-       Returns:
-           X, Y: Tuple[List[float], List[float]]
-               The X and Y values for the circle.
+    Returns:
+        X, Y: Tuple[List[float], List[float]]
+            The X and Y values for the circle.
     """
     assert isinstance(radius, (int, float))
     assert radius > 0

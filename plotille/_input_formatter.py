@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -23,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import math
 from collections import OrderedDict
 from datetime import date, datetime, time, timedelta
-import math
 
 from ._util import roundeven
 
@@ -97,29 +94,34 @@ def _datetime_formatter(val, chars, delta, left=False):
     assert isinstance(val, datetime)
     assert isinstance(delta, timedelta)
 
-    if chars < 8:
-        raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
+    if chars < 8:  # noqa: PLR2004
+        raise ValueError(
+            f'Not possible to display value "{val}" with {chars} characters!'
+        )
 
-    res = ''
+    res = ""
 
     if delta.days <= 0:
         # make time representation
-        if chars < 15:
-            res = '{:02d}:{:02d}:{:02d}'.format(val.hour, val.minute, val.second)
+        if chars < 15:  # noqa: PLR2004
+            res = "{:02d}:{:02d}:{:02d}".format(val.hour, val.minute, val.second)
         else:
-            res = '{:02d}:{:02d}:{:02d}.{:06d}'.format(val.hour, val.minute, val.second, val.microsecond)
-    elif 1 <= delta.days <= 10:
+            res = "{:02d}:{:02d}:{:02d}.{:06d}".format(
+                val.hour, val.minute, val.second, val.microsecond
+            )
+    elif 1 <= delta.days <= 10:  # noqa: PLR2004
         # make day / time representation
-        if chars < 11:
-            res = '{:02d}T{:02d}:{:02d}'.format(val.day, val.hour, val.minute)
+        if chars < 11:  # noqa: PLR2004
+            res = "{:02d}T{:02d}:{:02d}".format(val.day, val.hour, val.minute)
         else:
-            res = '{:02d}T{:02d}:{:02d}:{:02d}'.format(val.day, val.hour, val.minute, val.second)
+            res = "{:02d}T{:02d}:{:02d}:{:02d}".format(
+                val.day, val.hour, val.minute, val.second
+            )
+    # make date representation
+    elif chars < 10:  # noqa: PLR2004
+        res = "{:02d}-{:02d}-{:02d}".format(val.year % 100, val.month, val.day)
     else:
-        # make date representation
-        if chars < 10:
-            res = '{:02d}-{:02d}-{:02d}'.format(val.year % 100, val.month, val.day)
-        else:
-            res = '{:04d}-{:02d}-{:02d}'.format(val.year, val.month, val.day)
+        res = "{:04d}-{:02d}-{:02d}".format(val.year, val.month, val.day)
 
     if left:
         return res.ljust(chars)
@@ -129,9 +131,13 @@ def _datetime_formatter(val, chars, delta, left=False):
 
 def _num_formatter(val, chars, delta, left=False):
     if not isinstance(val, (int, float)):
-        raise ValueError('Only accepting numeric (int/long/float) types, not "{}" of type: {}'.format(val, type(val)))
+        raise ValueError(
+            "Only accepting numeric (int/long/float) "
+            f'types, not "{val}" of type: {type(val)}'
+        )
 
-    if abs(val - roundeven(val)) < 1e-8:  # about float (f32) machine precision
+    # about float (f32) machine precision
+    if abs(val - roundeven(val)) < 1e-8:  # noqa: PLR2004
         val = int(roundeven(val))
 
     if isinstance(val, int):
@@ -147,7 +153,7 @@ def _float_formatter(val, chars, left=False):
         return str(val).ljust(chars) if left else str(val).rjust(chars)
     sign = 1 if val < 0 else 0
     order = 0 if val == 0 else math.log10(abs(val))
-    align = '<' if left else ''
+    align = "<" if left else ""
 
     if order >= 0:
         # larger than 1 values or smaller than -1
@@ -156,18 +162,20 @@ def _float_formatter(val, chars, left=False):
         if digits + sign > chars:
             return _large_pos(val, chars, left, digits, sign)
 
-        return '{:{}{}.{}f}'.format(val, align, chars, fractionals)
+        return "{:{}{}.{}f}".format(val, align, chars, fractionals)
     else:
         # between -1 and 1 values
         order = abs(math.floor(order))
 
-        if order > 4:  # e-04  4 digits
+        if order > 4:  # e-04  4 digits  # noqa: PLR2004
             exp_digits = int(max(2, math.ceil(math.log10(order))))
             exp_digits += 2  # the - sign and the e
 
-            return '{:{}{}.{}e}'.format(val, align, chars, chars - exp_digits - 2 - sign)
+            return "{:{}{}.{}e}".format(
+                val, align, chars, chars - exp_digits - 2 - sign
+            )
         else:
-            return '{:{}{}.{}f}'.format(val, align, chars, chars - 2 - sign)
+            return "{:{}{}.{}f}".format(val, align, chars, chars - 2 - sign)
 
 
 def _int_formatter(val, chars, left=False):
@@ -177,20 +185,22 @@ def _int_formatter(val, chars, left=False):
         digits = math.ceil(math.log10(abs(val)))
         if digits + sign > chars:
             return _large_pos(val, chars, left, digits, sign)
-    align = '<' if left else ''
-    return '{:{}{}d}'.format(val, align, chars)
+    align = "<" if left else ""
+    return "{:{}{}d}".format(val, align, chars)
 
 
 def _large_pos(val, chars, left, digits, sign):
-    align = '<' if left else ''
+    align = "<" if left else ""
     # exponent is always + and has at least two digits (1.3e+06)
     exp_digits = max(2, math.ceil(math.log10(digits)))
     exp_digits += 2  # the + sign and the e
     front_digits = chars - exp_digits - sign
     residual_digits = int(max(0, front_digits - 2))
     if front_digits < 1:
-        raise ValueError('Not possible to display value "{}" with {} characters!'.format(val, chars))
-    return '{:{}{}.{}e}'.format(val, align, chars, residual_digits)
+        raise ValueError(
+            'Not possible to display value "{}" with {} characters!'.format(val, chars)
+        )
+    return "{:{}{}.{}e}".format(val, align, chars, residual_digits)
 
 
 def _text_formatter(val, chars, delta, left=False):

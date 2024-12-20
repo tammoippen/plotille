@@ -51,10 +51,11 @@ pytest-mock = "*"
 
 [tool.ruff.lint]
 select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
-# ignore = ["E501"]
+pylint.max-args = 6
 
-# [tool.ruff.lint.per-file-ignores]
-# "**/tests/*" = ["B011", "PLR2004"]
+[tool.ruff.lint.per-file-ignores]
+"**/examples/*" = ["T201"]
+"**/tests/*" = ["E501", "PLR2004", "PLR0913", "PLR0915", "T201"] #["B011", "PLR2004"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["plotille"]

@@ -1,6 +1,3 @@
-
-
-
 from plotille import plot
 
 

@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -41,9 +38,9 @@ def draw_scene(mouse_list, cat_list):
     for idx, mouse in enumerate(mouse_list):
         listx.append(mouse[0])
         listy.append(mouse[1])
-        names.append('o MOUSE {}'.format(idx))
+        names.append("o MOUSE {}".format(idx))
 
-    fig.text(listy, listx, names, lc='red')
+    fig.text(listy, listx, names, lc="red")
 
     listx = []
     listy = []
@@ -51,10 +48,10 @@ def draw_scene(mouse_list, cat_list):
         listx.append(cat[0])
         listy.append(cat[1])
 
-    fig.scatter(listy, listx, lc='green', label='Cat', marker='x')
+    fig.scatter(listy, listx, lc="green", label="Cat", marker="x")
 
     print(fig.show(legend=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

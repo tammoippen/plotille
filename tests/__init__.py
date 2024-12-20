@@ -1,6 +1,3 @@
-
-
-
 from logging import getLogger
 
-getLogger('flake8').propagate = False
+getLogger("flake8").propagate = False

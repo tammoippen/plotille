@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -29,17 +26,16 @@ from ._colors import color, hsl
 from ._figure import Figure
 from ._graphs import hist, hist_aggregated, histogram, plot, scatter
 
-
 __all__ = [
-    'Canvas',
-    'color',
-    'Colormap',
-    'Figure',
-    'hist',
-    'hist_aggregated',
-    'histogram',
-    'hsl',
-    'ListedColormap',
-    'plot',
-    'scatter',
+    "Canvas",
+    "Colormap",
+    "Figure",
+    "ListedColormap",
+    "color",
+    "hist",
+    "hist_aggregated",
+    "histogram",
+    "hsl",
+    "plot",
+    "scatter",
 ]

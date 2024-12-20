@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -23,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import os
 from datetime import timedelta
 from itertools import cycle
-import os
 
 from ._canvas import Canvas
 from ._colors import color, rgb2byte
@@ -37,7 +34,7 @@ from ._util import mk_timedelta
 # TODO tests
 
 
-class Figure(object):
+class Figure:
     """Figure class to compose multiple plots.
 
     Within a Figure you can easily compose many plots, assign labels to plots
@@ -55,14 +52,15 @@ class Figure(object):
         background: multiple  Define the background color.
         x_label, y_label: str Define the X / Y axis label.
     """
-    _COLOR_SEQ = [
-        {'names': 'white', 'rgb': (255, 255, 255), 'byte': rgb2byte(255, 255, 255)},
-        {'names': 'red', 'rgb': (255, 0, 0), 'byte': rgb2byte(255, 0, 0)},
-        {'names': 'green', 'rgb': (0, 255, 0), 'byte': rgb2byte(0, 255, 0)},
-        {'names': 'yellow', 'rgb': (255, 255, 0), 'byte': rgb2byte(255, 255, 0)},
-        {'names': 'blue', 'rgb': (0, 0, 255), 'byte': rgb2byte(0, 0, 255)},
-        {'names': 'magenta', 'rgb': (255, 0, 255), 'byte': rgb2byte(255, 0, 255)},
-        {'names': 'cyan', 'rgb': (0, 255, 255), 'byte': rgb2byte(0, 255, 255)},
+
+    _COLOR_SEQ = [  # noqa: RUF012
+        {"names": "white", "rgb": (255, 255, 255), "byte": rgb2byte(255, 255, 255)},
+        {"names": "red", "rgb": (255, 0, 0), "byte": rgb2byte(255, 0, 0)},
+        {"names": "green", "rgb": (0, 255, 0), "byte": rgb2byte(0, 255, 0)},
+        {"names": "yellow", "rgb": (255, 255, 0), "byte": rgb2byte(255, 255, 0)},
+        {"names": "blue", "rgb": (0, 0, 255), "byte": rgb2byte(0, 0, 255)},
+        {"names": "magenta", "rgb": (255, 0, 255), "byte": rgb2byte(255, 0, 255)},
+        {"names": "cyan", "rgb": (0, 255, 255), "byte": rgb2byte(0, 255, 255)},
     ]
 
     def __init__(self):
@@ -73,13 +71,13 @@ class Figure(object):
         self._x_max = None
         self._y_min = None
         self._y_max = None
-        self._color_kwargs = {'mode': 'names'}
+        self._color_kwargs = {"mode": "names"}
         self._with_colors = True
         self._origin = True
         self.linesep = os.linesep
         self.background = None
-        self.x_label = 'X'
-        self.y_label = 'Y'
+        self.x_label = "X"
+        self.y_label = "Y"
         # min, max -> value
         self.y_ticks_fkt = None
         self.x_ticks_fkt = None
@@ -98,7 +96,7 @@ class Figure(object):
     @width.setter
     def width(self, value):
         if not (isinstance(value, int) and value > 0):
-            raise ValueError('Invalid width: {}'.format(value))
+            raise ValueError("Invalid width: {}".format(value))
         self._width = value
 
     @property
@@ -110,30 +108,30 @@ class Figure(object):
     @height.setter
     def height(self, value):
         if not (isinstance(value, int) and value > 0):
-            raise ValueError('Invalid height: {}'.format(value))
+            raise ValueError("Invalid height: {}".format(value))
         self._height = value
 
     @property
     def color_mode(self):
-        return self._color_kwargs['mode']
+        return self._color_kwargs["mode"]
 
     @color_mode.setter
     def color_mode(self, value):
-        if value not in ('names', 'byte', 'rgb'):
-            raise ValueError('Only supports: names, byte, rgb!')
+        if value not in ("names", "byte", "rgb"):
+            raise ValueError("Only supports: names, byte, rgb!")
         if self._plots != []:
-            raise RuntimeError('Change color mode only, when no plots are prepared.')
-        self._color_kwargs['mode'] = value
+            raise RuntimeError("Change color mode only, when no plots are prepared.")
+        self._color_kwargs["mode"] = value
 
     @property
     def color_full_reset(self):
-        return self._color_kwargs.get('full_reset', True)
+        return self._color_kwargs.get("full_reset", True)
 
     @color_full_reset.setter
     def color_full_reset(self, value):
         if not isinstance(value, bool):
-            raise ValueError('Only supports bool.')
-        self._color_kwargs['full_reset'] = value
+            raise ValueError("Only supports bool.")
+        self._color_kwargs["full_reset"] = value
 
     @property
     def with_colors(self):
@@ -154,7 +152,7 @@ class Figure(object):
     @origin.setter
     def origin(self, value):
         if not isinstance(value, bool):
-            raise ValueError('Invalid origin: {}'.format(value))
+            raise ValueError("Invalid origin: {}".format(value))
         self._origin = value
 
     def register_label_formatter(self, type_, formatter):
@@ -193,28 +191,32 @@ class Figure(object):
 
     def set_x_limits(self, min_=None, max_=None):
         """Set min and max X values for displaying."""
-        self._x_min, self._x_max = self._set_limits(self._x_min, self._x_max, min_, max_)
+        self._x_min, self._x_max = self._set_limits(
+            self._x_min, self._x_max, min_, max_
+        )
 
     def y_limits(self):
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(self, min_=None, max_=None):
         """Set min and max Y values for displaying."""
-        self._y_min, self._y_max = self._set_limits(self._y_min, self._y_max, min_, max_)
+        self._y_min, self._y_max = self._set_limits(
+            self._y_min, self._y_max, min_, max_
+        )
 
     def _set_limits(self, init_min, init_max, min_=None, max_=None):
         if min_ is not None and max_ is not None:
             if min_ >= max_:
-                raise ValueError('min_ is larger or equal than max_.')
+                raise ValueError("min_ is larger or equal than max_.")
             init_min = min_
             init_max = max_
         elif min_ is not None:
             if init_max is not None and min_ >= init_max:
-                raise ValueError('Previous max is smaller or equal to new min_.')
+                raise ValueError("Previous max is smaller or equal to new min_.")
             init_min = min_
         elif max_ is not None:
             if init_min is not None and init_min >= max_:
-                raise ValueError('Previous min is larger or equal to new max_.')
+                raise ValueError("Previous min is larger or equal to new max_.")
             init_max = max_
         else:
             init_min = None
@@ -241,7 +243,7 @@ class Figure(object):
 
         return _choose(low, high, low_set, high_set)
 
-    def _y_axis(self, ymin, ymax, label='Y'):
+    def _y_axis(self, ymin, ymax, label="Y"):
         delta = abs(ymax - ymin)
         if isinstance(delta, timedelta):
             y_delta = mk_timedelta(delta.total_seconds() / self.height)
@@ -253,38 +255,40 @@ class Figure(object):
             value = i * y_delta + ymin
             if self.y_ticks_fkt:
                 value = self.y_ticks_fkt(value, value + y_delta)
-            res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' | ']
+            res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + " | "]
 
         # add max separately
         value = self.height * y_delta + ymin
         if self.y_ticks_fkt:
             value = self.y_ticks_fkt(value, value + y_delta)
-        res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + ' |']
+        res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + " |"]
 
-        ylbl = '({})'.format(label)
+        ylbl = "({})".format(label)
         ylbl_left = (10 - len(ylbl)) // 2
         ylbl_right = ylbl_left + len(ylbl) % 2
 
-        res += [' ' * (ylbl_left) + ylbl + ' ' * (ylbl_right) + ' ^']
+        res += [" " * (ylbl_left) + ylbl + " " * (ylbl_right) + " ^"]
         return list(reversed(res))
 
-    def _x_axis(self, xmin, xmax, label='X', with_y_axis=False):
+    def _x_axis(self, xmin, xmax, label="X", with_y_axis=False):
         delta = abs(xmax - xmin)
         if isinstance(delta, timedelta):
             x_delta = mk_timedelta(delta.total_seconds() / self.width)
         else:
             x_delta = delta / self.width
-        starts = ['', '']
+        starts = ["", ""]
         if with_y_axis:
-            starts = ['-' * 11 + '|-', ' ' * 11 + '| ']
+            starts = ["-" * 11 + "|-", " " * 11 + "| "]
         res = []
 
         res += [
             starts[0]
-            + '|---------' * (self.width // 10)
-            + '|'
-            + '-' * (self.width % 10)
-            + '-> (' + label + ')',
+            + "|---------" * (self.width // 10)
+            + "|"
+            + "-" * (self.width % 10)
+            + "-> ("
+            + label
+            + ")",
         ]
         bottom = []
 
@@ -294,7 +298,7 @@ class Figure(object):
                 value = self.x_ticks_fkt(value, value + x_delta)
             bottom += [self._in_fmt.fmt(value, delta, left=True, chars=9)]
 
-        res += [starts[1] + ' '.join(bottom)]
+        res += [starts[1] + " ".join(bottom)]
         return res
 
     def clear(self):
@@ -304,7 +308,7 @@ class Figure(object):
         self._spans = []
         self._heats = []
 
-    def plot(self, X, Y, lc=None, interp='linear', label=None, marker=None):
+    def plot(self, X, Y, lc=None, interp="linear", label=None, marker=None):
         """Create plot with X , Y values.
 
         Parameters:
@@ -437,7 +441,8 @@ class Figure(object):
                         None values are handled by the cmap.
                 - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
 
-                The first two dimensions (M, N) define the rows and columns of the image.
+                The first two dimensions (M, N) define the rows and columns of the
+                image.
 
             cmap: cmapstr or Colormap
                 The Colormap instance or registered colormap name used
@@ -466,10 +471,16 @@ class Figure(object):
             self.width = len(self._heats[0].X[0])
 
         # create canvas
-        canvas = Canvas(self.width, self.height,
-                        self._in_fmt.convert(xmin), self._in_fmt.convert(ymin),
-                        self._in_fmt.convert(xmax), self._in_fmt.convert(ymax),
-                        self.background, **self._color_kwargs)
+        canvas = Canvas(
+            self.width,
+            self.height,
+            self._in_fmt.convert(xmin),
+            self._in_fmt.convert(ymin),
+            self._in_fmt.convert(xmax),
+            self._in_fmt.convert(ymax),
+            self.background,
+            **self._color_kwargs,
+        )
 
         for s in self._spans:
             s.write(canvas, self.with_colors)
@@ -496,28 +507,33 @@ class Figure(object):
         # add y axis
         yaxis = self._y_axis(ymin, ymax, label=self.y_label)
         res = (
-            yaxis[0] + self.linesep  # up arrow
-            + yaxis[1] + self.linesep  # maximum
-            + self.linesep.join(lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep)))
+            yaxis[0]
+            + self.linesep  # up arrow
+            + yaxis[1]
+            + self.linesep  # maximum
+            + self.linesep.join(
+                lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep))
+            )
         )
 
         # add x axis
         xaxis = self._x_axis(xmin, xmax, label=self.x_label, with_y_axis=True)
         res = (
-            res + self.linesep  # plot
+            res
+            + self.linesep  # plot
             + self.linesep.join(xaxis)
         )
 
         if legend:
-            res += '{0}{0}Legend:{0}-------{0}'.format(self.linesep)
+            res += "{0}{0}Legend:{0}-------{0}".format(self.linesep)
             lines = []
             for i, p in enumerate(self._plots):
                 if isinstance(p, Plot):
-                    lbl = p.label or 'Label {}'.format(i)
-                    marker = p.marker or ''
+                    lbl = p.label or "Label {}".format(i)
+                    marker = p.marker or ""
                     lines += [
                         color(
-                            '⠤{}⠤ {}'.format(marker, lbl),
+                            "⠤{}⠤ {}".format(marker, lbl),
                             fg=p.lc,
                             mode=self.color_mode,
                             no_color=not self.with_colors,
@@ -568,7 +584,7 @@ def _default(low_set, high_set):
             return low_set, 1.0
 
     # Should never get here! => checked in function before
-    raise ValueError('Unexpected inputs!')
+    raise ValueError("Unexpected inputs!")
 
 
 def _choose(low, high, low_set, high_set):
@@ -601,4 +617,4 @@ def _choose(low, high, low_set, high_set):
             return low_set, high + diff
 
         # Should never get here! => checked in function before
-        raise ValueError('Unexpected inputs!')
+        raise ValueError("Unexpected inputs!")

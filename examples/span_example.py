@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -65,5 +62,5 @@ def main():
     boxes()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -25,7 +22,7 @@
 
 import os
 
-from ._colors import rgb2byte
+from ._colors import MAX_RGB, RGB_VALUES, rgb2byte
 from ._dots import Dots
 from ._util import roundeven
 
@@ -35,40 +32,58 @@ class Canvas(object):
 
     A Canvas object has a `width` x `height` characters large canvas, in which it
     can plot indivitual braille point, lines out of braille points, rectangles,...
-    Since a full braille character has 2 x 4 dots (⣿), the canvas has `width` * 2, `height` * 4
-    dots to plot into in total.
+    Since a full braille character has 2 x 4 dots (⣿), the canvas has `width` * 2,
+    `height` * 4 dots to plot into in total.
 
     It maintains two coordinate systems: a reference system with the limits (xmin, ymin)
     in the lower left corner to (xmax, ymax) in the upper right corner is transformed
-    into the canvas discrete, i.e. dots, coordinate system (0, 0) to (`width` * 2, `height` * 4).
-    It does so transparently to clients of the Canvas, i.e. all plotting functions
-    only accept coordinates in the reference system. If the coordinates are outside
-    the reference system, they are not plotted.
+    into the canvas discrete, i.e. dots, coordinate system (0, 0) to (`width` * 2,
+    `height` * 4). It does so transparently to clients of the Canvas, i.e. all plotting
+    functions only accept coordinates in the reference system. If the coordinates are
+    outside the reference system, they are not plotted.
     """
-    def __init__(self, width, height, xmin=0, ymin=0, xmax=1, ymax=1, background=None, **color_kwargs):
+
+    def __init__(  # noqa: PLR0913
+        self,
+        width,
+        height,
+        xmin=0,
+        ymin=0,
+        xmax=1,
+        ymax=1,
+        background=None,
+        **color_kwargs,
+    ):
         """Initiate a Canvas object
 
         Parameters:
-            width: int            The number of characters for the width (columns) of the canvas.
-            hight: int            The number of characters for the hight (rows) of the canvas.
+            width: int            The number of characters for the width (columns) of
+                                  the canvas.
+            hight: int            The number of characters for the hight (rows) of the
+                                  canvas.
             xmin, ymin: float     Lower left corner of reference system.
             xmax, ymax: float     Upper right corner of reference system.
             background: multiple  Background color of the canvas.
-            **color_kwargs:       More arguments to the color-function. See `plotille.color()`.
+            **color_kwargs:       More arguments to the color-function.
+                                  See `plotille.color()`.
 
         Returns:
             Canvas object
         """
-        assert isinstance(width, int), '`width` has to be of type `int`'
-        assert isinstance(height, int), '`height` has to be of type `int`'
-        assert width > 0, '`width` has to be greater than 0'
-        assert height > 0, '`height` has to be greater than 0'
+        assert isinstance(width, int), "`width` has to be of type `int`"
+        assert isinstance(height, int), "`height` has to be of type `int`"
+        assert width > 0, "`width` has to be greater than 0"
+        assert height > 0, "`height` has to be greater than 0"
         assert isinstance(xmin, (int, float))
         assert isinstance(xmax, (int, float))
         assert isinstance(ymin, (int, float))
         assert isinstance(ymax, (int, float))
-        assert xmin < xmax, 'xmin ({}) has to be smaller than xmax ({})'.format(xmin, xmax)
-        assert ymin < ymax, 'ymin ({}) has to be smaller than ymax ({})'.format(ymin, ymax)
+        assert xmin < xmax, "xmin ({}) has to be smaller than xmax ({})".format(
+            xmin, xmax
+        )
+        assert ymin < ymax, "ymin ({}) has to be smaller than ymax ({})".format(
+            ymin, ymax
+        )
 
         # characters in X / Y direction
         self._width = width
@@ -83,12 +98,20 @@ class Canvas(object):
         self._x_delta_pt = abs((xmax - xmin) / (width * 2))
         self._y_delta_pt = abs((ymax - ymin) / (height * 4))
         # the canvas to print in
-        self._color_mode = color_kwargs.get('mode', 'names')
-        self._canvas = [[Dots(bg=background, **color_kwargs) for j_ in range(width)] for i_ in range(height)]
+        self._color_mode = color_kwargs.get("mode", "names")
+        self._canvas = [
+            [Dots(bg=background, **color_kwargs) for j_ in range(width)]
+            for i_ in range(height)
+        ]
 
     def __str__(self):
-        return 'Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})'.format(
-            self.width, self.height, self.xmin, self.ymin, self.xmax, self.ymax,
+        return "Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})".format(
+            self.width,
+            self.height,
+            self.xmin,
+            self.ymin,
+            self.xmax,
+            self.ymax,
         )
 
     def __repr__(self):
@@ -121,7 +144,7 @@ class Canvas(object):
 
     @property
     def xmax_inside(self):
-        """Get max x-coordinate of reference coordinate system still inside the canvas."""
+        "Get max x-coordinate of reference coordinate system still inside the canvas."
         return self.xmin + (self.width * 2 - 1) * self._x_delta_pt
 
     @property
@@ -131,7 +154,7 @@ class Canvas(object):
 
     @property
     def ymax_inside(self):
-        """Get max y-coordinate of reference coordinate system still inside the canvas."""
+        "Get max y-coordinate of reference coordinate system still inside the canvas."
         return self.ymin + (self.height * 4 - 1) * self._y_delta_pt
 
     def _transform_x(self, x):
@@ -263,7 +286,9 @@ class Canvas(object):
             self._set(xb, yb, set_, color)
 
     def rect(self, xmin, ymin, xmax, ymax, set_=True, color=None):
-        """Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
+        """Plot rectangle with bbox (xmin, ymin) and (xmax, ymax).
+
+        In the reference coordinate system.
 
         Parameters:
             xmin, ymin: float  Lower left corner of rectangle.
@@ -278,7 +303,9 @@ class Canvas(object):
         self.line(xmax, ymax, xmax, ymin, set_, color)
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
-    def braille_image(self, pixels, threshold=127, inverse=False, color=None, set_=True):
+    def braille_image(
+        self, pixels, threshold=127, inverse=False, color=None, set_=True
+    ):
         """Print an image using braille dots into the canvas.
 
         The pixels and braille dots in the canvas are a 1-to-1 mapping, hence
@@ -313,7 +340,7 @@ class Canvas(object):
             if not do_dot:
                 continue
             y = self.height * 4 - idx // row_size - 1
-            x = idx % row_size  # noqa: S001
+            x = idx % row_size
 
             self._set(x, y, color=color, set_=set_)
 
@@ -345,20 +372,22 @@ class Canvas(object):
             if values is None:
                 continue
             # RGB
-            assert len(values) == 3
-            assert all(0 <= v <= 255 for v in values)
+            assert len(values) == RGB_VALUES
+            assert all(0 <= v <= MAX_RGB for v in values)
 
             y = self.height - idx // self.width - 1
-            x = idx % self.width  # noqa: S001
+            x = idx % self.width
 
             if set_ is False:
                 value = None
-            elif self._color_mode == 'rgb':
+            elif self._color_mode == "rgb":
                 value = values
-            elif self._color_mode == 'byte':
+            elif self._color_mode == "byte":
                 value = rgb2byte(*values)
             else:
-                raise NotImplementedError('Only color_modes rgb and byte are supported.')
+                raise NotImplementedError(
+                    "Only color_modes rgb and byte are supported."
+                )
 
             self._canvas[y][x].bg = value
 
@@ -372,5 +401,4 @@ class Canvas(object):
             unicode: The canvas as a string.
         """
 
-        return linesep.join(''.join(map(str, row))
-                            for row in reversed(self._canvas))
+        return linesep.join("".join(map(str, row)) for row in reversed(self._canvas))

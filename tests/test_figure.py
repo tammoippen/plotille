@@ -1,12 +1,9 @@
-
-
-
 import datetime as orig_datetime
 import os
-
 from unittest.mock import call
-from pendulum import datetime, duration
+
 import pytest
+from pendulum import datetime, duration
 
 from plotille import Figure
 from plotille._colors import hsl
@@ -14,18 +11,19 @@ from plotille._figure import Histogram, Plot
 
 try:
     import numpy as np
+
     have_numpy = True
 except ImportError:
     have_numpy = False
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_timehistogram_numpy(histogram):
     fig = Figure()
     fig.with_colors = False
 
-    day = np.timedelta64(1, 'D')
-    now = np.datetime64('2018-01-16T11:09:42.000100')
+    day = np.timedelta64(1, "D")
+    now = np.datetime64("2018-01-16T11:09:42.000100")
     x = [now - i * day for i in range(10)]
 
     fig.histogram(x, bins=8)
@@ -49,9 +47,9 @@ def test_width():
         fig.width = -10
 
     with pytest.raises(ValueError):
-        fig.width = '40'
+        fig.width = "40"
 
-    res = fig.show().split('\n')
+    res = fig.show().split("\n")
     assert all(len(r) > 40 and len(r) < 55 for r in res[2:-2])
 
 
@@ -70,9 +68,9 @@ def test_height():
         fig.height = -10
 
     with pytest.raises(ValueError):
-        fig.height = '40'
+        fig.height = "40"
 
-    res = fig.show().split('\n')
+    res = fig.show().split("\n")
     assert len(res) > 40
     assert len(res) < 45
 
@@ -80,13 +78,13 @@ def test_height():
 def test_color_mode():
     fig = Figure()
 
-    assert fig.color_mode == 'names'
+    assert fig.color_mode == "names"
 
-    fig.color_mode = 'byte'
-    assert fig.color_mode == 'byte'
+    fig.color_mode = "byte"
+    assert fig.color_mode == "byte"
 
     with pytest.raises(ValueError):
-        fig.color_mode = 'rgba'
+        fig.color_mode = "rgba"
 
     with pytest.raises(ValueError):
         fig.color_mode = 15
@@ -94,37 +92,37 @@ def test_color_mode():
     fig.plot([0.5], [0.5])
 
     with pytest.raises(RuntimeError):
-        fig.color_mode = 'names'
+        fig.color_mode = "names"
 
 
 def test_color_full_reset(mocker):
     fig = Figure()
-    fig.background = 'red'
+    fig.background = "red"
 
-    mock = mocker.patch('plotille._dots.color', return_value=' ')
+    mock = mocker.patch("plotille._dots.color", return_value=" ")
 
     assert fig.color_full_reset is True
     fig.show()
     assert mock.called
-    assert all(args.kwargs['full_reset'] is True for args in mock.call_args_lists)
+    assert all(args.kwargs["full_reset"] is True for args in mock.call_args_lists)
     mock.reset_mock()
 
     fig.color_full_reset = True
     assert fig.color_full_reset is True
     fig.show()
     assert mock.called
-    assert all(args.kwargs['full_reset'] is True for args in mock.call_args_lists)
+    assert all(args.kwargs["full_reset"] is True for args in mock.call_args_lists)
     mock.reset_mock()
 
     fig.color_full_reset = False
     assert fig.color_full_reset is False
     fig.show()
     assert mock.called
-    assert all(args.kwargs['full_reset'] is False for args in mock.call_args_lists)
+    assert all(args.kwargs["full_reset"] is False for args in mock.call_args_lists)
     mock.reset_mock()
 
     with pytest.raises(ValueError):
-        fig.color_full_reset = 'no'
+        fig.color_full_reset = "no"
 
 
 def test_with_colors():
@@ -191,7 +189,10 @@ def limits(get_limits, set_limits):
 
     set_limits(fig)  # resetting
     set_limits(fig, max_=-1.5)
-    assert get_limits(fig) == (-2.5, -1.5)  # max smaller than default min -> min = max - 1
+    assert get_limits(fig) == (
+        -2.5,
+        -1.5,
+    )  # max smaller than default min -> min = max - 1
 
     fig.clear()
     fig.plot([0], [0])
@@ -201,12 +202,18 @@ def limits(get_limits, set_limits):
     fig.clear()
     fig.plot([0.5], [0.5])
     set_limits(fig)  # resetting
-    assert get_limits(fig) == (pytest.approx(0.45), pytest.approx(0.55))  # both min, max same, but not 0 => +-10%
+    assert get_limits(fig) == (
+        pytest.approx(0.45),
+        pytest.approx(0.55),
+    )  # both min, max same, but not 0 => +-10%
 
     fig.clear()
     fig.plot([0.1, 0.2], [0.1, 0.2])
     set_limits(fig)  # resetting
-    assert get_limits(fig) == (pytest.approx(0.09), pytest.approx(0.21))  # diff 0.1 => +-10%
+    assert get_limits(fig) == (
+        pytest.approx(0.09),
+        pytest.approx(0.21),
+    )  # diff 0.1 => +-10%
 
     set_limits(fig, min_=0)
     assert get_limits(fig) == (0, pytest.approx(0.22))  # diff 0.2 => +10%
@@ -263,8 +270,8 @@ def test_plot(get_canvas):
     plot = fig._plots[0]
     assert isinstance(plot, Plot)
 
-    assert plot.interp == 'linear'
-    assert plot.lc == 'white'
+    assert plot.interp == "linear"
+    assert plot.lc == "white"
     assert plot.width_vals() == [0.1, 0.2]
     assert plot.height_vals() == [0.2, 0.3]
 
@@ -299,7 +306,7 @@ def test_plot(get_canvas):
     plot2 = fig._plots[1]
     assert isinstance(plot2, Plot)
 
-    assert plot2.lc == 'red'
+    assert plot2.lc == "red"
 
     with pytest.raises(ValueError):
         fig.plot([1], [0], interp=23)
@@ -321,7 +328,7 @@ def test_scatter(get_canvas):
     assert isinstance(plot, Plot)
 
     assert plot.interp is None
-    assert plot.lc == 'white'
+    assert plot.lc == "white"
     assert plot.width_vals() == [0.1, 0.2]
     assert plot.height_vals() == [0.2, 0.3]
 
@@ -350,7 +357,7 @@ def test_scatter(get_canvas):
     plot2 = fig._plots[1]
     assert isinstance(plot2, Plot)
 
-    assert plot2.lc == 'red'
+    assert plot2.lc == "red"
 
     with pytest.raises(ValueError):
         fig.scatter([1, 2], [0])
@@ -367,7 +374,7 @@ def test_histogram(get_canvas, mocker):
 
     assert hist.width_vals() == [1, 1, 2, 3, 1]
     assert hist.height_vals() == [3, 1, 1]  # 3 x 1
-    assert hist.lc == 'white'
+    assert hist.lc == "white"
 
     canvas = get_canvas()
     canvas.dots_between = mocker.Mock(return_value=[1, 1])
@@ -434,7 +441,9 @@ def test_show(cleandoc):
     assert cleandoc(expected) == fig.show()
 
     # no label for histograms
-    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}'.format(os.linesep)
+    assert fig.show(legend=True) == cleandoc(
+        expected
+    ) + "{0}{0}Legend:{0}-------{0}".format(os.linesep)
 
     fig.clear()
     fig.plot([-0.1, 0.2], [-0.2, 0.3])
@@ -488,7 +497,9 @@ def test_show(cleandoc):
     assert cleandoc(expected) == fig.show()  # no legend, origin
 
     # no label for histograms
-    assert fig.show(legend=True) == cleandoc(expected) + '{0}{0}Legend:{0}-------{0}⠤⠤ Label 0'.format(os.linesep)
+    assert fig.show(legend=True) == cleandoc(
+        expected
+    ) + "{0}{0}Legend:{0}-------{0}⠤⠤ Label 0".format(os.linesep)
 
 
 @pytest.fixture()
@@ -537,7 +548,7 @@ def timeseries(cleandoc):
     -0.5700000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -0.6000000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
-               | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """)  # noqa: E231, E501
+               | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """)
 
 
 def test_timeseries(timeseries):
@@ -618,7 +629,7 @@ def histogram(cleandoc):
     0.05250000 | ⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀
              0 | ⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
-               | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """)  # noqa: E231, E501
+               | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """)
 
 
 def test_timehistogram_pendulum(histogram):
@@ -657,8 +668,8 @@ def test_min_x():
     fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | 0         0.2062500 0.4125000 0.6187500 0.8250000 1.0312500 1.2375000 1.4437500 1.6500000'
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | 0         0.2062500 0.4125000 0.6187500 0.8250000 1.0312500 1.2375000 1.4437500 1.6500000"
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_max_x():
@@ -669,8 +680,8 @@ def test_max_x():
     fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | -1.200000 -0.925000 -0.650000 -0.375000 -0.100000 0.1750000 0.4500000 0.7250000 1        '
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | -1.200000 -0.925000 -0.650000 -0.375000 -0.100000 0.1750000 0.4500000 0.7250000 1        "
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_min_max_x():
@@ -681,8 +692,8 @@ def test_min_max_x():
     fig.plot([-1, -0.5, -0, 0.5, 1, 1.5], [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        '
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        "
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_min_max_y():
@@ -694,8 +705,8 @@ def test_min_max_y():
 
     res = fig.show()
     # print(res)
-    assert res.split('\n')[1].startswith('         1 |')
-    assert res.split('\n')[-3].startswith('         0 |')
+    assert res.split("\n")[1].startswith("         1 |")
+    assert res.split("\n")[-3].startswith("         0 |")
 
 
 def test_date_min_x():
@@ -711,8 +722,8 @@ def test_date_min_x():
     fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | 16T11:09  17T03:39  17T20:09  18T12:39  19T05:09  19T21:39  20T14:09  21T06:39  21T23:09 '
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | 16T11:09  17T03:39  17T20:09  18T12:39  19T05:09  19T21:39  20T14:09  21T06:39  21T23:09 "
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_date_max_x():
@@ -728,8 +739,8 @@ def test_date_max_x():
     fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | 15T23:09  16T15:39  17T08:09  18T00:39  18T17:09  19T09:39  20T02:09  20T18:39  21T11:09 '
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | 15T23:09  16T15:39  17T08:09  18T00:39  18T17:09  19T09:39  20T02:09  20T18:39  21T11:09 "
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_date_min_max_x():
@@ -744,8 +755,8 @@ def test_date_min_max_x():
     fig.plot(x, [-1, -0.5, -0, 0.5, 1, 1.5])
 
     # print(fig.show())
-    expected = '           | 16T11:09  17T02:09  17T17:09  18T08:09  18T23:09  19T14:09  20T05:09  20T20:09  21T11:09 '
-    assert expected == fig.show().split('\n')[-1]
+    expected = "           | 16T11:09  17T02:09  17T17:09  18T08:09  18T23:09  19T14:09  20T05:09  20T20:09  21T11:09 "
+    assert expected == fig.show().split("\n")[-1]
 
 
 def test_date_min_max_y():
@@ -761,8 +772,8 @@ def test_date_min_max_y():
 
     res = fig.show()
     # print(res)
-    assert res.split('\n')[1].startswith('  21T11:09 |')
-    assert res.split('\n')[-3].startswith('  16T11:09 |')
+    assert res.split("\n")[1].startswith("  21T11:09 |")
+    assert res.split("\n")[-3].startswith("  16T11:09 |")
 
 
 def test_lbl_formatter(cleandoc):
@@ -772,8 +783,8 @@ def test_lbl_formatter(cleandoc):
     fig.height = 15
 
     def _num_formatter(val, chars, delta, left=False):
-        align = '<' if left else ''
-        return '{:{}{}d}'.format(int(val), align, chars)
+        align = "<" if left else ""
+        return "{:{}{}d}".format(int(val), align, chars)
 
     fig.register_label_formatter(float, _num_formatter)
     fig.register_label_formatter(int, _num_formatter)
@@ -1239,12 +1250,12 @@ def test_all_components(tty):
     fig = Figure()
     fig.width = 20
     fig.height = 20
-    fig.color_mode = 'rgb'
+    fig.color_mode = "rgb"
 
     fig.plot([0, 1], [0, 1])
     fig.scatter([0.3, 0.5], [0.5, 0.3])
     fig.axhspan(0.25, 0.75, xmin=0.25, xmax=0.75)
-    fig.text([0.4], [0.8], ['Hello'], lc=hsl(120, 1, 0.5))
+    fig.text([0.4], [0.8], ["Hello"], lc=hsl(120, 1, 0.5))
 
     xs = []
     for y in range(fig.height):

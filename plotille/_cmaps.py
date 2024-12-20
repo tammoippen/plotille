@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -38,6 +35,7 @@ class Colormap(object):
     Colormap represents. Scaling the data into the `[0, 1]` interval is
     responsibility of the caller.
     """
+
     def __init__(self, name, lookup_table=None):
         """
         Parameters
@@ -53,7 +51,7 @@ class Colormap(object):
         self.over = None
         self.under = None
 
-    def __call__(self, X):  # noqa: N802
+    def __call__(self, X):
         """
         Parameters
         ----------
@@ -91,20 +89,30 @@ class ListedColormap(Colormap):
     @classmethod
     def from_relative(cls, name, colors):
         return cls(
-            name, [(round(255 * r), round(255 * g), round(255 * b)) for r, g, b in colors],
+            name,
+            [(round(255 * r), round(255 * g), round(255 * b)) for r, g, b in colors],
         )
 
 
 # Always generate a new cmap, such that you can override bad / over under values easily.
 cmaps = {}
-cmaps['magma'] = lambda: ListedColormap.from_relative('magma', _cmaps_data.magma_data)
-cmaps['inferno'] = lambda: ListedColormap.from_relative('inferno', _cmaps_data.inferno_data)
-cmaps['plasma'] = lambda: ListedColormap.from_relative('plasma', _cmaps_data.plasma_data)
-cmaps['viridis'] = lambda: ListedColormap.from_relative('viridis', _cmaps_data.viridis_data)
-cmaps['jet'] = lambda: ListedColormap.from_relative('jet', _cmaps_data.jet_data)
-cmaps['copper'] = lambda: ListedColormap.from_relative('copper', _cmaps_data.copper_data)
-cmaps['gray'] = lambda: ListedColormap(
-    name='gray', colors=[(idx, idx, idx) for idx in range(256)],
+cmaps["magma"] = lambda: ListedColormap.from_relative("magma", _cmaps_data.magma_data)
+cmaps["inferno"] = lambda: ListedColormap.from_relative(
+    "inferno", _cmaps_data.inferno_data
+)
+cmaps["plasma"] = lambda: ListedColormap.from_relative(
+    "plasma", _cmaps_data.plasma_data
+)
+cmaps["viridis"] = lambda: ListedColormap.from_relative(
+    "viridis", _cmaps_data.viridis_data
+)
+cmaps["jet"] = lambda: ListedColormap.from_relative("jet", _cmaps_data.jet_data)
+cmaps["copper"] = lambda: ListedColormap.from_relative(
+    "copper", _cmaps_data.copper_data
+)
+cmaps["gray"] = lambda: ListedColormap(
+    name="gray",
+    colors=[(idx, idx, idx) for idx in range(256)],
 )
 
 # for more, have a look at https://matplotlib.org/stable/tutorials/colors/colormaps.html

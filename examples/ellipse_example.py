@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -35,36 +32,42 @@ def main():
     fig.width = 50
     fig.height = 20
 
-    X1, Y1 = plt_data.ellipse(x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20)  # noqa: N806
+    X1, Y1 = plt_data.ellipse(
+        x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20
+    )
     fig.plot(X1, Y1)
 
     print(fig.show(legend=True))
 
     # first set
-    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)  # noqa: N806
+    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)
     fig.plot(X2, Y2)
 
-    X3, Y3 = plt_data.ellipse(x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20)  # noqa: N806
-    fig.plot(X3, Y3, label='Ellipse 2')
+    X3, Y3 = plt_data.ellipse(
+        x_center=0, y_center=0, x_amplitude=0.5, y_amplitude=0.5, n=20
+    )
+    fig.plot(X3, Y3, label="Ellipse 2")
 
     print(fig.show(legend=True))
 
     # second set, offset
     fig.clear()
-    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)  # noqa: N806
+    X2, Y2 = plt_data.ellipse(x_center=0, y_center=0)
     fig.plot(X2, Y2)
     fig.set_x_limits(min_=-10, max_=10)
     fig.set_y_limits(min_=-10, max_=10)
 
     for xx in [-4, 0, 4]:
         for yy in [-4, 0, 4]:
-            X, Y = plt_data.ellipse(x_center=xx, y_center=yy, x_amplitude=1, y_amplitude=1, n=20)  # noqa: N806
-            fig.plot(X, Y, label=('{},{}'.format(xx, yy)))
+            X, Y = plt_data.ellipse(
+                x_center=xx, y_center=yy, x_amplitude=1, y_amplitude=1, n=20
+            )
+            fig.plot(X, Y, label=("{},{}".format(xx, yy)))
 
     fig.scatter([4], [4])
 
     print(fig.show(legend=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

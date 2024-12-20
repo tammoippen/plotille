@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -30,11 +27,11 @@
 #                     --station 1048,4411 \
 #                     --date=1970-01-01/2021-01-01 > wetter-data.json
 
-from collections import defaultdict
-from datetime import datetime
 import gzip
 import json
 import os
+from collections import defaultdict
+from datetime import datetime
 
 import plotille as plt
 
@@ -60,7 +57,7 @@ def regression(x, y):
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    with gzip.open(current_dir + os.sep + 'wetter-data.json.gz', 'r') as f:
+    with gzip.open(current_dir + os.sep + "wetter-data.json.gz", "r") as f:
         data = json.load(f)
 
     # wetterdienst stations --station 1048,4411 \
@@ -70,61 +67,61 @@ def main():
     #                       --resolution daily
     stations = [
         {
-            'station_id': '01048',
-            'from_date': '1934-01-01T00:00:00.000Z',
-            'to_date': '2021-07-04T00:00:00.000Z',
-            'height': 228.0,
-            'latitude': 51.1278,
-            'longitude': 13.7543,
-            'name': 'Dresden-Klotzsche',
-            'state': 'Sachsen',
+            "station_id": "01048",
+            "from_date": "1934-01-01T00:00:00.000Z",
+            "to_date": "2021-07-04T00:00:00.000Z",
+            "height": 228.0,
+            "latitude": 51.1278,
+            "longitude": 13.7543,
+            "name": "Dresden-Klotzsche",
+            "state": "Sachsen",
         },
         {
-            'station_id': '04411',
-            'from_date': '1979-12-01T00:00:00.000Z',
-            'to_date': '2021-07-04T00:00:00.000Z',
-            'height': 155.0,
-            'latitude': 49.9195,
-            'longitude': 8.9671,
-            'name': 'Schaafheim-Schlierbach',
-            'state': 'Hessen',
+            "station_id": "04411",
+            "from_date": "1979-12-01T00:00:00.000Z",
+            "to_date": "2021-07-04T00:00:00.000Z",
+            "height": 155.0,
+            "latitude": 49.9195,
+            "longitude": 8.9671,
+            "name": "Schaafheim-Schlierbach",
+            "state": "Hessen",
         },
     ]
-    station_by_id = {st['station_id']: st for st in stations}
+    station_by_id = {st["station_id"]: st for st in stations}
 
-    Xs = defaultdict(list)  # noqa: N806
-    Ys = defaultdict(list)  # noqa: N806
+    Xs = defaultdict(list)
+    Ys = defaultdict(list)
     for d in data:
-        if d['temperature_air_200'] is not None:
-            dt = datetime.strptime(d['date'], '%Y-%m-%dT%H:%M:%S.%fZ').date()
-            name = station_by_id[d['station_id']]['name']
+        if d["temperature_air_200"] is not None:
+            dt = datetime.strptime(d["date"], "%Y-%m-%dT%H:%M:%S.%fZ").date()
+            name = station_by_id[d["station_id"]]["name"]
             if dt.month == 1 and dt.day == 1:
                 Xs[name] += [dt.year]
-                Ys[name] += [d['temperature_air_200'] - 273.15]
+                Ys[name] += [d["temperature_air_200"] - 273.15]
 
     fig = plt.Figure()
     fig.width = 120
     fig.height = 30
     fig.set_x_limits(1970, 2021)
     fig.set_y_limits(-18, 12)
-    fig.y_label = 'Celsius'
-    fig.x_label = 'Year'
+    fig.y_label = "Celsius"
+    fig.x_label = "Year"
 
-    fig.x_ticks_fkt = lambda min_, max_: '{:d}'.format(int(min_))
-    fig.y_ticks_fkt = lambda min_, max_: '{:.3f}'.format(min_)
+    fig.x_ticks_fkt = lambda min_, max_: "{:d}".format(int(min_))
+    fig.y_ticks_fkt = lambda min_, max_: "{:.3f}".format(min_)
 
-    markers = ['x', 'o']
+    markers = ["x", "o"]
     for idx, station in enumerate(Xs.keys()):
         fig.plot(Xs[station], Ys[station], label=station, marker=markers[idx])
         m, b = regression(Xs[station], Ys[station])
         start = m * 1970 + b
         end = m * 2021 + b
-        fig.plot([1970, 2021], [start, end], label='{} - regression'.format(station))
+        fig.plot([1970, 2021], [start, end], label="{} - regression".format(station))
 
-    print('\033[2J')  # clear screen
-    print(' ' * 50 + 'Temperatur of two stations in Germany at 1. Januar')
+    print("\033[2J")  # clear screen
+    print(" " * 50 + "Temperatur of two stations in Germany at 1. Januar")
     print(fig.show(legend=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

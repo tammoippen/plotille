@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -35,15 +32,15 @@ def main():
 
     x = numpy.linspace(0, 2 * numpy.pi, 20)
     y = numpy.sin(x)
-    fig.plot(x, y, lc='red')
+    fig.plot(x, y, lc="red")
 
     xs = x[::5]
     ys = y[::5]
 
-    fig.text(xs, ys, ['x {:.3f}'.format(val) for val in ys], lc='green')
+    fig.text(xs, ys, ["x {:.3f}".format(val) for val in ys], lc="green")
 
     print(fig.show(legend=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

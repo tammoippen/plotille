@@ -1,6 +1,3 @@
-
-
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -38,8 +35,8 @@ def main():
     t0 = time()
     for _ in range(100):
         plotille.plot(x, y, height=30, width=60)
-    print('Took {:.3f} sec'.format(time() - t0))
+    print("Took {:.3f} sec".format(time() - t0))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
