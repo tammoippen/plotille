@@ -1,7 +1,7 @@
 [tool.poetry]
 
 name = "plotille"
-version = "5.1.0"
+version = "5.2.0"
 description = "Plot in the terminal using braille dots."
 authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
 license = "MIT"
@@ -21,11 +21,11 @@ classifiers = [
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
     'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Programming Language :: Python :: Implementation :: CPython',
     'Programming Language :: Python :: Implementation :: PyPy',
     'Topic :: Scientific/Engineering :: Visualization',
@@ -33,34 +33,24 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 
 [tool.poetry.dev-dependencies]
 
-flake8 = "^5"
-flake8-bugbear = "^22"
-flake8-commas = "^2"
-flake8-comprehensions = "^3"
-flake8-import-order = "^0.18"
-flake8-pep3101 = "^1"
-flake8-polyfill = "^1"
-flake8-quotes = "^3"
-mock = "^3"
+ruff = "*"
 numpy = [
-    { version = "1.24.4", python = "~3.8" },
-    { version = "^1", python = "^3.9" },
+    { version = "*", python = "=3.12", optional = true },
+    { version = "~1.24.4", python = ">=3.8, <3.12", optional = true },
 ]
 pendulum = [
     { version = "^2", python = "<3.12" },
     { version = "^3", python = "^3.12" },
 ]
-pep8-naming = "^0.11"
 Pillow = "^9"
-pytest = "^6"
-pytest-cov = "^3"
-pytest-mock = "^2"
-pytest-pythonpath =  "^0.7.3"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]
