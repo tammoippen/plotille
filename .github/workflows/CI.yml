@@ -62,9 +62,15 @@ jobs:
           version: ${{ startsWith(matrix.python-version, 'pypy') && '1.2.2' || '1.7.0' }}
           virtualenvs-create: false
 
+      # pendulum has no 3.13 build (yet), hence install build dependencies
+      - name: Setup Ninja
+        uses: ashutoshvarma/setup-ninja@v1
+        with:
+          version: v1.12.1
+
       - name: Install
         run: |
-          poetry run pip install maturin
+          poetry run pip install maturin  # pendulum
           poetry install
 
       - name: Style
