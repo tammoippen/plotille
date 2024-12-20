@@ -63,7 +63,9 @@ jobs:
           virtualenvs-create: false
 
       - name: Install
-        run: poetry install
+        run: |
+          poetry run pip install maturin
+          poetry install
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
