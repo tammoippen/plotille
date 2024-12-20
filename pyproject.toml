@@ -39,10 +39,7 @@ python = "^3.9"
 [tool.poetry.dev-dependencies]
 
 ruff = "*"
-numpy = [
-    { version = "*", python = "=3.12", optional = true },
-    { version = "~1.24.4", python = ">=3.8, <3.12", optional = true },
-]
+numpy = "^1"
 pendulum = [
     { version = "^2", python = "<3.12" },
     { version = "^3", python = "^3.12" },
@@ -51,6 +48,16 @@ Pillow = "^9"
 pytest = "*"
 pytest-cov = "*"
 pytest-mock = "*"
+
+[tool.ruff.lint]
+select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
+# ignore = ["E501"]
+
+# [tool.ruff.lint.per-file-ignores]
+# "**/tests/*" = ["B011", "PLR2004"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["plotille"]
 
 [build-system]
 requires = ["poetry>=0.12"]
