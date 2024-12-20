@@ -67,10 +67,12 @@ jobs:
 
       - name: Style
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
-        run: make style
+        run: |
+          poetry run ruff format --check .
+	        poetry run ruff check .
 
       - name: Tests
-        run: make tests
+        run: poetry run pytest -s -vvv
 
       - uses: codecov/codecov-action@v4
         with:
