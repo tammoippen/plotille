@@ -69,7 +69,7 @@ jobs:
         if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
         run: |
           poetry run ruff format --check .
-	        poetry run ruff check .
+          poetry run ruff check .
 
       - name: Tests
         run: poetry run pytest -s -vvv
