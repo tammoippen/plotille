@@ -61,3 +61,7 @@ pytest = "^6"
 pytest-cov = "^3"
 pytest-mock = "^2"
 pytest-pythonpath =  "^0.7.3"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
