@@ -69,7 +69,7 @@ jobs:
 
       - name: Install
         run: |
-          poetry run pip install maturin  # pendulum
+          poetry run pip install maturin cython  # pendulum
           poetry install
 
       - name: Style
