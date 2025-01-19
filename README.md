@@ -608,3 +608,9 @@ In [29]: print(cvs.plot())
 ## Stargazers over time
 
 [![Stargazers over time](https://starchart.cc/tammoippen/plotille.svg)](https://starchart.cc/tammoippen/plotille)
+
+## Sponsoring the project
+
+If you like the project and want to buy me a coffee, feel free to send some coins ;)
+
+[<img src="https://api.gitsponsors.com/api/badge/img?id=105019800" height="20">](https://api.gitsponsors.com/api/badge/link?p=gkBol1u2+g2pjgZGRaDLy4k0XbPDRXdPWJWnueCUGo/wcSsqyE8nr+n9nvqfeuqXee6JhLARGZS5bP0ZvorS7y6t4INyHLtTrprYh9c+MYkqAZeSqNIf7WL0ZRTI070RVQA3L9QW9IZNFlMbulW+BQ==)
