@@ -44,7 +44,7 @@ def hist_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
                              Hence, `len(bins) == len(counts) + 1`.
         width: int           The number of characters for the width (columns).
         log_scale: bool      Scale the histogram with `log` function.
-        linesep: str         The requested line seperator. default: os.linesep
+        linesep: str         The requested line separator. default: os.linesep
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
         color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -69,12 +69,12 @@ def hist_aggregated(counts, bins, width=80, log_scale=False, linesep=os.linesep,
     canvas = ['        bucket       | {} {}'.format('_' * width, 'Total Counts')]
     lasts = ['', '⠂', '⠆', '⠇', '⡇', '⡗', '⡷', '⡿']
     for i in range(bins_count):
-        hight = int(width * 8 * _scale(h[i]) / h_max)
+        height = int(width * 8 * _scale(h[i]) / h_max)
         canvas += ['[{}, {}) | {} {}'.format(
             ipf.fmt(b[i], delta=delta, chars=8, left=True),
             ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
-            color('⣿' * (hight // 8) + lasts[hight % 8], fg=lc, bg=bg, mode=color_mode)
-            + color('\u2800' * (width - (hight // 8) + int(hight % 8 == 0)), bg=bg, mode=color_mode),
+            color('⣿' * (height // 8) + lasts[height % 8], fg=lc, bg=bg, mode=color_mode)
+            + color('\u2800' * (width - (height // 8) + int(height % 8 == 0)), bg=bg, mode=color_mode),
             h[i])]
     canvas += ['‾' * (2 * 8 + 2 + 3 + width + 12)]
     return linesep.join(canvas)
@@ -92,7 +92,7 @@ def hist(X, bins=40, width=80, log_scale=False, linesep=os.linesep,
         bins: int            The number of bins to put X entries in (rows).
         width: int           The number of characters for the width (columns).
         log_scale: bool      Scale the histogram with `log` function.
-        linesep: str         The requested line seperator. default: os.linesep
+        linesep: str         The requested line separator. default: os.linesep
         lc: multiple         Give the line color.
         bg: multiple         Give the background color.
         color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -121,7 +121,7 @@ def histogram(X, bins=160, width=80, height=40, X_label='X', Y_label='Counts', l
         height: int          The number of characters for the height (rows).
         X_label: str         Label for X-axis.
         Y_label: str         Label for Y-axis. max 8 characters.
-        linesep: str         The requested line seperator. default: os.linesep
+        linesep: str         The requested line separator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
@@ -170,10 +170,10 @@ def scatter(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.line
         X: List[float]       X values.
         Y: List[float]       Y values. X and Y must have the same number of entries.
         width: int           The number of characters for the width (columns) of the canvas.
-        hight: int           The number of characters for the hight (rows) of the canvas.
+        height: int           The number of characters for the height (rows) of the canvas.
         X_label: str         Label for X-axis.
         Y_label: str         Label for Y-axis. max 8 characters.
-        linesep: str         The requested line seperator. default: os.linesep
+        linesep: str         The requested line separator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
         lc: multiple         Give the line color.
@@ -200,10 +200,10 @@ def plot(X, Y, width=80, height=40, X_label='X', Y_label='Y', linesep=os.linesep
         X: List[float]         X values.
         Y: List[float]         Y values. X and Y must have the same number of entries.
         width: int             The number of characters for the width (columns) of the canvas.
-        hight: int             The number of characters for the hight (rows) of the canvas.
+        height: int             The number of characters for the height (rows) of the canvas.
         X_label: str           Label for X-axis.
         Y_label: str           Label for Y-axis. max 8 characters.
-        linesep: str           The requested line seperator. default: os.linesep
+        linesep: str           The requested line separator. default: os.linesep
         interp: Optional[str]  Specify interpolation; values None, 'linear'
         x_min, x_max: float    Limits for the displayed X values.
         y_min, y_max: float    Limits for the displayed Y values.

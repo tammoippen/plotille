@@ -10,7 +10,7 @@
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 
-Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with no dependancies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
+Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with no dependencies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
 
 Install:
 
@@ -41,7 +41,7 @@ In [3]: X = np.sort(np.random.normal(size=1000))
 
 ### Figure
 
-To construct plots the recomended way is to use a `Figure`:
+To construct plots the recommended way is to use a `Figure`:
 
 ```python
 In [12]: plotille.Figure?
@@ -155,10 +155,10 @@ Parameters:
     X: List[float]         X values.
     Y: List[float]         Y values. X and Y must have the same number of entries.
     width: int             The number of characters for the width (columns) of the canvas.
-    hight: int             The number of characters for the hight (rows) of the canvas.
+    height: int             The number of characters for the height (rows) of the canvas.
     X_label: str           Label for X-axis.
     Y_label: str           Label for Y-axis. max 8 characters.
-    linesep: str           The requested line seperator. default: os.linesep
+    linesep: str           The requested line separator. default: os.linesep
     interp: Optional[str]  Specify interpolation; values None, 'linear'
     x_min, x_max: float    Limits for the displayed X values.
     y_min, y_max: float    Limits for the displayed Y values.
@@ -210,10 +210,10 @@ Parameters:
     X: List[float]       X values.
     Y: List[float]       Y values. X and Y must have the same number of entries.
     width: int           The number of characters for the width (columns) of the canvas.
-    hight: int           The number of characters for the hight (rows) of the canvas.
+    height: int           The number of characters for the height (rows) of the canvas.
     X_label: str         Label for X-axis.
     Y_label: str         Label for Y-axis. max 8 characters.
-    linesep: str         The requested line seperator. default: os.linesep
+    linesep: str         The requested line separator. default: os.linesep
     x_min, x_max: float  Limits for the displayed X values.
     y_min, y_max: float  Limits for the displayed Y values.
     lc: multiple         Give the line color.
@@ -259,7 +259,7 @@ Parameters:
     bins: int            The number of bins to put X entries in (rows).
     width: int           The number of characters for the width (columns).
     log_scale: bool      Scale the histogram with `log` function.
-    linesep: str         The requested line seperator. default: os.linesep
+    linesep: str         The requested line separator. default: os.linesep
     lc: multiple         Give the line color.
     bg: multiple         Give the background color.
     color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -304,7 +304,7 @@ Parameters:
                          Hence, `len(bins) == len(counts) + 1`.
     width: int           The number of characters for the width (columns).
     log_scale: bool      Scale the histogram with `log` function.
-    linesep: str         The requested line seperator. default: os.linesep
+    linesep: str         The requested line separator. default: os.linesep
     lc: multiple         Give the line color.
     bg: multiple         Give the background color.
     color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
@@ -359,7 +359,7 @@ Parameters:
     height: int          The number of characters for the height (rows).
     X_label: str         Label for X-axis.
     Y_label: str         Label for Y-axis. max 8 characters.
-    linesep: str         The requested line seperator. default: os.linesep
+    linesep: str         The requested line separator. default: os.linesep
     x_min, x_max: float  Limits for the displayed X values.
     y_min, y_max: float  Limits for the displayed Y values.
     lc: multiple         Give the line color.
@@ -411,7 +411,7 @@ Initiate a Canvas object
 
 Parameters:
     width: int            The number of characters for the width (columns) of the canvas.
-    hight: int            The number of characters for the hight (rows) of the canvas.
+    height: int            The number of characters for the height (rows) of the canvas.
     xmin, ymin: float     Lower left corner of reference system.
     xmax, ymax: float     Upper right corner of reference system.
     background: multiple  Background color of the canvas.
@@ -559,7 +559,7 @@ Docstring:
 Transform canvas into `print`-able string
 
 Parameters:
-    linesep: str  The requested line seperator. default: os.linesep
+    linesep: str  The requested line separator. default: os.linesep
 
 Returns:
     unicode: The canvas as a string.
