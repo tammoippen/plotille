@@ -39,7 +39,7 @@ class Dots(object):
 
     Dot ordering: \u2800 '⠀' - \u28FF '⣿'' Coding according to ISO/TR 11548-1
 
-        Hence, each dot on or off is 8bit, i.e. 256 posibilities. With dot number
+        Hence, each dot on or off is 8bit, i.e. 256 possibilities. With dot number
         one being the lsb and 8 is msb:
 
         idx:  8 7 6 5 4 3 2 1

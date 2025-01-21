@@ -49,7 +49,7 @@ def color(text, fg=None, bg=None, mode='names', no_color=False, full_reset=True)
     `ValueErrors`.
 
     If you do not want a foreground or background color, leave the corresponding
-    paramter `None`. If both are `None`, you get `text` directly.
+    parameter `None`. If both are `None`, you get `text` directly.
 
     When you stick to mode `names` and only use the none `bright_` versions,
     the color control characters conform to ISO 6429 and the ANSI Escape sequences
