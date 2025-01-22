@@ -59,7 +59,7 @@ class Canvas:
         Parameters:
             width: int            The number of characters for the width (columns) of
                                   the canvas.
-            hight: int            The number of characters for the hight (rows) of the
+            height: int           The number of characters for the hight (rows) of the
                                   canvas.
             xmin, ymin: float     Lower left corner of reference system.
             xmax, ymax: float     Upper right corner of reference system.
@@ -395,7 +395,7 @@ class Canvas:
         """Transform canvas into `print`-able string
 
         Parameters:
-            linesep: str  The requested line seperator. default: os.linesep
+            linesep: str  The requested line separator. default: os.linesep
 
         Returns:
             unicode: The canvas as a string.

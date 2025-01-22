@@ -35,7 +35,7 @@ def main():
     print(color("and a background.", bg="red"))
     print(color("Or both.", fg="black", bg="cyan"))
 
-    print(color("Asside from 4-bit / name colors", fg="green", mode="names"))
+    print(color("Aside from 4-bit / name colors", fg="green", mode="names"))
     print(
         color(
             "you can also set 8-bit colors / 256-color lookup tables",
@@ -56,7 +56,7 @@ def main():
     no_color = os.environ.get("NO_COLOR")
     os.environ["NO_COLOR"] = "1"
     print(
-        color("The Environmnet variable `NO_COLOR` will always strip colors.", fg="red")
+        color("The Environment variable `NO_COLOR` will always strip colors.", fg="red")
     )
     if no_color:
         os.environ["NO_COLOR"] = no_color
@@ -67,7 +67,7 @@ def main():
     os.environ["FORCE_COLOR"] = "1"
     print(
         color(
-            "The Environmnet variable `FORCE_COLOR` allows to toggle colors,", fg="blue"
+            "The Environment variable `FORCE_COLOR` allows to toggle colors,", fg="blue"
         )
     )
     os.environ["FORCE_COLOR"] = "0"

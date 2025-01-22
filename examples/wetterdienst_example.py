@@ -119,7 +119,7 @@ def main():
         fig.plot([1970, 2021], [start, end], label="{} - regression".format(station))
 
     print("\033[2J")  # clear screen
-    print(" " * 50 + "Temperatur of two stations in Germany at 1. Januar")
+    print(" " * 50 + "Temperature of two stations in Germany at 1. Januar")
     print(fig.show(legend=True))
 
 

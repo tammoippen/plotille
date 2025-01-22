@@ -26,7 +26,7 @@ import plotille as plt
 
 # Custom X and Y ticks
 #
-# You can customize the displayed tick valus on the corresponding axis
+# You can customize the displayed tick values on the corresponding axis
 # by providing callback functions for each.
 
 

@@ -342,7 +342,7 @@ class Figure:
     def histogram(self, X, bins=160, lc=None):
         """Compute and plot the histogram over X.
 
-        Paramaters:
+        Parameters:
             X: List[float]     X values.
             bins: int          The number of bins to put X entries in (columns).
             lc: multiple       The line color.
