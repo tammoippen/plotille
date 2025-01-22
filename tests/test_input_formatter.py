@@ -17,7 +17,7 @@ def test_defaults():
     assert " 15:03:12" == ipf.fmt(d, t)
     assert "15:03:12 " == ipf.fmt(d, t, left=True)
 
-    assert 1516543392.001234 == ipf.convert(d)
+    assert 1516546992.001234 == ipf.convert(d)
 
     # no formatter available
     assert "None" == ipf.fmt(None, 0)
