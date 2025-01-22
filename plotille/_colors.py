@@ -24,7 +24,7 @@ import colorsys
 import os
 import sys
 from collections.abc import Sequence
-from typing import Literal, Optional, Final, Union
+from typing import Final, Literal, Optional, Union
 
 MAX_RGB: Final = 255
 MAX_HUE: Final = 360

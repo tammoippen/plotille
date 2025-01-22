@@ -22,7 +22,7 @@
 
 import math
 from collections.abc import Sequence
-from datetime import datetime, timedelta, tzinfo
+from datetime import datetime, timedelta
 from typing import Any, Union
 
 
@@ -51,6 +51,12 @@ def _numpy_to_native(x: Any) -> Any:
     return x
 
 
+def _pendulum_to_native(x: Any) -> Any:
+    if "pendulum.datetime.DateTime" in str(type(x)):
+        return datetime.fromisoformat(x.isoformat())
+    return x
+
+
 def hist(
     X: Sequence[Union[float, datetime]], bins: int
 ) -> tuple[list[int], list[Union[float, datetime]]]:
@@ -68,14 +74,13 @@ def hist(
     """
     assert bins > 0
 
+    X = [_numpy_to_native(_pendulum_to_native(x)) for x in X]
+
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0
     if xmin == xmax:  # what about dame datetimes?
         xmin -= 0.5
         xmax += 0.5
-
-    xmin = _numpy_to_native(xmin)
-    xmax = _numpy_to_native(xmax)
 
     delta = xmax - xmin
     is_datetime = False
@@ -87,8 +92,7 @@ def hist(
 
     y = [0] * bins
     for x in X:
-        x_ = _numpy_to_native(x)
-        delta = x_ - xmin
+        delta = x - xmin
         if isinstance(delta, timedelta):
             delta = delta.total_seconds()
         x_idx = min(bins - 1, int(delta // xwidth))

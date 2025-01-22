@@ -28,6 +28,7 @@ from . import _cmaps_data
 
 Number = Union[float, int]
 
+
 class Colormap:
     """
     Baseclass for all scalar to RGB mappings.

@@ -81,7 +81,10 @@ def hist_aggregated(  # noqa: PLR0913
                 ipf.fmt(b[i], delta=delta, chars=8, left=True),
                 ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
                 color(
-                    "⣿" * (height // 8) + lasts[height % 8], fg=lc, bg=bg, mode=color_mode
+                    "⣿" * (height // 8) + lasts[height % 8],
+                    fg=lc,
+                    bg=bg,
+                    mode=color_mode,
                 )
                 + color(
                     "\u2800" * (width - (height // 8) + int(height % 8 == 0)),
