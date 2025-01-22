@@ -1,4 +1,4 @@
-from pendulum import datetime, duration
+from datetime import datetime, timedelta
 
 from plotille._input_formatter import InputFormatter
 
@@ -12,12 +12,12 @@ def test_defaults():
     assert 1.0 == ipf.convert(1)
 
     d = datetime(2018, 1, 21, 15, 3, 12, 1234)
-    t = duration(hours=1)
+    t = timedelta(hours=1)
 
     assert " 15:03:12" == ipf.fmt(d, t)
     assert "15:03:12 " == ipf.fmt(d, t, left=True)
 
-    assert 1516546992.001234 == ipf.convert(d)
+    assert 1516543392.001234 == ipf.convert(d)
 
     # no formatter available
     assert "None" == ipf.fmt(None, 0)

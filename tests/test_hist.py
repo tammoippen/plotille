@@ -1,7 +1,6 @@
-import datetime as orig_datetime
+import datetime
 
 import pytest
-from pendulum import datetime, duration
 
 from plotille import hist, hist_aggregated
 
@@ -59,21 +58,9 @@ def test_timehist_numpy(expected_hist):
     assert expected_hist == res
 
 
-def test_timehist_pendulum(expected_hist):
-    day = duration(days=1)
-    now = datetime(2018, 1, 16, 11, 9, 42, 100)
-    x = [now - i * day for i in range(10)]
-
-    res = hist(x, bins=8)
-
-    # print()
-    # print(res)
-    assert expected_hist == res
-
-
 def test_timehist_orig_dt(expected_hist):
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
 
     res = hist(x, bins=8)

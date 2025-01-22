@@ -40,7 +40,6 @@ python = "^3.9"
 
 mypy = "*"
 numpy = "*"
-pendulum = "*"
 Pillow = "*"
 pytest = "*"
 pytest-cov = "*"

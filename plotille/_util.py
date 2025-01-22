@@ -51,12 +51,6 @@ def _numpy_to_native(x: Any) -> Any:
     return x
 
 
-def _pendulum_to_native(x: Any) -> Any:
-    if "pendulum.datetime.DateTime" in str(type(x)):
-        return datetime.fromisoformat(x.isoformat())
-    return x
-
-
 def hist(
     X: Sequence[Union[float, datetime]], bins: int
 ) -> tuple[list[int], list[Union[float, datetime]]]:
@@ -74,7 +68,7 @@ def hist(
     """
     assert bins > 0
 
-    X = [_numpy_to_native(_pendulum_to_native(x)) for x in X]
+    X = [_numpy_to_native(x) for x in X]
 
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0

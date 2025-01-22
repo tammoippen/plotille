@@ -1,9 +1,8 @@
-import datetime as orig_datetime
+import datetime
 import os
 from unittest.mock import call
 
 import pytest
-from pendulum import datetime, duration
 
 from plotille import Figure
 from plotille._colors import hsl
@@ -555,8 +554,8 @@ def test_timeseries(timeseries):
     fig = Figure()
     fig.with_colors = False
 
-    day = duration(days=1)
-    now = datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
     x = list(reversed(x))
     y = [0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5]
@@ -571,8 +570,8 @@ def test_timeseries_orig_dt(timeseries):
     fig = Figure()
     fig.with_colors = False
 
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
     x = list(reversed(x))
     y = [0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5]
@@ -632,26 +631,12 @@ def histogram(cleandoc):
                | 06T13:33  07T21:57  09T06:21  10T14:45  11T23:09  13T07:33  14T15:57  16T00:21  17T08:45 """)
 
 
-def test_timehistogram_pendulum(histogram):
-    fig = Figure()
-    fig.with_colors = False
-
-    day = duration(days=1)
-    now = datetime(2018, 1, 16, 11, 9, 42, 100)
-    x = [now - i * day for i in range(10)]
-
-    fig.histogram(x, bins=8)
-
-    # print(fig.show())
-    assert histogram == fig.show()
-
-
 def test_timehistogram_orig_dt(histogram):
     fig = Figure()
     fig.with_colors = False
 
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now - i * day for i in range(10)]
 
     fig.histogram(x, bins=8)
@@ -713,8 +698,8 @@ def test_date_min_x():
     fig = Figure()
     fig.with_colors = False
 
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now + i * day for i in range(6)]
 
     fig.set_x_limits(min_=x[0])
@@ -730,8 +715,8 @@ def test_date_max_x():
     fig = Figure()
     fig.with_colors = False
 
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now + i * day for i in range(6)]
 
     fig.set_x_limits(max_=x[-1])
@@ -746,8 +731,8 @@ def test_date_max_x():
 def test_date_min_max_x():
     fig = Figure()
     fig.with_colors = False
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     x = [now + i * day for i in range(6)]
 
     fig.set_x_limits(min_=x[0], max_=x[-1])
@@ -762,8 +747,8 @@ def test_date_min_max_x():
 def test_date_min_max_y():
     fig = Figure()
     fig.with_colors = False
-    day = orig_datetime.timedelta(days=1)
-    now = orig_datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
     y = [now + i * day for i in range(6)]
 
     fig.set_y_limits(min_=y[0], max_=y[-1])

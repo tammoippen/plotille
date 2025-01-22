@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, timezone
 from random import randint
 from time import sleep
@@ -27,6 +28,9 @@ def main():
         fig.set_y_limits(min_=0, max_=100)
         sleep(1)
         print(fig.show())
+
+        if "pytest" in sys.modules:
+            break
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
+from datetime import datetime, timedelta
+
 import pytest
-from pendulum import datetime, duration
 
 from plotille._input_formatter import _convert_datetime, _datetime_formatter
 
@@ -11,12 +12,12 @@ def date():
 
 @pytest.fixture()
 def day():
-    return duration(days=1)
+    return timedelta(days=1)
 
 
 @pytest.fixture()
 def hour():
-    return duration(hours=1)
+    return timedelta(hours=1)
 
 
 def test_days(date, day):
