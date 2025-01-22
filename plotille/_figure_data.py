@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -23,15 +20,27 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from collections.abc import Sequence
+from datetime import datetime
+from typing import Union
+
 from . import _cmaps
 from ._util import hist
 
 
 class Plot:
-    def __init__(self, X, Y, lc, interp, label, marker):
+    def __init__(
+        self,
+        X: Sequence[Union[float, int, datetime]],
+        Y: Sequence[Union[float, int, datetime]],
+        lc,
+        interp,
+        label,
+        marker,
+    ):
         if len(X) != len(Y):
-            raise ValueError('X and Y dim have to be the same.')
-        if interp not in ('linear', None):
+            raise ValueError("X and Y dim have to be the same.")
+        if interp not in ("linear", None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
         self.X = X
@@ -63,7 +72,7 @@ class Plot:
         # plot other points and lines
         for (x0, y0), (x, y) in zip(from_points, to_points):
             canvas.point(x, y, color=color, marker=self.marker)
-            if self.interp == 'linear':
+            if self.interp == "linear":
                 # no marker for interpolated values
                 canvas.line(x0, y0, x, y, color=color)
 
@@ -85,9 +94,15 @@ class Histogram:
 
     def write(self, canvas, with_colors, in_fmt):
         # how fat will one bar of the histogram be
-        x_diff = (canvas.dots_between(in_fmt.convert(self.buckets[0]), 0,
-                                      in_fmt.convert(self.buckets[1]), 0)[0] or 1)
-        bin_size = (in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])) / x_diff
+        x_diff = (
+            canvas.dots_between(
+                in_fmt.convert(self.buckets[0]), 0, in_fmt.convert(self.buckets[1]), 0
+            )[0]
+            or 1
+        )
+        bin_size = (
+            in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])
+        ) / x_diff
 
         color = self.lc if with_colors else None
         for i in range(self.bins):
@@ -98,15 +113,13 @@ class Histogram:
                     x_ = in_fmt.convert(self.buckets[i]) + j * bin_size
 
                     if canvas.xmin <= x_ <= canvas.xmax:
-                        canvas.line(x_, 0,
-                                    x_, self.frequencies[i],
-                                    color=color)
+                        canvas.line(x_, 0, x_, self.frequencies[i], color=color)
 
 
 class Text:
     def __init__(self, X, Y, texts, lc):
         if len(X) != len(Y) != len(texts):
-            raise ValueError('X, Y and texts dim have to be the same.')
+            raise ValueError("X, Y and texts dim have to be the same.")
 
         self.X = X
         self.Y = Y
@@ -121,7 +134,9 @@ class Text:
 
     def write(self, canvas, with_colors, in_fmt):
         # make point iterator
-        points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts)
+        points = zip(
+            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts
+        )
 
         color = self.lc if with_colors else None
 
@@ -133,9 +148,13 @@ class Text:
 class Span:
     def __init__(self, xmin, xmax, ymin, ymax, lc=None):
         if not (0 <= xmin <= xmax <= 1):
-            raise ValueError('xmin has to be <= xmax and both have to be within [0, 1].')
+            raise ValueError(
+                "xmin has to be <= xmax and both have to be within [0, 1]."
+            )
         if not (0 <= ymin <= ymax <= 1):
-            raise ValueError('ymin has to be <= ymax and both have to be within [0, 1].')
+            raise ValueError(
+                "ymin has to be <= ymax and both have to be within [0, 1]."
+            )
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
@@ -189,14 +208,14 @@ class Heat:
         self._X = X
 
         if cmap is None:
-            cmap = 'viridis'
+            cmap = "viridis"
 
         if isinstance(cmap, str):
             cmap = _cmaps.cmaps[cmap]()
         self.cmap = cmap
 
     @property
-    def X(self):  # noqa: N802
+    def X(self):
         return self._X
 
     def write(self, canvas):
@@ -206,12 +225,13 @@ class Heat:
 
         flat = [x for xs in self.X for x in xs]
         try:
-            assert all(len(pixel) == 3 for pixel in flat)
+            assert all(len(pixel) == 3 for pixel in flat)  # noqa: PLR2004
             # assume rgb
             if all(0 <= v <= 1 for pixel in flat for v in pixel):
                 # 0 - 1 values => make 0-255 int values
-                flat = [(round(r * 255), round(g * 255), round(b * 255))
-                        for r, g, b in flat]
+                flat = [
+                    (round(r * 255), round(g * 255), round(b * 255)) for r, g, b in flat
+                ]
             canvas.image(flat)
         except TypeError:
             # cannot call len on a float

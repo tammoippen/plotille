@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
 # Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
@@ -23,11 +20,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from datetime import timedelta, tzinfo
 import math
+from collections.abc import Sequence
+from datetime import datetime, timedelta
+from typing import Any, Union
 
 
-def roundeven(x):
+def roundeven(x: float) -> float:
     """Round to next even integer number in case of `X.5`
 
     Parameters:
@@ -43,14 +42,18 @@ def roundeven(x):
     return round(x)
 
 
-def _numpy_to_native(x):
+def _numpy_to_native(x: Any) -> Any:
     # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
-    if ("<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))) and callable(x.item):
+    if (
+        "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
+    ) and callable(x.item):
         return x.item()
     return x
 
 
-def hist(X, bins):
+def hist(
+    X: Sequence[Union[float, datetime]], bins: int
+) -> tuple[list[int], list[Union[float, datetime]]]:
     """Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -60,18 +63,18 @@ def hist(X, bins):
     Returns:
         (counts, bins):
             counts: List[int]  The counts for all bins.
-            bins: List[float]  The range for each bin: bin `i` is in [bins[i], bins[i+1])
+            bins: List[float]  The range for each bin:
+                                bin `i` is in [bins[i], bins[i+1])
     """
     assert bins > 0
 
+    X = [_numpy_to_native(x) for x in X]
+
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0
-    if xmin == xmax:
+    if xmin == xmax:  # what about dame datetimes?
         xmin -= 0.5
         xmax += 0.5
-
-    xmin = _numpy_to_native(xmin)
-    xmax = _numpy_to_native(xmax)
 
     delta = xmax - xmin
     is_datetime = False
@@ -83,8 +86,7 @@ def hist(X, bins):
 
     y = [0] * bins
     for x in X:
-        x_ = _numpy_to_native(x)
-        delta = (x_ - xmin)
+        delta = x - xmin
         if isinstance(delta, timedelta):
             delta = delta.total_seconds()
         x_idx = min(bins - 1, int(delta // xwidth))
@@ -96,21 +98,7 @@ def hist(X, bins):
     return y, [i * xwidth + xmin for i in range(bins + 1)]
 
 
-class _UTC(tzinfo):
-    """UTC"""
-    _ZERO = timedelta(0)
-
-    def utcoffset(self, dt):
-        return self._ZERO
-
-    def tzname(self, dt):
-        return 'UTC'
-
-    def dst(self, dt):
-        return self._ZERO
-
-
-def mk_timedelta(v):
+def mk_timedelta(v: float) -> timedelta:
     seconds = int(v)
     microseconds = int((v - seconds) * 1e6)
     return timedelta(seconds=seconds, microseconds=microseconds)
