@@ -21,12 +21,14 @@
 # THE SOFTWARE.
 
 import math
-from numbers import Number
+from collections.abc import Sequence
+from typing import Optional, Union
 
 from . import _cmaps_data
 
+Number = Union[float, int]
 
-class Colormap(object):
+class Colormap:
     """
     Baseclass for all scalar to RGB mappings.
 
@@ -36,7 +38,7 @@ class Colormap(object):
     responsibility of the caller.
     """
 
-    def __init__(self, name, lookup_table=None):
+    def __init__(self, name: str, lookup_table: Sequence[Sequence[float]]) -> None:
         """
         Parameters
         ----------
@@ -47,11 +49,13 @@ class Colormap(object):
         """
         self.name = name
         self._lookup_table = lookup_table
-        self.bad = None
-        self.over = None
-        self.under = None
+        self.bad: Optional[Sequence[Number]] = None
+        self.over: Optional[Sequence[Number]] = None
+        self.under: Optional[Sequence[Number]] = None
 
-    def __call__(self, X):
+    def __call__(
+        self, X: Union[Number, Sequence[Number]]
+    ) -> Union[None, Sequence[Number], list[Optional[Sequence[Number]]]]:
         """
         Parameters
         ----------
@@ -66,13 +70,14 @@ class Colormap(object):
         RGB values with a shape of `X.shape + (3, )`.
         """
         try:
-            return [self._process_value(x) for x in X]
+            return [self._process_value(x) for x in X]  # type: ignore [union-attr]
         except TypeError:
             # not iterable
+            assert isinstance(X, (int, float))
             return self._process_value(X)
 
-    def _process_value(self, x):
-        if not isinstance(x, Number) or math.isnan(x) or math.isinf(x):
+    def _process_value(self, x: Number) -> Optional[Sequence[Number]]:
+        if not isinstance(x, (int, float)) or math.isnan(x) or math.isinf(x):
             return self.bad
         if x < 0:
             return self.under
@@ -83,11 +88,13 @@ class Colormap(object):
 
 
 class ListedColormap(Colormap):
-    def __init__(self, name, colors):
+    def __init__(self, name: str, colors: Sequence[Sequence[int]]) -> None:
         super(ListedColormap, self).__init__(name, lookup_table=colors)
 
     @classmethod
-    def from_relative(cls, name, colors):
+    def from_relative(
+        cls, name: str, colors: Sequence[Sequence[float]]
+    ) -> "ListedColormap":
         return cls(
             name,
             [(round(255 * r), round(255 * g), round(255 * b)) for r, g, b in colors],

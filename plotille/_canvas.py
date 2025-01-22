@@ -27,7 +27,7 @@ from ._dots import Dots
 from ._util import roundeven
 
 
-class Canvas(object):
+class Canvas:
     """A canvas object for plotting braille dots
 
     A Canvas object has a `width` x `height` characters large canvas, in which it

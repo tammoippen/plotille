@@ -23,13 +23,48 @@
 import colorsys
 import os
 import sys
+from collections.abc import Sequence
+from typing import Literal, Optional, Final, Union
 
-MAX_RGB = 255
-MAX_HUE = 360
-RGB_VALUES = 3
+MAX_RGB: Final = 255
+MAX_HUE: Final = 360
+RGB_VALUES: Final = 3
+ColorNames = Literal[
+    "black"
+    "red"
+    "green"
+    "yellow"
+    "blue"
+    "magenta"
+    "cyan"
+    "white"
+    "bright_black"
+    "bright_red"
+    "bright_green"
+    "bright_yellow"
+    "bright_blue"
+    "bright_magenta"
+    "bright_cyan"
+    "bright_white"
+    "bright_black_old"
+    "bright_red_old"
+    "bright_green_old"
+    "bright_yellow_old"
+    "bright_blue_old"
+    "bright_magenta_old"
+    "bright_cyan_old"
+    "bright_white_old"
+]
 
 
-def color(text, fg=None, bg=None, mode="names", no_color=False, full_reset=True):  # noqa: PLR0912 C901
+def color(  # noqa: PLR0912 C901
+    text: str,
+    fg: Union[None, str, int, ColorNames, Sequence[int]] = None,
+    bg: Union[None, str, int, ColorNames, Sequence[int]] = None,
+    mode: Literal["names", "byte", "rgb"] = "names",
+    no_color: bool = False,
+    full_reset: bool = True,
+) -> str:
     """Surround `text` with control characters for coloring
 
     c.f. http://en.wikipedia.org/wiki/ANSI_escape_code
@@ -51,7 +86,7 @@ def color(text, fg=None, bg=None, mode="names", no_color=False, full_reset=True)
     `ValueErrors`.
 
     If you do not want a foreground or background color, leave the corresponding
-    paramter `None`. If both are `None`, you get `text` directly.
+    parameter `None`. If both are `None`, you get `text` directly.
 
     When you stick to mode `names` and only use the none `bright_` versions,
     the color control characters conform to ISO 6429 and the ANSI Escape sequences
@@ -105,8 +140,12 @@ def color(text, fg=None, bg=None, mode="names", no_color=False, full_reset=True)
 
     start = ""
     if mode == "names":
+        assert fg is None or isinstance(fg, str)
+        assert bg is None or isinstance(bg, str)
         start = _names(fg, bg)
     elif mode == "byte":
+        assert fg is None or isinstance(fg, int)
+        assert bg is None or isinstance(bg, int)
         start = _byte(fg, bg)
     elif mode == "rgb":
         if isinstance(fg, str):
@@ -114,6 +153,8 @@ def color(text, fg=None, bg=None, mode="names", no_color=False, full_reset=True)
         if isinstance(bg, str):
             bg = _hex2rgb(bg)
 
+        assert fg is None or isinstance(fg, (list, tuple))
+        assert bg is None or isinstance(bg, (list, tuple))
         start = _rgb(fg, bg)
     else:
         raise ValueError(
@@ -128,7 +169,7 @@ def color(text, fg=None, bg=None, mode="names", no_color=False, full_reset=True)
         return res + "\x1b[39;49m"
 
 
-def hsl(hue, saturation, lightness):
+def hsl(hue: float, saturation: float, lightness: float) -> tuple[int, int, int]:
     """Convert HSL color space into RGB color space.
 
     In contrast to colorsys.hls_to_rgb, this works directly in
@@ -147,7 +188,7 @@ def hsl(hue, saturation, lightness):
     return int(round(r * 255)), int(round(g * 255)), int(round(b * 255))
 
 
-def rgb2byte(r, g, b):
+def rgb2byte(r: int, g: int, b: int) -> int:
     """Convert RGB values into an index for the byte color-mode.
 
     Parameters:
@@ -175,18 +216,18 @@ def rgb2byte(r, g, b):
     return 16 + 36 * r_idx + 6 * g_idx + b_idx
 
 
-def _value_to_index(v, off=55, steps=40):
+def _value_to_index(v: int, off: int = 55, steps: int = 40) -> int:
     idx = (v - off) / steps
     if idx < 0:
         return 0
     return int(round(idx))
 
 
-def _isatty():
+def _isatty() -> bool:
     return sys.stdout.isatty()
 
 
-def _names(fg, bg):
+def _names(fg: Optional[str], bg: Optional[str]) -> str:
     """3/4 bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#3.2F4_bit
@@ -199,13 +240,15 @@ def _names(fg, bg):
     if not (bg is None or bg in _BACKGROUNDS):
         raise ValueError(f'Invalid color name bg = "{bg}"')
 
+    # assert fg is not None
+    # assert bg is not None
     fg_ = _FOREGROUNDS.get(fg, "")
     bg_ = _BACKGROUNDS.get(bg, "")
 
     return _join_codes(fg_, bg_)
 
 
-def _byte(fg, bg):
+def _byte(fg: Optional[int], bg: Optional[int]) -> str:
     """8-bite encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
@@ -225,7 +268,7 @@ def _byte(fg, bg):
     return _join_codes(fg_, bg_)
 
 
-def _hex2rgb(h):
+def _hex2rgb(h: str) -> tuple[int, int, int]:
     """Transform rgb hex representation into rgb tuple of ints representation"""
     assert isinstance(h, str)
     if h.lower().startswith("0x"):
@@ -238,7 +281,7 @@ def _hex2rgb(h):
     raise ValueError("Invalid hex RGB value.")
 
 
-def _rgb(fg, bg):
+def _rgb(fg: Optional[Sequence[int]], bg: Optional[Sequence[int]]) -> str:
     """24-bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
@@ -270,7 +313,7 @@ def _rgb(fg, bg):
     return _join_codes(fg_, bg_)
 
 
-def _join_codes(fg, bg):
+def _join_codes(fg: str, bg: str) -> str:
     """Join `fg` and `bg` with ; and surround with correct esc sequence."""
     colors = ";".join(filter(lambda c: len(c) > 0, (fg, bg)))
     if colors:

@@ -20,12 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from collections.abc import Sequence
+from datetime import datetime
+from typing import Union
+
 from . import _cmaps
 from ._util import hist
 
 
 class Plot:
-    def __init__(self, X, Y, lc, interp, label, marker):
+    def __init__(
+        self,
+        X: Sequence[Union[float, int, datetime]],
+        Y: Sequence[Union[float, int, datetime]],
+        lc,
+        interp,
+        label,
+        marker,
+    ):
         if len(X) != len(Y):
             raise ValueError("X and Y dim have to be the same.")
         if interp not in ("linear", None):

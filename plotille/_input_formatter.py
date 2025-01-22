@@ -27,7 +27,7 @@ from datetime import date, datetime, time, timedelta
 from ._util import roundeven
 
 
-class InputFormatter(object):
+class InputFormatter:
     def __init__(self):
         self.formatters = OrderedDict()
 

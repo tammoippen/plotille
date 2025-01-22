@@ -21,10 +21,12 @@
 # THE SOFTWARE.
 
 import math
-from datetime import timedelta, tzinfo
+from collections.abc import Sequence
+from datetime import datetime, timedelta, tzinfo
+from typing import Any, Union
 
 
-def roundeven(x):
+def roundeven(x: float) -> float:
     """Round to next even integer number in case of `X.5`
 
     Parameters:
@@ -40,7 +42,7 @@ def roundeven(x):
     return round(x)
 
 
-def _numpy_to_native(x):
+def _numpy_to_native(x: Any) -> Any:
     # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
     if (
         "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
@@ -49,7 +51,9 @@ def _numpy_to_native(x):
     return x
 
 
-def hist(X, bins):
+def hist(
+    X: Sequence[Union[float, datetime]], bins: int
+) -> tuple[list[int], list[Union[float, datetime]]]:
     """Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -66,7 +70,7 @@ def hist(X, bins):
 
     xmin = min(X) if len(X) > 0 else 0.0
     xmax = max(X) if len(X) > 0 else 1.0
-    if xmin == xmax:
+    if xmin == xmax:  # what about dame datetimes?
         xmin -= 0.5
         xmax += 0.5
 
@@ -96,22 +100,7 @@ def hist(X, bins):
     return y, [i * xwidth + xmin for i in range(bins + 1)]
 
 
-class _UTC(tzinfo):
-    """UTC"""
-
-    _ZERO = timedelta(0)
-
-    def utcoffset(self, dt):
-        return self._ZERO
-
-    def tzname(self, dt):
-        return "UTC"
-
-    def dst(self, dt):
-        return self._ZERO
-
-
-def mk_timedelta(v):
+def mk_timedelta(v: float) -> timedelta:
     seconds = int(v)
     microseconds = int((v - seconds) * 1e6)
     return timedelta(seconds=seconds, microseconds=microseconds)

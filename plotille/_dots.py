@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from typing import Any, Literal, Optional
+
 from ._colors import color
 
 # I plot upside down, hence the different order
@@ -31,12 +33,12 @@ _xy2dot = [
 ]
 
 
-class Dots(object):
+class Dots:
     """A Dots object is responsible for printing requested braille dots and colors
 
     Dot ordering: \u2800 '⠀' - \u28ff '⣿'' Coding according to ISO/TR 11548-1
 
-        Hence, each dot on or off is 8bit, i.e. 256 posibilities. With dot number
+        Hence, each dot on or off is 8bit, i.e. 256 possibilities. With dot number
         one being the lsb and 8 is msb:
 
         idx:  8 7 6 5 4 3 2 1
@@ -50,7 +52,13 @@ class Dots(object):
         7  8
     """
 
-    def __init__(self, marker=None, fg=None, bg=None, **color_kwargs):
+    def __init__(
+        self,
+        marker: Optional[str] = None,
+        fg: Optional[str] = None,
+        bg: Optional[str] = None,
+        **color_kwargs: Any,
+    ) -> None:
         """Create a Dots object
 
         Parameters:
@@ -74,11 +82,11 @@ class Dots(object):
             self._color_kwargs["mode"] = "names"
 
     @property
-    def color_kwargs(self):
+    def color_kwargs(self) -> dict[str, Any]:
         return self._color_kwargs
 
     @property
-    def dots(self):
+    def dots(self) -> list[int]:
         assert self._dots.bit_length() <= 8  # noqa: PLR2004
         dots = []
         x = self._dots
@@ -91,16 +99,16 @@ class Dots(object):
         return sorted(dots)
 
     @property
-    def marker(self):
+    def marker(self) -> Optional[str]:
         return self._marker
 
     @marker.setter
-    def marker(self, value):
+    def marker(self, value: Optional[str]) -> None:
         assert value is None or isinstance(value, str)
         assert value is None or len(value) == 1
         self._marker = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Dots(dots={}, marker={}, fg={}, bg={}, color_kwargs={})".format(
             self.dots,
             self.marker,
@@ -109,7 +117,7 @@ class Dots(object):
             " ".join("{}: {}".format(k, v) for k, v in self.color_kwargs.items()),
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.marker:
             res = self.marker
         else:
@@ -117,14 +125,20 @@ class Dots(object):
 
         return color(res, fg=self.fg, bg=self.bg, **self.color_kwargs)
 
-    def fill(self):
+    def fill(self) -> None:
         self._dots = 0xFF
 
-    def clear(self):
+    def clear(self) -> None:
         self._dots = 0
         self.marker = None
 
-    def update(self, x, y, set_=True, marker=None):
+    def update(
+        self,
+        x: Literal[0, 1],
+        y: Literal[0, 1, 2, 3],
+        set_: bool = True,
+        marker: Optional[str] = None,
+    ) -> None:
         """(Un)Set dot at position x, y, with (0, 0) is top left corner.
 
         Parameters:
@@ -143,7 +157,7 @@ class Dots(object):
             self.marker = None
 
 
-def braille_from(dots):
+def braille_from(dots: list[int]) -> str:
     """Unicode character for braille with given dots set
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
@@ -164,7 +178,7 @@ def braille_from(dots):
     return chr(code)
 
 
-def dots_from(braille):
+def dots_from(braille: str) -> list[int]:
     """Get set dots from given
 
     See https://en.wikipedia.org/wiki/Braille_Patterns#Identifying.2C_naming_and_ordering
