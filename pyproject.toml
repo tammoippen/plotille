@@ -1,50 +1,51 @@
-[tool.poetry]
-
+[project]
 name = "plotille"
 version = "5.2.0"
 description = "Plot in the terminal using braille dots."
-authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
-license = "MIT"
-
+authors = [{ name = "Tammo Ippen", email = "tammo.ippen@posteo.de" }]
+requires-python = ">=3.10,<4"
 readme = "README.md"
-
-repository = "https://github.com/tammoippen/plotille"
-homepage = "https://github.com/tammoippen/plotille"
-
-keywords = ['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode', 'timeseries']
-
+license = "MIT"
+keywords = [
+    "plot",
+    "scatter",
+    "histogram",
+    "terminal",
+    "braille",
+    "unicode",
+    "timeseries",
+]
 classifiers = [
-    # Trove classifiers
-    # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    'Environment :: Console',
-    'License :: OSI Approved :: MIT License',
-    'Intended Audience :: Science/Research',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: 3.13',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Programming Language :: Python :: Implementation :: PyPy',
-    'Topic :: Scientific/Engineering :: Visualization',
-    'Topic :: Terminals'
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Terminals",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.9"
+[project.urls]
+Homepage = "https://github.com/tammoippen/plotille"
+Repository = "https://github.com/tammoippen/plotille"
 
-
-[tool.poetry.group.dev.dependencies]
-
-mypy = "*"
-numpy = "*"
-Pillow = "*"
-pytest = "*"
-pytest-cov = "*"
-pytest-mock = "*"
-ruff = "*"
+[dependency-groups]
+dev = [
+    "mypy",
+    "numpy",
+    "Pillow",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "ruff",
+]
 
 [tool.ruff.lint]
 select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
