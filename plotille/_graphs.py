@@ -21,24 +21,29 @@
 # THE SOFTWARE.
 
 import os
+from datetime import datetime, timedelta
 from math import log
+from typing import Optional, Union
 
-from ._colors import color
+from ._colors import ColorDefinition, ColorMode, color
 from ._figure import Figure
 from ._input_formatter import InputFormatter
 from ._util import hist as compute_hist
 
+Value = Union[float, int, datetime]
+Values = Union[list[Union[float, int]], list[datetime]]
+
 
 def hist_aggregated(  # noqa: PLR0913
-    counts,
-    bins,
-    width=80,
-    log_scale=False,
-    linesep=os.linesep,
-    lc=None,
-    bg=None,
-    color_mode="names",
-):
+    counts: list[int],
+    bins: Values,
+    width: int = 80,
+    log_scale: bool = False,
+    linesep: str = os.linesep,
+    lc: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    color_mode: ColorMode = "names",
+) -> str:
     """
     Create histogram for aggregated data.
 
@@ -58,7 +63,7 @@ def hist_aggregated(  # noqa: PLR0913
         str: histogram over `X` from left to right.
     """
 
-    def _scale(a):
+    def _scale(a: int) -> Union[float, int]:
         if log_scale and a > 0:
             return log(a)
         return a
@@ -68,7 +73,13 @@ def hist_aggregated(  # noqa: PLR0913
 
     ipf = InputFormatter()
     h_max = _scale(max(h)) or 1
-    delta = b[-1] - b[0]
+    max_ = b[-1]
+    min_ = b[0]
+    delta: Union[float, timedelta]
+    if isinstance(max_, (float, int)) and isinstance(min_, (float, int)):
+        delta = max_ - min_
+    elif isinstance(max_, datetime) and isinstance(min_, datetime):
+        delta = max_ - min_
 
     bins_count = len(h)
 
@@ -99,15 +110,15 @@ def hist_aggregated(  # noqa: PLR0913
 
 
 def hist(  # noqa: PLR0913
-    X,
-    bins=40,
-    width=80,
-    log_scale=False,
-    linesep=os.linesep,
-    lc=None,
-    bg=None,
-    color_mode="names",
-):
+    X: Values,
+    bins: int = 40,
+    width: int = 80,
+    log_scale: bool = False,
+    linesep: str = os.linesep,
+    lc: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    color_mode: ColorMode = "names",
+) -> str:
     """Create histogram over `X` from left to right
 
     The values on the left are the center of the bucket, i.e. `(bin[i] + bin[i+1]) / 2`.
@@ -127,10 +138,10 @@ def hist(  # noqa: PLR0913
     Returns:
         str: histogram over `X` from left to right.
     """
-    counts, bins = compute_hist(X, bins)
+    counts, bins_list = compute_hist(X, bins)
     return hist_aggregated(
         counts=counts,
-        bins=bins,
+        bins=bins_list,
         width=width,
         log_scale=log_scale,
         linesep=linesep,
@@ -141,21 +152,21 @@ def hist(  # noqa: PLR0913
 
 
 def histogram(  # noqa: PLR0913
-    X,
-    bins=160,
-    width=80,
-    height=40,
-    X_label="X",
-    Y_label="Counts",
-    linesep=os.linesep,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode="names",
-):
+    X: Values,
+    bins: int = 160,
+    width: int = 80,
+    height: int = 40,
+    X_label: str = "X",
+    Y_label: str = "Counts",
+    linesep: str = os.linesep,
+    x_min: Union[float, int, datetime, None] = None,
+    x_max: Union[float, int, datetime, None] = None,
+    y_min: Union[float, int, datetime, None] = None,
+    y_max: Union[float, int, datetime, None] = None,
+    lc: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    color_mode: ColorMode = "names",
+) -> str:
     """Create histogram over `X`
 
     In contrast to `hist`, this is the more `usual` histogram from bottom
@@ -205,22 +216,22 @@ def histogram(  # noqa: PLR0913
 
 
 def scatter(  # noqa: PLR0913
-    X,
-    Y,
-    width=80,
-    height=40,
-    X_label="X",
-    Y_label="Y",
-    linesep=os.linesep,
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode="names",
-    origin=True,
-    marker=None,
+    X: Values,
+    Y: Values,
+    width: int = 80,
+    height: int = 40,
+    X_label: str = "X",
+    Y_label: str = "Y",
+    linesep: str = os.linesep,
+    x_min: Value = None,
+    x_max: Value = None,
+    y_min: Value = None,
+    y_max: Value = None,
+    lc: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    color_mode: ColorMode = "names",
+    origin: bool = True,
+    marker: Optional[str] = None,
 ):
     """Create scatter plot with X , Y values
 

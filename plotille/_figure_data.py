@@ -22,22 +22,26 @@
 
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Union
+from typing import Literal, Optional, Union
+
+from plotille._canvas import Canvas
+from plotille._colors import ColorDefinition
+from plotille._input_formatter import InputFormatter
 
 from . import _cmaps
-from ._util import hist
+from ._util import DataValue, DataValues, hist
 
 
 class Plot:
     def __init__(
         self,
-        X: Sequence[Union[float, int, datetime]],
-        Y: Sequence[Union[float, int, datetime]],
-        lc,
-        interp,
-        label,
-        marker,
-    ):
+        X: DataValues,
+        Y: DataValues,
+        lc: ColorDefinition,
+        interp: Optional[Literal["linear"]],
+        label: Optional[str],
+        marker: Optional[str],
+    ) -> None:
         if len(X) != len(Y):
             raise ValueError("X and Y dim have to be the same.")
         if interp not in ("linear", None):
@@ -50,13 +54,13 @@ class Plot:
         self.label = label
         self.marker = marker
 
-    def width_vals(self):
+    def width_vals(self) -> DataValues:
         return self.X
 
-    def height_vals(self):
+    def height_vals(self) -> DataValues:
         return self.Y
 
-    def write(self, canvas, with_colors, in_fmt):
+    def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # make point iterators
         from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
         to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
@@ -78,7 +82,7 @@ class Plot:
 
 
 class Histogram:
-    def __init__(self, X, bins, lc):
+    def __init__(self, X: DataValues, bins: list[int], lc: ColorDefinition) -> None:
         frequencies, buckets = hist(X, bins)
         self.X = X
         self.bins = bins
@@ -86,13 +90,13 @@ class Histogram:
         self.buckets = buckets
         self.lc = lc
 
-    def width_vals(self):
+    def width_vals(self) -> DataValues:
         return self.X
 
-    def height_vals(self):
+    def height_vals(self) -> list[int]:
         return self.frequencies
 
-    def write(self, canvas, with_colors, in_fmt):
+    def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # how fat will one bar of the histogram be
         x_diff = (
             canvas.dots_between(
@@ -117,7 +121,9 @@ class Histogram:
 
 
 class Text:
-    def __init__(self, X, Y, texts, lc):
+    def __init__(
+        self, X: DataValues, Y: DataValues, texts: list[str], lc: ColorDefinition
+    ) -> None:
         if len(X) != len(Y) != len(texts):
             raise ValueError("X, Y and texts dim have to be the same.")
 
@@ -126,13 +132,13 @@ class Text:
         self.texts = texts
         self.lc = lc
 
-    def width_vals(self):
+    def width_vals(self) -> DataValues:
         return self.X
 
-    def height_vals(self):
+    def height_vals(self) -> DataValues:
         return self.Y
 
-    def write(self, canvas, with_colors, in_fmt):
+    def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # make point iterator
         points = zip(
             map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts
@@ -146,7 +152,14 @@ class Text:
 
 
 class Span:
-    def __init__(self, xmin, xmax, ymin, ymax, lc=None):
+    def __init__(
+        self,
+        xmin: float,
+        xmax: float,
+        ymin: float,
+        ymax: float,
+        lc: Optional[ColorDefinition] = None,
+    ):
         if not (0 <= xmin <= xmax <= 1):
             raise ValueError(
                 "xmin has to be <= xmax and both have to be within [0, 1]."
@@ -161,7 +174,7 @@ class Span:
         self.ymax = ymax
         self.lc = lc
 
-    def write(self, canvas, with_colors):
+    def write(self, canvas: Canvas, with_colors: bool) -> None:
         color = self.lc if with_colors else None
 
         # plot texts with color

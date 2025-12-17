@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 
-from ._colors import color
+from ._colors import ColorDefinition, color
 
 # I plot upside down, hence the different order
 _xy2dot = [
@@ -55,8 +55,8 @@ class Dots:
     def __init__(
         self,
         marker: Optional[str] = None,
-        fg: Optional[str] = None,
-        bg: Optional[str] = None,
+        fg: ColorDefinition = None,
+        bg: ColorDefinition = None,
         **color_kwargs: Any,
     ) -> None:
         """Create a Dots object
@@ -134,8 +134,8 @@ class Dots:
 
     def update(
         self,
-        x: Literal[0, 1],
-        y: Literal[0, 1, 2, 3],
+        x: int,
+        y: int,
         set_: bool = True,
         marker: Optional[str] = None,
     ) -> None:
@@ -147,6 +147,8 @@ class Dots:
             set_: bool  True, sets dot, False, removes dot
             marker: str Instead of braille dots set a marker char.
         """
+        assert x in (0, 1)
+        assert y in (0, 1, 2, 3)
 
         if set_:
             self._dots |= _xy2dot[y][x]

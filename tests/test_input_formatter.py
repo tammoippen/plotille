@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from plotille._input_formatter import InputFormatter
 
@@ -11,7 +11,7 @@ def test_defaults():
 
     assert 1.0 == ipf.convert(1)
 
-    d = datetime(2018, 1, 21, 15, 3, 12, 1234)
+    d = datetime(2018, 1, 21, 15, 3, 12, 1234, tzinfo=timezone.utc)
     t = timedelta(hours=1)
 
     assert " 15:03:12" == ipf.fmt(d, t)

@@ -21,10 +21,14 @@
 # THE SOFTWARE.
 
 import os
+from typing import Any, Optional, Sequence, Union
 
-from ._colors import MAX_RGB, RGB_VALUES, rgb2byte
+from ._colors import MAX_RGB, RGB_VALUES, ColorDefinition, RGB_t, rgb2byte
 from ._dots import Dots
 from ._util import roundeven
+
+DotCoord = int
+RefCoord = Union[float, int]
 
 
 class Canvas:
@@ -45,15 +49,15 @@ class Canvas:
 
     def __init__(  # noqa: PLR0913
         self,
-        width,
-        height,
-        xmin=0,
-        ymin=0,
-        xmax=1,
-        ymax=1,
-        background=None,
-        **color_kwargs,
-    ):
+        width: DotCoord,
+        height: DotCoord,
+        xmin: RefCoord = 0,
+        ymin: RefCoord = 0,
+        xmax: RefCoord = 1,
+        ymax: RefCoord = 1,
+        background: ColorDefinition = None,
+        **color_kwargs: Any,
+    ) -> None:
         """Initiate a Canvas object
 
         Parameters:
@@ -104,7 +108,7 @@ class Canvas:
             for i_ in range(height)
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})".format(
             self.width,
             self.height,
@@ -114,56 +118,63 @@ class Canvas:
             self.ymax,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
     @property
-    def width(self):
+    def width(self) -> int:
         """Number of characters in X direction"""
         return self._width
 
     @property
-    def height(self):
+    def height(self) -> int:
         """Number of characters in Y direction"""
         return self._height
 
     @property
-    def xmin(self):
+    def xmin(self) -> RefCoord:
         """Get xmin coordinate of reference coordinate system [including]."""
         return self._xmin
 
     @property
-    def ymin(self):
+    def ymin(self) -> RefCoord:
         """Get ymin coordinate of reference coordinate system [including]."""
         return self._ymin
 
     @property
-    def xmax(self):
+    def xmax(self) -> RefCoord:
         """Get xmax coordinate of reference coordinate system [excluding]."""
         return self._xmax
 
     @property
-    def xmax_inside(self):
+    def xmax_inside(self) -> float:
         "Get max x-coordinate of reference coordinate system still inside the canvas."
         return self.xmin + (self.width * 2 - 1) * self._x_delta_pt
 
     @property
-    def ymax(self):
+    def ymax(self) -> RefCoord:
         """Get ymax coordinate of reference coordinate system [excluding]."""
         return self._ymax
 
     @property
-    def ymax_inside(self):
+    def ymax_inside(self) -> float:
         "Get max y-coordinate of reference coordinate system still inside the canvas."
         return self.ymin + (self.height * 4 - 1) * self._y_delta_pt
 
-    def _transform_x(self, x):
+    def _transform_x(self, x: RefCoord) -> DotCoord:
         return int(roundeven((x - self.xmin) / self._x_delta_pt))
 
-    def _transform_y(self, y):
+    def _transform_y(self, y: RefCoord) -> DotCoord:
         return int(roundeven((y - self.ymin) / self._y_delta_pt))
 
-    def _set(self, x_idx, y_idx, set_=True, color=None, marker=None):
+    def _set(
+        self,
+        x_idx: int,
+        y_idx: int,
+        set_: bool = True,
+        color: ColorDefinition = None,
+        marker: Optional[str] = None,
+    ) -> None:
         """Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
         Parameters:
@@ -184,7 +195,13 @@ class Canvas:
                 elif color == self._canvas[y_c][x_c].fg:
                     self._canvas[y_c][x_c].fg = None
 
-    def dots_between(self, x0, y0, x1, y1):
+    def dots_between(
+        self,
+        x0: RefCoord,
+        y0: RefCoord,
+        x1: RefCoord,
+        y1: RefCoord,
+    ) -> tuple[DotCoord, DotCoord]:
         """Number of dots between (x0, y0) and (x1, y1).
 
         Parameters:
@@ -201,7 +218,14 @@ class Canvas:
 
         return x1_idx - x0_idx, y1_idx - y0_idx
 
-    def text(self, x, y, text, set_=True, color=None):
+    def text(
+        self,
+        x: RefCoord,
+        y: RefCoord,
+        text: str,
+        set_: bool = True,
+        color: ColorDefinition = None,
+    ) -> None:
         """Put some text into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
@@ -217,7 +241,7 @@ class Canvas:
         for idx in range(self.width - x_idx):
             if text is None or len(text) <= idx:
                 break
-            val = text[idx]
+            val: Optional[str] = text[idx]
             if not set_:
                 val = None
             self._canvas[y_idx][x_idx + idx].marker = val
@@ -227,7 +251,14 @@ class Canvas:
                 elif color == self._canvas[y_idx][x_idx + idx].fg:
                     self._canvas[y_idx][x_idx + idx].fg = None
 
-    def point(self, x, y, set_=True, color=None, marker=None):
+    def point(
+        self,
+        x: RefCoord,
+        y: RefCoord,
+        set_: bool = True,
+        color: ColorDefinition = None,
+        marker: Optional[str] = None,
+    ) -> None:
         """Put a point into the canvas at (x, y) [reference coordinate system]
 
         Parameters:
@@ -241,7 +272,7 @@ class Canvas:
         y_idx = self._transform_y(y)
         self._set(x_idx, y_idx, set_, color, marker)
 
-    def fill_char(self, x, y, set_=True):
+    def fill_char(self, x: RefCoord, y: RefCoord, set_: bool = True) -> None:
         """Fill the complete character at the point (x, y) [reference coordinate system]
 
         Parameters:
@@ -260,7 +291,15 @@ class Canvas:
         else:
             self._canvas[y_c][x_c].clear()
 
-    def line(self, x0, y0, x1, y1, set_=True, color=None):
+    def line(
+        self,
+        x0: RefCoord,
+        y0: RefCoord,
+        x1: RefCoord,
+        y1: RefCoord,
+        set_: bool = True,
+        color: ColorDefinition = None,
+    ) -> None:
         """Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
 
         Parameters:
@@ -285,7 +324,15 @@ class Canvas:
             yb = y0_idx + int(roundeven(y_diff / steps * i))
             self._set(xb, yb, set_, color)
 
-    def rect(self, xmin, ymin, xmax, ymax, set_=True, color=None):
+    def rect(
+        self,
+        xmin: RefCoord,
+        ymin: RefCoord,
+        xmax: RefCoord,
+        ymax: RefCoord,
+        set_: bool = True,
+        color: ColorDefinition = None,
+    ) -> None:
         """Plot rectangle with bbox (xmin, ymin) and (xmax, ymax).
 
         In the reference coordinate system.
@@ -304,8 +351,13 @@ class Canvas:
         self.line(xmax, ymin, xmin, ymin, set_, color)
 
     def braille_image(
-        self, pixels, threshold=127, inverse=False, color=None, set_=True
-    ):
+        self,
+        pixels: Sequence[int],
+        threshold: int = 127,
+        inverse: bool = False,
+        color: ColorDefinition = None,
+        set_: bool = True,
+    ) -> None:
         """Print an image using braille dots into the canvas.
 
         The pixels and braille dots in the canvas are a 1-to-1 mapping, hence
@@ -344,7 +396,7 @@ class Canvas:
 
             self._set(x, y, color=color, set_=set_)
 
-    def image(self, pixels, set_=True):
+    def image(self, pixels: Sequence[Optional[RGB_t]], set_: bool = True) -> None:
         """Print an image using background colors into the canvas.
 
         The pixels of the image and the characters in the canvas are a
@@ -378,20 +430,21 @@ class Canvas:
             y = self.height - idx // self.width - 1
             x = idx % self.width
 
+            color_value: ColorDefinition
             if set_ is False:
-                value = None
+                color_value = None
             elif self._color_mode == "rgb":
-                value = values
+                color_value = values
             elif self._color_mode == "byte":
-                value = rgb2byte(*values)
+                color_value = rgb2byte(*values)
             else:
                 raise NotImplementedError(
                     "Only color_modes rgb and byte are supported."
                 )
 
-            self._canvas[y][x].bg = value
+            self._canvas[y][x].bg = color_value
 
-    def plot(self, linesep=os.linesep):
+    def plot(self, linesep: str = os.linesep) -> str:
         """Transform canvas into `print`-able string
 
         Parameters:

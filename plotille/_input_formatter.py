@@ -23,13 +23,21 @@
 import math
 from collections import OrderedDict
 from datetime import date, datetime, time, timedelta
+from typing import Any, Callable, Protocol, Union
 
 from ._util import roundeven
 
 
+class Formatter(Protocol):
+    def __call__(self, val: Any, chars: int, delta: Any, left: bool) -> str: ...
+
+
+Converter = Callable[[Any], Union[int, float, datetime]]
+
+
 class InputFormatter:
-    def __init__(self):
-        self.formatters = OrderedDict()
+    def __init__(self) -> None:
+        self.formatters: OrderedDict[type, Formatter] = OrderedDict()
 
         self.formatters[float] = _num_formatter
         self.formatters[int] = _num_formatter
@@ -39,7 +47,7 @@ class InputFormatter:
 
         self.formatters[str] = _text_formatter
 
-        self.converters = OrderedDict()
+        self.converters: OrderedDict[type, Converter] = OrderedDict()
         self.converters[float] = _convert_numbers
         self.converters[int] = _convert_numbers
 
@@ -54,20 +62,20 @@ class InputFormatter:
         except ImportError:  # pragma: nocover
             pass
 
-    def register_formatter(self, t, f):
+    def register_formatter(self, t: type, f: Formatter) -> None:
         self.formatters[t] = f
 
-    def register_converter(self, t, f):
+    def register_converter(self, t: type, f: Converter) -> None:
         self.converters[t] = f
 
-    def fmt(self, val, delta, left=False, chars=9):
+    def fmt(self, val: Any, delta: Any, left: bool = False, chars: int = 9) -> str:
         for t, f in reversed(self.formatters.items()):
             if isinstance(val, t):
                 return f(val, chars=chars, delta=delta, left=left)
 
         return str(val)
 
-    def convert(self, val):
+    def convert(self, val: Any) -> Any:
         for t, f in reversed(self.converters.items()):
             if isinstance(val, t):
                 return f(val)
@@ -75,14 +83,14 @@ class InputFormatter:
         return val
 
 
-def _np_datetime_formatter(val, chars, delta, left=False):
+def _np_datetime_formatter(val: Any, chars: int, delta: Any, left: bool = False) -> str:
     # assert isinstance(val, np.datetime64)
     # assert isinstance(delta, np.timedelta64)
 
     return _datetime_formatter(val.item(), chars, delta.item(), left)
 
 
-def _date_formatter(val, chars, delta, left=False):
+def _date_formatter(val: date, chars: int, delta: timedelta, left: bool = False) -> str:
     assert isinstance(val, date)
     assert isinstance(delta, timedelta)
 
@@ -90,7 +98,9 @@ def _date_formatter(val, chars, delta, left=False):
     return _datetime_formatter(val_dt, chars, delta, left)
 
 
-def _datetime_formatter(val, chars, delta, left=False):
+def _datetime_formatter(
+    val: datetime, chars: int, delta: timedelta, left: bool = False
+) -> str:
     assert isinstance(val, datetime)
     assert isinstance(delta, timedelta)
 
@@ -129,7 +139,9 @@ def _datetime_formatter(val, chars, delta, left=False):
         return res.rjust(chars)
 
 
-def _num_formatter(val, chars, delta, left=False):
+def _num_formatter(
+    val: Union[int, float], chars: int, delta: Union[int, float], left: bool = False
+) -> str:
     if not isinstance(val, (int, float)):
         raise ValueError(
             "Only accepting numeric (int/long/float) "
@@ -147,7 +159,7 @@ def _num_formatter(val, chars, delta, left=False):
     # unreachable
 
 
-def _float_formatter(val, chars, left=False):
+def _float_formatter(val: float, chars: int, left: bool = False) -> str:
     assert isinstance(val, float)
     if math.isinf(val):
         return str(val).ljust(chars) if left else str(val).rjust(chars)
@@ -178,7 +190,7 @@ def _float_formatter(val, chars, left=False):
             return "{:{}{}.{}f}".format(val, align, chars, chars - 2 - sign)
 
 
-def _int_formatter(val, chars, left=False):
+def _int_formatter(val: int, chars: int, left: bool = False) -> str:
     assert isinstance(val, int)
     if val != 0:
         sign = 1 if val < 0 else 0
@@ -189,7 +201,9 @@ def _int_formatter(val, chars, left=False):
     return "{:{}{}d}".format(val, align, chars)
 
 
-def _large_pos(val, chars, left, digits, sign):
+def _large_pos(
+    val: Union[float, int], chars: int, left: bool, digits: int, sign: int
+) -> str:
     align = "<" if left else ""
     # exponent is always + and has at least two digits (1.3e+06)
     exp_digits = max(2, math.ceil(math.log10(digits)))
@@ -203,28 +217,30 @@ def _large_pos(val, chars, left, digits, sign):
     return "{:{}{}.{}e}".format(val, align, chars, residual_digits)
 
 
-def _text_formatter(val, chars, delta, left=False):
+def _text_formatter(val: str, chars: int, delta: str, left: bool = False) -> str:
     if left:
         return val[:chars].ljust(chars)
     else:
         return val[:chars].rjust(chars)
 
 
-def _convert_numbers(v):
+def _convert_numbers(v: Union[float, int]) -> float:
     assert isinstance(v, float) or isinstance(v, int)
     return float(v)
 
 
-def _convert_np_datetime(v):
+def _convert_np_datetime(v: Any) -> float:
     # assert isinstance(v, np.datetime64)
-    return v.item().timestamp()
+    v = v.item().timestamp()
+    assert isinstance(v, float)
+    return v
 
 
-def _convert_date(v):
+def _convert_date(v: date) -> int:
     assert isinstance(v, date)
     return (v - date.min).days
 
 
-def _convert_datetime(v):
+def _convert_datetime(v: datetime) -> float:
     assert isinstance(v, datetime)
     return v.timestamp()

@@ -29,6 +29,12 @@ from typing import Final, Literal, Optional, Union
 MAX_RGB: Final = 255
 MAX_HUE: Final = 360
 RGB_VALUES: Final = 3
+
+RGB_t = Union[tuple[int, int, int], Sequence[int]]
+ColorDefinition = Union[None, str, int, "ColorNames", RGB_t]
+ColorMode = Literal["names", "byte", "rgb"]
+
+
 ColorNames = Literal[
     "black"
     "red"
@@ -59,9 +65,9 @@ ColorNames = Literal[
 
 def color(  # noqa: PLR0912 C901
     text: str,
-    fg: Union[None, str, int, ColorNames, Sequence[int]] = None,
-    bg: Union[None, str, int, ColorNames, Sequence[int]] = None,
-    mode: Literal["names", "byte", "rgb"] = "names",
+    fg: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    mode: ColorMode = "names",
     no_color: bool = False,
     full_reset: bool = True,
 ) -> str:
@@ -240,8 +246,6 @@ def _names(fg: Optional[str], bg: Optional[str]) -> str:
     if not (bg is None or bg in _BACKGROUNDS):
         raise ValueError(f'Invalid color name bg = "{bg}"')
 
-    # assert fg is not None
-    # assert bg is not None
     fg_ = _FOREGROUNDS.get(fg, "")
     bg_ = _BACKGROUNDS.get(bg, "")
 
@@ -322,7 +326,7 @@ def _join_codes(fg: str, bg: str) -> str:
     return ""
 
 
-_BACKGROUNDS = {
+_BACKGROUNDS: dict[Optional[str], str] = {
     "black": "40",
     "red": "41",
     "green": "42",
@@ -349,7 +353,7 @@ _BACKGROUNDS = {
     "bright_white_old": "1;47",
 }
 
-_FOREGROUNDS = {
+_FOREGROUNDS: dict[Optional[str], str] = {
     "black": "30",
     "red": "31",
     "green": "32",

@@ -21,9 +21,17 @@
 # THE SOFTWARE.
 
 from math import cos, pi, sin
+from typing import Union
 
 
-def ellipse(x_center, y_center, angle=0, x_amplitude=1, y_amplitude=1, n=20):
+def ellipse(
+    x_center: Union[float, int],
+    y_center: Union[float, int],
+    angle: Union[float, int] = 0,
+    x_amplitude: Union[float, int] = 1,
+    y_amplitude: Union[float, int] = 1,
+    n: int = 20,
+) -> tuple[list[float], list[float]]:
     r"""Create X and Y values for an ellipse.
 
     Parameters:
@@ -68,7 +76,12 @@ def ellipse(x_center, y_center, angle=0, x_amplitude=1, y_amplitude=1, n=20):
     return ell_x, ell_y
 
 
-def circle(x_center, y_center, radius, n=20):
+def circle(
+    x_center: Union[float, int],
+    y_center: Union[float, int],
+    radius: Union[float, int],
+    n: int = 20,
+) -> tuple[list[float], list[float]]:
     """Create X and Y values for a circle.
 
     Parameters:

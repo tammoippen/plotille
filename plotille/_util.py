@@ -25,6 +25,9 @@ from collections.abc import Sequence
 from datetime import datetime, timedelta
 from typing import Any, Union
 
+DataValue = Union[float, int, datetime]
+DataValues = Union[Sequence[Union[float, int]], Sequence[datetime]]
+
 
 def roundeven(x: float) -> float:
     """Round to next even integer number in case of `X.5`
@@ -52,8 +55,8 @@ def _numpy_to_native(x: Any) -> Any:
 
 
 def hist(
-    X: Sequence[Union[float, datetime]], bins: int
-) -> tuple[list[int], list[Union[float, datetime]]]:
+    X: DataValues, bins: int
+) -> tuple[list[int], Union[list[float], list[datetime]]]:
     """Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -70,16 +73,26 @@ def hist(
 
     X = [_numpy_to_native(x) for x in X]
 
-    xmin = min(X) if len(X) > 0 else 0.0
-    xmax = max(X) if len(X) > 0 else 1.0
-    if xmin == xmax:  # what about dame datetimes?
-        xmin -= 0.5
-        xmax += 0.5
+    if len(X) == 0:
+        xmin = 0.0
+        xmax = 1.0
+    else:
+        xmin = min(X)
+        xmax = max(X)
+
+    is_datetime = isinstance(xmax, datetime)
+    assert not is_datetime or isinstance(xmin, datetime)
+
+    if xmin == xmax:
+        if is_datetime:
+            xmin -= timedelta(seconds=1)
+            xmax += timedelta(seconds=1)
+        else:
+            xmin -= 0.5
+            xmax += 0.5
 
     delta = xmax - xmin
-    is_datetime = False
     if isinstance(delta, timedelta):
-        is_datetime = True
         delta = delta.total_seconds()
 
     xwidth = delta / bins
