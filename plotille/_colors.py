@@ -31,7 +31,7 @@ MAX_HUE: Final = 360
 RGB_VALUES: Final = 3
 
 RGB_t = tuple[int, int, int] | Sequence[int]
-ColorDefinition = Union[str | int | "ColorNames" | RGB_t | None]
+ColorDefinition = Union[str, int, "ColorNames", RGB_t, None]
 ColorMode = Literal["names", "byte", "rgb"]
 
 

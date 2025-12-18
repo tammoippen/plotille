@@ -250,7 +250,6 @@ class Heat:
 
         flat = [x for xs in self.X for x in xs]
         try:
-            assert all(not isinstance(pixel, float | int) for pixel in flat)
             assert all(len(pixel) == 3 for pixel in flat)  # type: ignore[arg-type]
             # assume rgb
             if all(

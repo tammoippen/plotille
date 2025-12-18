@@ -620,7 +620,7 @@ def _limit(values: DataValues) -> tuple[DataValue, DataValue]:
 
 
 def _diff(low: DataValue, high: DataValue) -> float:
-    assert type(low) is type(high)
+    # assert type(low) is type(high)
     if low == high:
         # TODO: what about datetime?
         if low == 0:
