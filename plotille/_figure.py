@@ -22,12 +22,13 @@
 
 import os
 from collections.abc import Iterator, Sequence
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, tzinfo
 from itertools import cycle
 from typing import Any, Final, Literal, NotRequired, TypedDict
 
 from ._canvas import Canvas
 from ._colors import ColorDefinition, ColorMode, color, rgb2byte
+from ._data_metadata import DataMetadata
 from ._figure_data import Heat, HeatInput, Histogram, Plot, Span, Text
 from ._input_formatter import Converter, Formatter, InputFormatter
 from ._util import DataValue, DataValues, mk_timedelta
@@ -99,6 +100,12 @@ class Figure:
         self._heats: list[Heat] = []
         self._in_fmt: InputFormatter = InputFormatter()
 
+        # Metadata for axis display formatting
+        self._x_display_metadata: DataMetadata | None = None
+        self._y_display_metadata: DataMetadata | None = None
+        self._x_display_timezone_override: tzinfo | None = None
+        self._y_display_timezone_override: tzinfo | None = None
+
     @property
     def width(self) -> int:
         if self._width is not None:
@@ -166,6 +173,122 @@ class Figure:
         if not isinstance(value, bool):
             raise TypeError(f"Invalid origin: {value}")
         self._origin = value
+
+    def _aggregate_metadata(self, is_height: bool) -> DataMetadata:
+        """Aggregate metadata from all plots for one axis.
+
+        Determines whether the axis should display as numeric or datetime,
+        and validates that all plots have compatible types.
+
+        Args:
+            is_height: True for Y-axis, False for X-axis
+
+        Returns:
+            DataMetadata for the axis (with display timezone)
+
+        Raises:
+            ValueError: If plots have incompatible types on same axis
+        """
+        # Collect metadata from all plots
+        metadatas = []
+        for p in self._plots + self._texts:
+            if is_height:
+                metadatas.append(p.Y_metadata)
+            else:
+                metadatas.append(p.X_metadata)
+
+        if not metadatas:
+            # No plots yet, default to numeric
+            return DataMetadata(is_datetime=False, timezone=None)
+
+        # Check if all numeric or all datetime (no mixing)
+        datetime_flags = {m.is_datetime for m in metadatas}
+        if len(datetime_flags) > 1:
+            axis_name = "Y" if is_height else "X"
+            raise ValueError(
+                f"Cannot mix numeric and datetime values on {axis_name}-axis. "
+                f"All plots on an axis must use the same data type."
+            )
+
+        # All numeric case
+        if not metadatas[0].is_datetime:
+            return DataMetadata(is_datetime=False, timezone=None)
+
+        # All datetime - validate timezone consistency
+        timezones = {m.timezone for m in metadatas}
+        has_naive = None in timezones
+        has_aware = len(timezones - {None}) > 0
+
+        # Cannot mix naive and aware datetime
+        if has_naive and has_aware:
+            axis_name = "Y" if is_height else "X"
+            raise ValueError(
+                f"Cannot mix timezone-naive and timezone-aware datetime on {axis_name}-axis. "
+                f"Either all datetimes must have timezones or none must have timezones. "
+                f"Found: {timezones}"
+            )
+
+        # Pick first encountered timezone as default
+        # (User can override with set_x_display_timezone/set_y_display_timezone)
+        display_timezone = metadatas[0].timezone
+
+        return DataMetadata(is_datetime=True, timezone=display_timezone)
+
+    def set_x_display_timezone(self, tz: tzinfo | None) -> None:
+        """Set display timezone for X-axis labels.
+
+        Use this when you have datetime data with multiple timezones and want
+        to display the axis in a specific timezone.
+
+        Args:
+            tz: Target timezone (e.g., ZoneInfo("America/New_York"), timezone.utc)
+                or None for naive datetime display
+
+        Example:
+            from zoneinfo import ZoneInfo
+            fig.set_x_display_timezone(ZoneInfo("America/New_York"))
+        """
+        self._x_display_timezone_override = tz
+
+    def set_y_display_timezone(self, tz: tzinfo | None) -> None:
+        """Set display timezone for Y-axis labels.
+
+        Use this when you have datetime data with multiple timezones and want
+        to display the axis in a specific timezone.
+
+        Args:
+            tz: Target timezone (e.g., ZoneInfo("America/New_York"), timezone.utc)
+                or None for naive datetime display
+
+        Example:
+            from zoneinfo import ZoneInfo
+            fig.set_y_display_timezone(ZoneInfo("UTC"))
+        """
+        self._y_display_timezone_override = tz
+
+    def _convert_for_display(
+        self,
+        value: float,
+        metadata: DataMetadata,
+        tz_override: tzinfo | None = None,
+    ) -> float | datetime:
+        """Convert normalized float back to original type for display.
+
+        Args:
+            value: Normalized float value (timestamp if datetime)
+            metadata: Metadata indicating original type
+            tz_override: Optional timezone override for datetime display
+
+        Returns:
+            float for numeric data, datetime for datetime data
+        """
+        if not metadata.is_datetime:
+            return value
+
+        # Use override if provided, otherwise use metadata timezone
+        display_tz = tz_override if tz_override is not None else metadata.timezone
+
+        return datetime.fromtimestamp(value, tz=display_tz)
 
     def register_label_formatter(self, type_: type[Any], formatter: Formatter) -> None:
         """Register a formatter for labels of a certain type.
@@ -651,12 +774,20 @@ class Figure:
         return res
 
 
-def _limit(values: DataValues | list[float]) -> tuple[DataValue | float, DataValue | float]:
-    min_: DataValue | float = 0
-    max_: DataValue | float = 1
+def _limit(values: Sequence[float]) -> tuple[float, float]:
+    """Find min and max of normalized float values.
+
+    Args:
+        values: Sequence of already-normalized float values
+
+    Returns:
+        (min, max) as floats
+    """
+    min_: float = 0.0
+    max_: float = 1.0
     if len(values) > 0:
-        min_ = min(values)  # type: ignore[type-var]
-        max_ = max(values)  # type: ignore[type-var]
+        min_ = min(values)
+        max_ = max(values)
 
     return min_, max_
 
