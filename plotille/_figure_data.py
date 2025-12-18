@@ -93,23 +93,22 @@ class Histogram:
         # Normalize data first
         self._formatter = InputFormatter()
         self.X_metadata = DataMetadata.from_sequence(X)
-        self.X_normalized = [self._formatter.convert(x) for x in X]
+        self.X = [self._formatter.convert(x) for x in X]
 
         # Compute histogram on normalized data
         frequencies, buckets = hist(
-            self.X_normalized, bins, is_datetime=self.X_metadata.is_datetime
+            self.X, bins, is_datetime=self.X_metadata.is_datetime
         )
 
         # Store everything
-        self.X = X  # original data (for backward compat)
         self.bins = bins
         self.frequencies = frequencies
-        self.buckets = buckets  # already float
+        self.buckets = buckets
         self.lc = lc
 
     def width_vals(self) -> list[float]:
         """Return normalized X values as floats."""
-        return self.X_normalized
+        return self.X
 
     def height_vals(self) -> list[int]:
         """Return histogram frequencies."""

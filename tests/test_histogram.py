@@ -115,7 +115,7 @@ def test_histogram_stores_normalized_data():
     hist = Histogram(X, bins, lc=None)
 
     # X should be normalized
-    assert all(isinstance(x, float) for x in hist.X_normalized)
+    assert all(isinstance(x, float) for x in hist.X)
     assert not hist.X_metadata.is_datetime
 
     # buckets should also be float
@@ -136,7 +136,7 @@ def test_histogram_with_datetime_data():
 
     hist = Histogram(X, bins, lc=None)
 
-    assert all(isinstance(x, float) for x in hist.X_normalized)
+    assert all(isinstance(x, float) for x in hist.X)
     assert hist.X_metadata.is_datetime
     assert all(isinstance(b, float) for b in hist.buckets)
 
