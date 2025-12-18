@@ -23,6 +23,7 @@
 import os
 from datetime import datetime, timedelta
 from math import log
+from typing import Literal
 
 from ._colors import ColorDefinition, ColorMode, color
 from ._figure import Figure
@@ -229,7 +230,7 @@ def scatter(
     color_mode: ColorMode = "names",
     origin: bool = True,
     marker: str | None = None,
-):
+) -> str:
     """Create scatter plot with X , Y values
 
     Basically plotting without interpolation:
@@ -279,24 +280,24 @@ def scatter(
 
 
 def plot(
-    X,
-    Y,
-    width=80,
-    height=40,
-    X_label="X",
-    Y_label="Y",
-    linesep=os.linesep,
-    interp="linear",
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode="names",
-    origin=True,
-    marker=None,
-):
+    X: DataValues,
+    Y: DataValues,
+    width: int = 80,
+    height: int = 40,
+    X_label: str = "X",
+    Y_label: str = "Y",
+    linesep: str = os.linesep,
+    interp: Literal["linear"] | None = "linear",
+    x_min: DataValue | None = None,
+    x_max: DataValue | None = None,
+    y_min: DataValue | None = None,
+    y_max: DataValue | None = None,
+    lc: ColorDefinition = None,
+    bg: ColorDefinition = None,
+    color_mode: ColorMode = "names",
+    origin: bool = True,
+    marker: str | None = None,
+) -> str:
     """Create plot with X , Y values and linear interpolation between points
 
     Parameters:

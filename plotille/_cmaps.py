@@ -22,11 +22,10 @@
 
 import math
 from collections.abc import Sequence
-from typing import Union
 
 from . import _cmaps_data
 
-Number = Union[float, int]
+Number = float | int
 
 
 class Colormap:
@@ -48,15 +47,15 @@ class Colormap:
         N : int
             The number of rgb quantization levels.
         """
-        self.name = name
-        self._lookup_table = lookup_table
+        self.name: str = name
+        self._lookup_table: Sequence[Sequence[float]] = lookup_table
         self.bad: Sequence[Number] | None = None
         self.over: Sequence[Number] | None = None
         self.under: Sequence[Number] | None = None
 
     def __call__(
-        self, X: Union[Number, Sequence[Number]]
-    ) -> Union[None, Sequence[Number], list[Sequence[Number] | None]]:
+        self, X: Number | Sequence[Number]
+    ) -> Sequence[Number] | list[Sequence[Number] | None] | None:
         """
         Parameters
         ----------

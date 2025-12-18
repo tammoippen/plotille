@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from typing import Literal
+from collections.abc import Sequence
+from typing import Literal, final
 
 from plotille._canvas import Canvas
 from plotille._colors import ColorDefinition
 from plotille._input_formatter import InputFormatter
 
-from . import _cmaps
+from . import Colormap, _cmaps
 from ._util import DataValues, hist
 
 
@@ -83,8 +84,9 @@ class Plot:
                 canvas.line(x0, y0, x, y, color=color)
 
 
+@final
 class Histogram:
-    def __init__(self, X: DataValues, bins: list[int], lc: ColorDefinition) -> None:
+    def __init__(self, X: DataValues, bins: int, lc: ColorDefinition) -> None:
         frequencies, buckets = hist(X, bins)
         self.X = X
         self.bins = bins
@@ -122,9 +124,10 @@ class Histogram:
                         canvas.line(x_, 0, x_, self.frequencies[i], color=color)
 
 
+@final
 class Text:
     def __init__(
-        self, X: DataValues, Y: DataValues, texts: list[str], lc: ColorDefinition
+        self, X: DataValues, Y: DataValues, texts: Sequence[str], lc: ColorDefinition
     ) -> None:
         if len(X) != len(Y) != len(texts):
             raise ValueError("X, Y and texts dim have to be the same.")
@@ -173,11 +176,11 @@ class Span:
             raise ValueError(
                 "ymin has to be <= ymax and both have to be within [0, 1]."
             )
-        self.xmin = xmin
-        self.xmax = xmax
-        self.ymin = ymin
-        self.ymax = ymax
-        self.lc = lc
+        self.xmin: float = xmin
+        self.xmax: float = xmax
+        self.ymin: float = ymin
+        self.ymax: float = ymax
+        self.lc: ColorDefinition | None = lc
 
     def write(self, canvas: Canvas, with_colors: bool) -> None:
         color = self.lc if with_colors else None
@@ -198,8 +201,12 @@ class Span:
         )
 
 
+HeatInput = Sequence[Sequence[float]] | Sequence[Sequence[Sequence[float]]]
+
+
+@final
 class Heat:
-    def __init__(self, X, cmap=None):
+    def __init__(self, X: HeatInput, cmap: str | Colormap | None = None):
         """Initialize a Heat-class.
 
         Parameters
@@ -223,7 +230,7 @@ class Heat:
         assert cmap is None or isinstance(cmap, (str, _cmaps.Colormap))
         len_first = len(X[0])
         assert all(len(x) == len_first for x in X)
-        self._X = X
+        self._X: HeatInput = X
 
         if cmap is None:
             cmap = "viridis"
@@ -233,24 +240,29 @@ class Heat:
         self.cmap = cmap
 
     @property
-    def X(self):
+    def X(self) -> HeatInput:
         return self._X
 
-    def write(self, canvas):
+    def write(self, canvas: Canvas) -> None:
         assert len(self.X)
         assert canvas.height == len(self.X)
         assert canvas.width == len(self.X[0])
 
         flat = [x for xs in self.X for x in xs]
         try:
-            assert all(len(pixel) == 3 for pixel in flat)
+            assert all(not isinstance(pixel, float | int) for pixel in flat)
+            assert all(len(pixel) == 3 for pixel in flat)  # type: ignore[arg-type]
             # assume rgb
-            if all(0 <= v <= 1 for pixel in flat for v in pixel):
+            if all(
+                isinstance(v, float) and 0 <= v <= 1
+                for pixel in flat
+                for v in pixel  # type: ignore[union-attr]
+            ):
                 # 0 - 1 values => make 0-255 int values
-                flat = [
+                flat = [  # type: ignore[misc]
                     (round(r * 255), round(g * 255), round(b * 255)) for r, g, b in flat
                 ]
-            canvas.image(flat)
+            canvas.image(flat)  # type: ignore[arg-type]
         except TypeError:
             # cannot call len on a float
-            canvas.image(self.cmap(flat))
+            canvas.image(self.cmap(flat))  # type: ignore[arg-type]

@@ -21,12 +21,12 @@
 # THE SOFTWARE.
 
 import math
-from collections.abc import Collection
+from collections.abc import Sequence
 from datetime import datetime, timedelta
 from typing import Any
 
 DataValue = float | int | datetime
-DataValues = Collection[float | int] | Collection[datetime]
+DataValues = Sequence[float | int] | Sequence[datetime]
 
 
 def roundeven(x: float) -> float:
@@ -79,19 +79,19 @@ def hist(X: DataValues, bins: int) -> tuple[list[int], list[float] | list[dateti
         xmax = max(xs)
 
     is_datetime = isinstance(xmax, datetime)
-    assert not is_datetime or isinstance(xmin, datetime)
+    assert not is_datetime or isinstance(xmin, datetime)  # type: ignore[unreachable]
 
     if xmin == xmax:
         if is_datetime:
-            xmin -= timedelta(seconds=1)
+            xmin -= timedelta(seconds=1)  # type: ignore[unreachable]
             xmax += timedelta(seconds=1)
         else:
             xmin -= 0.5
             xmax += 0.5
 
     delta = xmax - xmin
-    if isinstance(delta, timedelta):
-        delta = delta.total_seconds()
+    if isinstance(delta, timedelta):  # type: ignore[unreachable]
+        delta = delta.total_seconds()  # type: ignore[unreachable]
 
     xwidth = delta / bins
 
@@ -104,7 +104,7 @@ def hist(X: DataValues, bins: int) -> tuple[list[int], list[float] | list[dateti
         y[x_idx] += 1
 
     if is_datetime:
-        xwidth = mk_timedelta(xwidth)
+        xwidth = mk_timedelta(xwidth)  # type: ignore[unreachable]
 
     return y, [i * xwidth + xmin for i in range(bins + 1)]
 

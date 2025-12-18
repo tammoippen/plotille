@@ -21,17 +21,27 @@
 # THE SOFTWARE.
 
 import os
+from collections.abc import Iterator, Sequence
 from datetime import timedelta
 from itertools import cycle
+from typing import Any, Final, Literal, NotRequired, TypedDict
 
 from ._canvas import Canvas
-from ._colors import color, rgb2byte
-from ._figure_data import Heat, Histogram, Plot, Span, Text
-from ._input_formatter import InputFormatter
-from ._util import mk_timedelta
+from ._colors import ColorDefinition, ColorMode, color, rgb2byte
+from ._figure_data import Heat, HeatInput, Histogram, Plot, Span, Text
+from ._input_formatter import Converter, Formatter, InputFormatter
+from ._util import DataValue, DataValues, mk_timedelta
 
 # TODO documentation!!!
 # TODO tests
+
+
+class _ColorKwargs(TypedDict):
+    fg: NotRequired[ColorDefinition]
+    bg: NotRequired[ColorDefinition]
+    mode: ColorMode
+    no_color: NotRequired[bool]
+    full_reset: NotRequired[bool]
 
 
 class Figure:
@@ -53,7 +63,7 @@ class Figure:
         x_label, y_label: str Define the X / Y axis label.
     """
 
-    _COLOR_SEQ = [  # noqa: RUF012
+    _COLOR_SEQ: Final[list[dict[ColorMode, ColorDefinition]]] = [
         {"names": "white", "rgb": (255, 255, 255), "byte": rgb2byte(255, 255, 255)},
         {"names": "red", "rgb": (255, 0, 0), "byte": rgb2byte(255, 0, 0)},
         {"names": "green", "rgb": (0, 255, 0), "byte": rgb2byte(0, 255, 0)},
@@ -63,60 +73,62 @@ class Figure:
         {"names": "cyan", "rgb": (0, 255, 255), "byte": rgb2byte(0, 255, 255)},
     ]
 
-    def __init__(self):
-        self._color_seq = iter(cycle(Figure._COLOR_SEQ))
-        self._width = None
-        self._height = None
-        self._x_min = None
-        self._x_max = None
-        self._y_min = None
-        self._y_max = None
-        self._color_kwargs = {"mode": "names"}
-        self._with_colors = True
-        self._origin = True
-        self.linesep = os.linesep
-        self.background = None
-        self.x_label = "X"
-        self.y_label = "Y"
+    def __init__(self) -> None:
+        self._color_seq: Iterator[dict[ColorMode, ColorDefinition]] = iter(
+            cycle(Figure._COLOR_SEQ)
+        )
+        self._width: int | None = None
+        self._height: int | None = None
+        self._x_min: DataValue | None = None
+        self._x_max: DataValue | None = None
+        self._y_min: DataValue | None = None
+        self._y_max: DataValue | None = None
+        self._color_kwargs: _ColorKwargs = {"mode": "names"}
+        self._with_colors: bool = True
+        self._origin: bool = True
+        self.linesep: str = os.linesep
+        self.background: ColorDefinition = None
+        self.x_label: str = "X"
+        self.y_label: str = "Y"
         # min, max -> value
         self.y_ticks_fkt = None
         self.x_ticks_fkt = None
-        self._plots = []
-        self._texts = []
-        self._spans = []
-        self._heats = []
-        self._in_fmt = InputFormatter()
+        self._plots: list[Plot | Histogram] = []
+        self._texts: list[Text] = []
+        self._spans: list[Span] = []
+        self._heats: list[Heat] = []
+        self._in_fmt: InputFormatter = InputFormatter()
 
     @property
-    def width(self):
+    def width(self) -> int:
         if self._width is not None:
             return self._width
         return 80
 
     @width.setter
-    def width(self, value):
+    def width(self, value: int) -> None:
         if not (isinstance(value, int) and value > 0):
             raise ValueError(f"Invalid width: {value}")
         self._width = value
 
     @property
-    def height(self):
+    def height(self) -> int:
         if self._height is not None:
             return self._height
         return 40
 
     @height.setter
-    def height(self, value):
+    def height(self, value: int) -> None:
         if not (isinstance(value, int) and value > 0):
             raise ValueError(f"Invalid height: {value}")
         self._height = value
 
     @property
-    def color_mode(self):
+    def color_mode(self) -> ColorMode:
         return self._color_kwargs["mode"]
 
     @color_mode.setter
-    def color_mode(self, value):
+    def color_mode(self, value: ColorMode) -> None:
         if value not in ("names", "byte", "rgb"):
             raise ValueError("Only supports: names, byte, rgb!")
         if self._plots != []:
@@ -124,38 +136,38 @@ class Figure:
         self._color_kwargs["mode"] = value
 
     @property
-    def color_full_reset(self):
+    def color_full_reset(self) -> bool:
         return self._color_kwargs.get("full_reset", True)
 
     @color_full_reset.setter
-    def color_full_reset(self, value):
+    def color_full_reset(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError("Only supports bool.")
         self._color_kwargs["full_reset"] = value
 
     @property
-    def with_colors(self):
+    def with_colors(self) -> bool:
         """Whether to plot with or without color."""
         return self._with_colors
 
     @with_colors.setter
-    def with_colors(self, value):
+    def with_colors(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f'Only bool allowed: "{value}"')
         self._with_colors = value
 
     @property
-    def origin(self):
+    def origin(self) -> bool:
         """Show or not show the origin in the plot."""
         return self._origin
 
     @origin.setter
-    def origin(self, value):
+    def origin(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f"Invalid origin: {value}")
         self._origin = value
 
-    def register_label_formatter(self, type_, formatter):
+    def register_label_formatter(self, type_: type[Any], formatter: Formatter):
         """Register a formatter for labels of a certain type.
 
         See `plotille._input_formatter` for examples.
@@ -163,7 +175,7 @@ class Figure:
         Parameters
         ----------
         type_
-            A python typte, that can be used for isinstance tests.
+            A python type, that can be used for isinstance tests.
         formatter: (val: type_, chars: int, delta, left: bool = False) -> str
             Function that formats `val` into a string.
             chars: int => number of chars you should fill
@@ -172,7 +184,7 @@ class Figure:
         """
         self._in_fmt.register_formatter(type_, formatter)
 
-    def register_float_converter(self, type_, converter):
+    def register_float_converter(self, type_: type[Any], converter: Converter) -> None:
         """Register a converter from some type_ to float.
 
         See `plotille._input_formatter` for examples.
@@ -186,25 +198,35 @@ class Figure:
         """
         self._in_fmt.register_converter(type_, converter)
 
-    def x_limits(self):
+    def x_limits(self) -> tuple[DataValue, DataValue]:
         return self._limits(self._x_min, self._x_max, False)
 
-    def set_x_limits(self, min_=None, max_=None):
+    def set_x_limits(
+        self, min_: DataValue | None = None, max_: DataValue | None = None
+    ):
         """Set min and max X values for displaying."""
         self._x_min, self._x_max = self._set_limits(
             self._x_min, self._x_max, min_, max_
         )
 
-    def y_limits(self):
+    def y_limits(self) -> tuple[DataValue, DataValue]:
         return self._limits(self._y_min, self._y_max, True)
 
-    def set_y_limits(self, min_=None, max_=None):
+    def set_y_limits(
+        self, min_: DataValue | None = None, max_: DataValue | None = None
+    ) -> None:
         """Set min and max Y values for displaying."""
         self._y_min, self._y_max = self._set_limits(
             self._y_min, self._y_max, min_, max_
         )
 
-    def _set_limits(self, init_min, init_max, min_=None, max_=None):
+    def _set_limits(
+        self,
+        init_min: DataValue | None,
+        init_max: DataValue | None,
+        min_: DataValue | None = None,
+        max_: DataValue | None = None,
+    ) -> tuple[DataValue, DataValue]:
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError("min_ is larger or equal than max_.")
@@ -224,7 +246,9 @@ class Figure:
 
         return init_min, init_max
 
-    def _limits(self, low_set, high_set, is_height):
+    def _limits(
+        self, low_set: DataValue | None, high_set: DataValue | None, is_height: bool
+    ) -> tuple[DataValue, DataValue]:
         if low_set is not None and high_set is not None:
             return low_set, high_set
 
@@ -234,7 +258,7 @@ class Figure:
                 _min, _max = _limit(p.height_vals())
             else:
                 _min, _max = _limit(p.width_vals())
-            if low is None:
+            if low is None or high is None:
                 low = _min
                 high = _max
 
@@ -301,14 +325,22 @@ class Figure:
         res += [starts[1] + " ".join(bottom)]
         return res
 
-    def clear(self):
+    def clear(self) -> None:
         """Remove all plots, texts and spans from the figure."""
         self._plots = []
         self._texts = []
         self._spans = []
         self._heats = []
 
-    def plot(self, X, Y, lc=None, interp="linear", label=None, marker=None):
+    def plot(
+        self,
+        X: DataValues,
+        Y: DataValues,
+        lc: ColorDefinition = None,
+        interp: Literal["linear"] | None = "linear",
+        label: str | None = None,
+        marker: str | None = None,
+    ) -> None:
         """Create plot with X , Y values.
 
         Parameters:
@@ -324,7 +356,14 @@ class Figure:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot(X, Y, lc, interp, label, marker)]
 
-    def scatter(self, X, Y, lc=None, label=None, marker=None):
+    def scatter(
+        self,
+        X: DataValues,
+        Y: DataValues,
+        lc: ColorDefinition = None,
+        label: str | None = None,
+        marker: str | None = None,
+    ) -> None:
         """Create a scatter plot with X , Y values
 
         Parameters:
@@ -339,7 +378,9 @@ class Figure:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Plot(X, Y, lc, None, label, marker)]
 
-    def histogram(self, X, bins=160, lc=None):
+    def histogram(
+        self, X: DataValues, bins: int = 160, lc: ColorDefinition = None
+    ) -> None:
         """Compute and plot the histogram over X.
 
         Parameters:
@@ -352,7 +393,13 @@ class Figure:
                 lc = next(self._color_seq)[self.color_mode]
             self._plots += [Histogram(X, bins, lc)]
 
-    def text(self, X, Y, texts, lc=None):
+    def text(
+        self,
+        X: DataValues,
+        Y: DataValues,
+        texts: Sequence[str],
+        lc: ColorDefinition = None,
+    ):
         """Plot texts at coordinates X, Y.
 
         Always print the first character of a text at its
@@ -369,7 +416,9 @@ class Figure:
         if len(X) > 0:
             self._texts += [Text(X, Y, texts, lc)]
 
-    def axvline(self, x, ymin=0, ymax=1, lc=None):
+    def axvline(
+        self, x: float, ymin: float = 0, ymax: float = 1, lc: ColorDefinition = None
+    ):
         """Plot a vertical line at x.
 
         Parameters:
@@ -383,7 +432,14 @@ class Figure:
         """
         self._spans.append(Span(x, x, ymin, ymax, lc))
 
-    def axvspan(self, xmin, xmax, ymin=0, ymax=1, lc=None):
+    def axvspan(
+        self,
+        xmin: float,
+        xmax: float,
+        ymin: float = 0,
+        ymax: float = 1,
+        lc: ColorDefinition = None,
+    ) -> None:
         """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
 
         Parameters:
@@ -399,7 +455,9 @@ class Figure:
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
-    def axhline(self, y, xmin=0, xmax=1, lc=None):
+    def axhline(
+        self, y: float, xmin: float = 0, xmax: float = 1, lc: ColorDefinition = None
+    ) -> None:
         """Plot a horizontal line at y.
 
         Parameters:
@@ -413,7 +471,14 @@ class Figure:
         """
         self._spans.append(Span(xmin, xmax, y, y, lc))
 
-    def axhspan(self, ymin, ymax, xmin=0, xmax=1, lc=None):
+    def axhspan(
+        self,
+        ymin: float,
+        ymax: float,
+        xmin: float = 0,
+        xmax: float = 1,
+        lc: ColorDefinition = None,
+    ) -> None:
         """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
 
         Parameters:
@@ -429,7 +494,7 @@ class Figure:
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
-    def imgshow(self, X, cmap=None):
+    def imgshow(self, X: HeatInput, cmap=None):
         """Display data as an image, i.e., on a 2D regular raster.
 
         Parameters:
@@ -452,7 +517,7 @@ class Figure:
         if len(X) > 0:
             self._heats += [Heat(X, cmap)]
 
-    def show(self, legend=False):
+    def show(self, legend: bool = False) -> str:
         """Compute the plot.
 
         Parameters:
@@ -544,9 +609,9 @@ class Figure:
         return res
 
 
-def _limit(values):
-    _min = 0
-    _max = 1
+def _limit(values: DataValues) -> tuple[DataValue, DataValue]:
+    _min: DataValue = 0
+    _max: DataValue = 1
     if len(values) > 0:
         _min = min(values)
         _max = max(values)
@@ -554,8 +619,10 @@ def _limit(values):
     return (_min, _max)
 
 
-def _diff(low, high):
+def _diff(low: DataValue, high: DataValue) -> float:
+    assert type(low) is type(high)
     if low == high:
+        # TODO: what about datetime?
         if low == 0:
             return 0.5
         else:
@@ -568,7 +635,7 @@ def _diff(low, high):
             return delta * 0.1
 
 
-def _default(low_set, high_set):
+def _default(low_set: float | None, high_set: float | None) -> tuple[float, float]:
     if low_set is None and high_set is None:
         return 0.0, 1.0  # defaults
 
@@ -588,9 +655,15 @@ def _default(low_set, high_set):
     raise ValueError("Unexpected inputs!")
 
 
-def _choose(low, high, low_set, high_set):
-    no_data = low is None and high is None
-    if no_data:
+# TODO: test x/y limit setting with datetime?
+def _choose(
+    low: DataValue | None,
+    high: DataValue | None,
+    low_set: float | None,
+    high_set: float | None,
+) -> tuple[float, float]:
+    if low is None or high is None:
+        # either all are set or none
         return _default(low_set, high_set)
 
     else:  # some data
