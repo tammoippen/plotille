@@ -37,7 +37,16 @@ Homepage = "https://github.com/tammoippen/plotille"
 Repository = "https://github.com/tammoippen/plotille"
 
 [dependency-groups]
-dev = ["mypy", "numpy", "Pillow", "pytest", "pytest-cov", "pytest-mock", "ruff"]
+dev = [
+    "mypy",
+    "numpy",
+    "Pillow",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "ruff",
+    "ty>=0.0.3",
+]
 
 [tool.pytest.ini_options]
 addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html"

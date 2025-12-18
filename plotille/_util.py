@@ -23,10 +23,18 @@
 import math
 from collections.abc import Sequence
 from datetime import datetime, timedelta
-from typing import Any
+from numbers import Real
+from typing import Any, TypeAlias, TypeGuard
 
-DataValue = float | int | datetime
-DataValues = Sequence[float | int] | Sequence[datetime]
+try:
+    import numpy as np
+
+    DatetimeLike: TypeAlias = np.datetime64 | datetime
+except ImportError:
+    DatetimeLike: TypeAlias = datetime  # type: ignore[misc,no-redef]
+
+DataValue = Real | DatetimeLike
+DataValues = Sequence[Real] | Sequence[DatetimeLike]
 
 
 def roundeven(x: float) -> float:
@@ -45,6 +53,16 @@ def roundeven(x: float) -> float:
     return round(x)
 
 
+def is_datetimes(xs: Sequence[DataValue]) -> TypeGuard[Sequence[DatetimeLike]]:
+    is_datetime = None
+    for x in xs:
+        if is_datetime is None:
+            is_datetime = isinstance(x, DatetimeLike)
+        elif is_datetime != isinstance(x, DatetimeLike):
+            raise TypeError("Mixed types in sequence.")
+    return is_datetime or False
+
+
 def _numpy_to_native(x: Any) -> Any:
     # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
     if (
@@ -54,7 +72,7 @@ def _numpy_to_native(x: Any) -> Any:
     return x
 
 
-def hist(X: DataValues, bins: int) -> tuple[list[int], list[float] | list[datetime]]:
+def hist(X: DataValues, bins: int) -> tuple[list[int], list[Real] | list[datetime]]:
     """Create histogram similar to `numpy.hist()`
 
     Parameters:
@@ -75,16 +93,16 @@ def hist(X: DataValues, bins: int) -> tuple[list[int], list[float] | list[dateti
         xmin = 0.0
         xmax = 1.0
     else:
+        # raises, if there are Real and DatetimeLike
         xmin = min(xs)
         xmax = max(xs)
 
-    is_datetime = isinstance(xmax, datetime)
-    assert not is_datetime or isinstance(xmin, datetime)  # type: ignore[unreachable]
+    is_datetime = isinstance(xmax, DatetimeLike)
 
     if xmin == xmax:
         if is_datetime:
-            xmin -= timedelta(seconds=1)  # type: ignore[unreachable]
-            xmax += timedelta(seconds=1)
+            xmin -= timedelta(seconds=1)  # type: ignore[operator]
+            xmax += timedelta(seconds=1)  # type: ignore[operator]
         else:
             xmin -= 0.5
             xmax += 0.5
@@ -104,9 +122,9 @@ def hist(X: DataValues, bins: int) -> tuple[list[int], list[float] | list[dateti
         y[x_idx] += 1
 
     if is_datetime:
-        xwidth = mk_timedelta(xwidth)  # type: ignore[unreachable]
+        xwidth = mk_timedelta(xwidth)  # type: ignore[assignment]
 
-    return y, [i * xwidth + xmin for i in range(bins + 1)]
+    return y, [i * xwidth + xmin for i in range(bins + 1)]  # type: ignore[return-value]
 
 
 def mk_timedelta(v: float) -> timedelta:

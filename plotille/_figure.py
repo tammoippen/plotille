@@ -22,7 +22,7 @@
 
 import os
 from collections.abc import Iterator, Sequence
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from itertools import cycle
 from typing import Any, Final, Literal, NotRequired, TypedDict
 
@@ -167,7 +167,7 @@ class Figure:
             raise TypeError(f"Invalid origin: {value}")
         self._origin = value
 
-    def register_label_formatter(self, type_: type[Any], formatter: Formatter):
+    def register_label_formatter(self, type_: type[Any], formatter: Formatter) -> None:
         """Register a formatter for labels of a certain type.
 
         See `plotille._input_formatter` for examples.
@@ -203,7 +203,7 @@ class Figure:
 
     def set_x_limits(
         self, min_: DataValue | None = None, max_: DataValue | None = None
-    ):
+    ) -> None:
         """Set min and max X values for displaying."""
         self._x_min, self._x_max = self._set_limits(
             self._x_min, self._x_max, min_, max_
@@ -226,18 +226,28 @@ class Figure:
         init_max: DataValue | None,
         min_: DataValue | None = None,
         max_: DataValue | None = None,
-    ) -> tuple[DataValue, DataValue]:
+    ) -> tuple[DataValue | None, DataValue | None]:
+        values = list(filter(lambda v: v is not None, [init_min, init_max, min_, max_]))
+        if not values:
+            return None, None
+
+        if any(isinstance(v, datetime) for v in values):
+            if not all(isinstance(v, datetime) for v in values):
+                raise ValueError(
+                    "Either all or none of the min/max values can be datetime."
+                )
+
         if min_ is not None and max_ is not None:
-            if min_ >= max_:
+            if min_ >= max_:  # type: ignore[operator]
                 raise ValueError("min_ is larger or equal than max_.")
             init_min = min_
             init_max = max_
         elif min_ is not None:
-            if init_max is not None and min_ >= init_max:
+            if init_max is not None and min_ >= init_max:  # type: ignore[operator]
                 raise ValueError("Previous max is smaller or equal to new min_.")
             init_min = min_
         elif max_ is not None:
-            if init_min is not None and init_min >= max_:
+            if init_min is not None and init_min >= max_:  # type: ignore[operator]
                 raise ValueError("Previous min is larger or equal to new max_.")
             init_max = max_
         else:
@@ -262,12 +272,44 @@ class Figure:
                 low = _min
                 high = _max
 
-            low = min(_min, low)
-            high = max(_max, high)
+            try:
+                low = min(_min, low)
+                high = max(_max, high)
+            except TypeError as e:
+                raise TypeError(
+                    "Cannot mix float,int values with datetime within one axis"
+                ) from e
 
-        return _choose(low, high, low_set, high_set)
+        is_datetime = False
+        timezone = False
+        if isinstance(low, datetime):
+            timezone = low.tzinfo is not None
+            low = low.timestamp()
+            is_datetime = True
+        if isinstance(high, datetime):
+            timezone = high.tzinfo is not None
+            high = high.timestamp()
+            is_datetime = True
+        if isinstance(low_set, datetime):
+            timezone = low_set.tzinfo is not None
+            low_set = low_set.timestamp()
+            is_datetime = True
+        if isinstance(high_set, datetime):
+            timezone = high_set.tzinfo is not None
+            high_set = high_set.timestamp()
+            is_datetime = True
 
-    def _y_axis(self, ymin, ymax, label="Y"):
+        result = _choose(low, high, low_set, high_set)
+
+        if is_datetime:
+            tzinfo = UTC if timezone else None
+            return datetime.fromtimestamp(result[0], tz=tzinfo), datetime.fromtimestamp(
+                result[1], tz=tzinfo
+            )
+        else:
+            return result
+
+    def _y_axis(self, ymin: DataValue, ymax: DataValue, label: str = "Y") -> list[str]:
         delta = abs(ymax - ymin)
         if isinstance(delta, timedelta):
             y_delta = mk_timedelta(delta.total_seconds() / self.height)
@@ -610,29 +652,25 @@ class Figure:
 
 
 def _limit(values: DataValues) -> tuple[DataValue, DataValue]:
-    _min: DataValue = 0
-    _max: DataValue = 1
+    min_: DataValue = 0
+    max_: DataValue = 1
     if len(values) > 0:
-        _min = min(values)
-        _max = max(values)
+        min_ = min(values)
+        max_ = max(values)
 
-    return (_min, _max)
+    return min_, max_
 
 
-def _diff(low: DataValue, high: DataValue) -> float:
+def _diff(low: float, high: float) -> float:
     # assert type(low) is type(high)
     if low == high:
-        # TODO: what about datetime?
         if low == 0:
             return 0.5
         else:
             return abs(low * 0.1)
     else:
         delta = abs(high - low)
-        if isinstance(delta, timedelta):
-            return mk_timedelta(delta.total_seconds() * 0.1)
-        else:
-            return delta * 0.1
+        return delta * 0.1
 
 
 def _default(low_set: float | None, high_set: float | None) -> tuple[float, float]:
@@ -655,15 +693,16 @@ def _default(low_set: float | None, high_set: float | None) -> tuple[float, floa
     raise ValueError("Unexpected inputs!")
 
 
-# TODO: test x/y limit setting with datetime?
 def _choose(
-    low: DataValue | None,
-    high: DataValue | None,
+    low: float | None,
+    high: float | None,
     low_set: float | None,
     high_set: float | None,
 ) -> tuple[float, float]:
     if low is None or high is None:
         # either all are set or none
+        assert low is None
+        assert high is None
         return _default(low_set, high_set)
 
     else:  # some data

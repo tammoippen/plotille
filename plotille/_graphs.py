@@ -21,14 +21,14 @@
 # THE SOFTWARE.
 
 import os
-from datetime import datetime, timedelta
 from math import log
+from numbers import Real
 from typing import Literal
 
 from ._colors import ColorDefinition, ColorMode, color
 from ._figure import Figure
 from ._input_formatter import InputFormatter
-from ._util import DataValue, DataValues
+from ._util import DataValue, DataValues, DatetimeLike
 from ._util import hist as compute_hist
 
 
@@ -73,11 +73,12 @@ def hist_aggregated(
     h_max = _scale(max(h)) or 1
     max_ = b[-1]
     min_ = b[0]
-    delta: float | timedelta
-    if isinstance(max_, (float, int)) and isinstance(min_, (float, int)):
+    if isinstance(max_, Real) and isinstance(min_, Real):
         delta = max_ - min_
-    elif isinstance(max_, datetime) and isinstance(min_, datetime):
-        delta = max_ - min_
+    elif isinstance(max_, DatetimeLike) and isinstance(min_, DatetimeLike):
+        delta = max_ - min_  # type: ignore[assignment]
+    else:
+        raise TypeError(type(max_))
 
     bins_count = len(h)
 

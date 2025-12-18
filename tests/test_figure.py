@@ -1284,3 +1284,91 @@ def test_irregular_width_and_height(cleandoc):
 
     # print(fig.show())
     assert cleandoc(expected) == fig.show()
+
+
+def test_limits_with_datetimes_no_data(cleandoc):
+    fig = Figure()
+    fig.with_colors = False
+    fig.width = 30
+    fig.height = 10
+
+    fig.set_x_limits(
+        min_=datetime.datetime(2025, 1, 1), max_=datetime.datetime(2025, 12, 31)
+    )
+    fig.set_y_limits(
+        min_=datetime.datetime(2025, 1, 1, 12, 0, 1),
+        max_=datetime.datetime(2025, 1, 1, 12, 0, 2),
+    )
+
+    assert (
+        datetime.datetime(2025, 1, 1),
+        datetime.datetime(2025, 12, 31),
+    ) == fig.x_limits()
+    assert (
+        datetime.datetime(2025, 1, 1, 12, 0, 1),
+        datetime.datetime(2025, 1, 1, 12, 0, 2),
+    ) == fig.y_limits()
+
+    expected = """
+         (Y)     ^
+        12:00:02 |
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+        12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      -----------|-|---------|---------|---------|-> (X)
+                 | 25-01-01  25-05-02  25-08-31  25-12-31 """
+    # print(fig.show())
+    assert cleandoc(expected) == fig.show()
+
+
+def test_limits_with_datetimes_with_data(cleandoc):
+    fig = Figure()
+    fig.with_colors = False
+    fig.width = 30
+    fig.height = 10
+
+    fig.set_x_limits(
+        min_=datetime.datetime(2025, 1, 1), max_=datetime.datetime(2025, 12, 31)
+    )
+    fig.set_y_limits(
+        min_=datetime.datetime(2025, 1, 1, 12, 0, 1),
+        max_=datetime.datetime(2025, 1, 1, 12, 0, 2),
+    )
+
+    assert (
+        datetime.datetime(2025, 1, 1),
+        datetime.datetime(2025, 12, 31),
+    ) == fig.x_limits()
+    assert (
+        datetime.datetime(2025, 1, 1, 12, 0, 1),
+        datetime.datetime(2025, 1, 1, 12, 0, 2),
+    ) == fig.y_limits()
+
+    fig.plot(
+        [datetime.datetime(2025, 6, 1)], [datetime.datetime(2025, 1, 1, 12, 0, 1, 30)]
+    )
+
+    expected = """
+       (Y)     ^
+      12:00:02 |
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+      12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    -----------|-|---------|---------|---------|-> (X)
+               | 25-01-01  25-05-02  25-08-31  25-12-31 """
+    print(fig.show())
+    assert cleandoc(expected) == fig.show()

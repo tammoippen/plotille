@@ -10,6 +10,7 @@ check:
 
 typing:
 	uv run --locked mypy ./plotille
+	uv run --locked ty check ./plotille
 
 tests:
 	uv run --locked pytest -s -vvv
