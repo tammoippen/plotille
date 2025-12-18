@@ -14,21 +14,10 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['pypy-3.9', 3.9, '3.10', 'pypy-3.10', '3.11', '3.12', '3.13']
-        include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
-        - os: macos-latest
-          path: ~/Library/Caches/pip
-        - os: windows-latest
-          path: ~\AppData\Local\pip\Cache
+        python-version: ['3.10', 'pypy-3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
         - os: macos-latest
-          python-version: 'pypy-3.9'
-        - os: macos-latest
           python-version: 'pypy-3.10'
-        - os: windows-latest
-          python-version: 'pypy-3.9'
         - os: windows-latest
           python-version: 'pypy-3.10'
     defaults:
@@ -38,29 +27,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PYTHONIOENCODING: UTF-8
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Set Up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Cache Install
-        id: restore-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ matrix.path }}
-            poetry.lock
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('tests/requirements.txt') }}
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: ${{ startsWith(matrix.python-version, 'pypy') && '1.2.2' || '1.7.0' }}
-          virtualenvs-create: false
+        uses: astral-sh/setup-uv@v7
 
       # pendulum has no 3.13 build (yet), hence install build dependencies
       - uses: seanmiddleditch/gha-setup-ninja@v5
@@ -69,18 +42,17 @@ jobs:
 
       - name: Install
         run: |
-          poetry run pip install maturin cython  # pendulum
-          poetry install
+          uv pip install maturin cython  # pendulum
+          uv sync --locked
 
-      - name: Style
-        if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
-        run: |
-          poetry run ruff format --check .
-          poetry run ruff check .
-          # poetry run mypy ./plotille
+      - if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
+        run: make check
+
+      - if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
+        run: make typing
 
       - name: Tests
-        run: poetry run pytest -s -vvv
+        run: make tests
 
       - uses: codecov/codecov-action@v4
         with:
