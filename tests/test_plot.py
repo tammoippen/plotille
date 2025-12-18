@@ -245,8 +245,8 @@ def test_plot_stores_normalized_datetime_data():
     assert not plot.Y_metadata.is_datetime
 
 
-def test_plot_width_height_vals_return_normalized():
-    """width_vals() and height_vals() should return normalized floats."""
+def test_plot_width_height_vals_return_raw():
+    """width_vals() and height_vals() should return raw data for axis calculation."""
     from plotille._figure_data import Plot
 
     X = [1, 2, 3]
@@ -257,8 +257,10 @@ def test_plot_width_height_vals_return_normalized():
     width = plot.width_vals()
     height = plot.height_vals()
 
-    # Should return normalized (float) data
-    assert all(isinstance(x, float) for x in width)
-    assert all(isinstance(y, float) for y in height)
-    assert list(width) == [1.0, 2.0, 3.0]
-    assert list(height) == [4.0, 5.0, 6.0]
+    # Should return raw data (not normalized)
+    assert list(width) == [1, 2, 3]
+    assert list(height) == [4, 5, 6]
+
+    # But internally normalized data should exist
+    assert all(isinstance(x, float) for x in plot.X_normalized)
+    assert all(isinstance(y, float) for y in plot.Y_normalized)

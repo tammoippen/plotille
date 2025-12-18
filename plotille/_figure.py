@@ -396,7 +396,7 @@ class Figure:
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot(X, Y, lc, interp, label, marker)]
+            self._plots += [Plot(X, Y, lc, interp, label, marker, self._in_fmt)]
 
     def scatter(
         self,
@@ -418,7 +418,7 @@ class Figure:
         if len(X) > 0:
             if lc is None:
                 lc = next(self._color_seq)[self.color_mode]
-            self._plots += [Plot(X, Y, lc, None, label, marker)]
+            self._plots += [Plot(X, Y, lc, None, label, marker, self._in_fmt)]
 
     def histogram(
         self, X: DataValues, bins: int = 160, lc: ColorDefinition = None

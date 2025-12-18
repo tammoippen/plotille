@@ -25,6 +25,7 @@ from typing import Literal, final
 
 from plotille._canvas import Canvas
 from plotille._colors import ColorDefinition
+from plotille._data_metadata import DataMetadata
 from plotille._input_formatter import InputFormatter
 
 from . import Colormap, _cmaps
@@ -40,33 +41,41 @@ class Plot:
         interp: Literal["linear"] | None,
         label: str | None,
         marker: str | None,
+        formatter: InputFormatter | None = None,
     ) -> None:
         if len(X) != len(Y):
             raise ValueError("X and Y dim have to be the same.")
         if interp not in ("linear", None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
+        # Store original data for backward compatibility (if needed)
         self.X = X
         self.Y = Y
+
+        # Normalize data to float and track metadata
+        self._formatter = formatter if formatter is not None else InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.Y_metadata = DataMetadata.from_sequence(Y)
+        self.X_normalized = [self._formatter.convert(x) for x in X]
+        self.Y_normalized = [self._formatter.convert(y) for y in Y]
+
         self.lc = lc
         self.interp = interp
         self.label = label
         self.marker = marker
 
     def width_vals(self) -> DataValues:
+        """Return raw X values for axis calculation."""
         return self.X
 
     def height_vals(self) -> DataValues:
+        """Return raw Y values for axis calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterators
-        from_points = zip(
-            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
-        )
-        to_points = zip(
-            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
-        )
+        # make point iterators - now using pre-normalized data
+        from_points = zip(self.X_normalized, self.Y_normalized, strict=True)
+        to_points = zip(self.X_normalized, self.Y_normalized, strict=True)
 
         # remove first point of to_points
         (x0, y0) = next(to_points)
