@@ -30,20 +30,10 @@ jobs:
       UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set Up Python ${{ matrix.python-version }}
         uses: astral-sh/setup-uv@v7
-
-      # pendulum has no 3.13 build (yet), hence install build dependencies
-      - uses: seanmiddleditch/gha-setup-ninja@v5
-        with:
-          version: "1.12.1"
-
-      - name: Install
-        run: |
-          uv pip install maturin cython  # pendulum
-          uv sync --locked
 
       - if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
         run: make check

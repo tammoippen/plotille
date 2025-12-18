@@ -13,25 +13,20 @@ jobs:
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set Up Python 3.12
-        uses: actions/setup-python@v5
+        uses: astral-sh/setup-uv@v7
         with:
           python-version: 3.12
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 1.8.3
-
       - name: Build
-        run: poetry build -vvv -f sdist
+        run: uv build -v
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
-          path: dist/*.tar.gz
+          path: dist/*
 
       - name: Publish
-        run: poetry publish -vvv -n -u tammoippen -p ${{ secrets.PYPI_PASS }}
+        run: uv publish -v -n -t ${{ secrets.PYPI_PASS }}
