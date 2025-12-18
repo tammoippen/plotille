@@ -72,59 +72,50 @@ def _numpy_to_native(x: Any) -> Any:
     return x
 
 
-def hist(X: DataValues, bins: int) -> tuple[list[int], list[Real] | list[datetime]]:
+def hist(
+    X: Sequence[float], bins: int, is_datetime: bool = False
+) -> tuple[list[int], list[float]]:
     """Create histogram similar to `numpy.hist()`
 
+    NOTE: This function now expects X to be already normalized to float.
+    The is_datetime parameter indicates if the original data was datetime.
+
     Parameters:
-        X: List[float|datetime]  The items to count over.
-        bins: int                The number of bins to put X entries in.
+        X: Sequence[float]  Already normalized to float (timestamps if datetime)
+        bins: int           The number of bins to put X entries in.
+        is_datetime: bool   Whether original data was datetime (for bucket calculation)
 
     Returns:
         (counts, bins):
-            counts: List[int]  The counts for all bins.
-            bins: List[float]  The range for each bin:
-                                bin `i` is in [bins[i], bins[i+1])
+            counts: list[int]  The counts for all bins.
+            bins: list[float]  The range for each bin (as floats/timestamps)
     """
     assert bins > 0
 
+    # Convert numpy scalars to native types to avoid overflow
     xs = [_numpy_to_native(x) for x in X]
 
     if len(xs) == 0:
         xmin = 0.0
         xmax = 1.0
     else:
-        # raises, if there are Real and DatetimeLike
-        xmin = min(xs)
-        xmax = max(xs)
-
-    is_datetime = isinstance(xmax, DatetimeLike)
+        xmin = float(min(xs))
+        xmax = float(max(xs))
 
     if xmin == xmax:
-        if is_datetime:
-            xmin -= timedelta(seconds=1)  # type: ignore[operator]
-            xmax += timedelta(seconds=1)  # type: ignore[operator]
-        else:
-            xmin -= 0.5
-            xmax += 0.5
+        xmin -= 0.5
+        xmax += 0.5
 
     delta = xmax - xmin
-    if isinstance(delta, timedelta):  # type: ignore[unreachable]
-        delta = delta.total_seconds()  # type: ignore[unreachable]
-
     xwidth = delta / bins
 
     y = [0] * bins
     for x in xs:
-        delta = x - xmin
-        if isinstance(delta, timedelta):
-            delta = delta.total_seconds()
-        x_idx = min(bins - 1, int(delta // xwidth))
+        delta_x = x - xmin
+        x_idx = min(bins - 1, int(delta_x // xwidth))
         y[x_idx] += 1
 
-    if is_datetime:
-        xwidth = mk_timedelta(xwidth)  # type: ignore[assignment]
-
-    return y, [i * xwidth + xmin for i in range(bins + 1)]  # type: ignore[return-value]
+    return y, [i * xwidth + xmin for i in range(bins + 1)]
 
 
 def mk_timedelta(v: float) -> timedelta:

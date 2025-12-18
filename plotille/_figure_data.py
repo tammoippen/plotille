@@ -90,30 +90,38 @@ class Plot:
 @final
 class Histogram:
     def __init__(self, X: DataValues, bins: int, lc: ColorDefinition) -> None:
-        frequencies, buckets = hist(X, bins)
-        self.X = X
+        # Normalize data first
+        self._formatter = InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.X_normalized = [self._formatter.convert(x) for x in X]
+
+        # Compute histogram on normalized data
+        frequencies, buckets = hist(
+            self.X_normalized, bins, is_datetime=self.X_metadata.is_datetime
+        )
+
+        # Store everything
+        self.X = X  # original data (for backward compat)
         self.bins = bins
         self.frequencies = frequencies
-        self.buckets = buckets
+        self.buckets = buckets  # already float
         self.lc = lc
 
-    def width_vals(self) -> DataValues:
-        return self.X
+    def width_vals(self) -> list[float]:
+        """Return normalized X values as floats."""
+        return self.X_normalized
 
     def height_vals(self) -> list[int]:
+        """Return histogram frequencies."""
         return self.frequencies
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # how fat will one bar of the histogram be
+        # buckets are already normalized to float, no conversion needed
         x_diff = (
-            canvas.dots_between(
-                in_fmt.convert(self.buckets[0]), 0, in_fmt.convert(self.buckets[1]), 0
-            )[0]
-            or 1
+            canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
         )
-        bin_size = (
-            in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])
-        ) / x_diff
+        bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
 
         color = self.lc if with_colors else None
         for i in range(self.bins):
@@ -121,7 +129,7 @@ class Histogram:
             if self.frequencies[i] > 0:
                 for j in range(x_diff):
                     # print bar
-                    x_ = in_fmt.convert(self.buckets[i]) + j * bin_size
+                    x_ = self.buckets[i] + j * bin_size
 
                     if canvas.xmin <= x_ <= canvas.xmax:
                         canvas.line(x_, 0, x_, self.frequencies[i], color=color)

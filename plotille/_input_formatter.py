@@ -220,6 +220,10 @@ def _text_formatter(val: str, chars: int, delta: str, left: bool = False) -> str
 
 
 def _convert_numbers(v: float | int) -> float:
+    from ._util import _numpy_to_native
+
+    # Convert numpy scalars to native Python types first to avoid overflow
+    v = _numpy_to_native(v)
     assert isinstance(v, float) or isinstance(v, int)
     return float(v)
 
