@@ -199,3 +199,66 @@ def test_single_value(cleandoc):
                | 0.4500000 0.4625000 0.4750000 0.4875000 0.5000000 0.5125000 0.5250000 0.5375000 0.5500000"""
     # print(plot([0.5], [0.5]))
     assert cleandoc(expected) == plot([0.5], [0.5])
+
+
+"""Tests for data normalization in Plot class."""
+from datetime import datetime, timezone
+
+
+def test_plot_stores_normalized_numeric_data():
+    """Plot should convert numeric data to float and track metadata."""
+    from plotille._figure_data import Plot
+
+    X = [1, 2, 3, 4, 5]
+    Y = [2, 4, 6, 8, 10]
+
+    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
+
+    # Data should be stored as floats
+    assert all(isinstance(x, float) for x in plot.X_normalized)
+    assert all(isinstance(y, float) for y in plot.Y_normalized)
+
+    # Metadata should indicate non-datetime
+    assert not plot.X_metadata.is_datetime
+    assert not plot.Y_metadata.is_datetime
+
+
+def test_plot_stores_normalized_datetime_data():
+    """Plot should convert datetime data to float timestamps."""
+    from plotille._figure_data import Plot
+
+    X = [
+        datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 3, 12, 0, 0, tzinfo=timezone.utc),
+    ]
+    Y = [10, 20, 30]
+
+    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
+
+    # Data should be stored as floats (timestamps)
+    assert all(isinstance(x, float) for x in plot.X_normalized)
+
+    # Metadata should indicate datetime
+    assert plot.X_metadata.is_datetime
+    assert plot.X_metadata.timezone is timezone.utc
+    assert not plot.Y_metadata.is_datetime
+
+
+def test_plot_width_height_vals_return_normalized():
+    """width_vals() and height_vals() should return normalized floats."""
+    from plotille._figure_data import Plot
+
+    X = [1, 2, 3]
+    Y = [4, 5, 6]
+
+    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
+
+    width = plot.width_vals()
+    height = plot.height_vals()
+
+    # Should return normalized (float) data
+    assert all(isinstance(x, float) for x in width)
+    assert all(isinstance(y, float) for y in height)
+    assert list(width) == [1.0, 2.0, 3.0]
+    assert list(height) == [4.0, 5.0, 6.0]
