@@ -651,12 +651,12 @@ class Figure:
         return res
 
 
-def _limit(values: DataValues) -> tuple[DataValue, DataValue]:
-    min_: DataValue = 0
-    max_: DataValue = 1
+def _limit(values: DataValues | list[float]) -> tuple[DataValue | float, DataValue | float]:
+    min_: DataValue | float = 0
+    max_: DataValue | float = 1
     if len(values) > 0:
-        min_ = min(values)
-        max_ = max(values)
+        min_ = min(values)  # type: ignore[type-var]
+        max_ = max(values)  # type: ignore[type-var]
 
     return min_, max_
 

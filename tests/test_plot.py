@@ -215,8 +215,8 @@ def test_plot_stores_normalized_numeric_data():
     plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
 
     # Data should be stored as floats
-    assert all(isinstance(x, float) for x in plot.X_normalized)
-    assert all(isinstance(y, float) for y in plot.Y_normalized)
+    assert all(isinstance(x, float) for x in plot.X)
+    assert all(isinstance(y, float) for y in plot.Y)
 
     # Metadata should indicate non-datetime
     assert not plot.X_metadata.is_datetime
@@ -237,33 +237,12 @@ def test_plot_stores_normalized_datetime_data():
     plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
 
     # Data should be stored as floats (timestamps)
-    assert all(isinstance(x, float) for x in plot.X_normalized)
+    assert all(isinstance(x, float) for x in plot.X)
 
     # Metadata should indicate datetime
     assert plot.X_metadata.is_datetime
     assert plot.X_metadata.timezone is timezone.utc
     assert not plot.Y_metadata.is_datetime
-
-
-def test_plot_width_height_vals_return_raw():
-    """width_vals() and height_vals() should return raw data for axis calculation."""
-    from plotille._figure_data import Plot
-
-    X = [1, 2, 3]
-    Y = [4, 5, 6]
-
-    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
-
-    width = plot.width_vals()
-    height = plot.height_vals()
-
-    # Should return raw data (not normalized)
-    assert list(width) == [1, 2, 3]
-    assert list(height) == [4, 5, 6]
-
-    # But internally normalized data should exist
-    assert all(isinstance(x, float) for x in plot.X_normalized)
-    assert all(isinstance(y, float) for y in plot.Y_normalized)
 
 
 """Tests for data normalization in Text class."""
@@ -279,8 +258,8 @@ def test_text_stores_normalized_data():
 
     text = Text(X, Y, texts, lc=None)
 
-    assert all(isinstance(x, float) for x in text.X_normalized)
-    assert all(isinstance(y, float) for y in text.Y_normalized)
+    assert all(isinstance(x, float) for x in text.X)
+    assert all(isinstance(y, float) for y in text.Y)
     assert not text.X_metadata.is_datetime
     assert not text.Y_metadata.is_datetime
 
@@ -298,6 +277,6 @@ def test_text_with_datetime_data():
 
     text = Text(X, Y, texts, lc=None)
 
-    assert all(isinstance(x, float) for x in text.X_normalized)
+    assert all(isinstance(x, float) for x in text.X)
     assert text.X_metadata.is_datetime
     assert not text.Y_metadata.is_datetime

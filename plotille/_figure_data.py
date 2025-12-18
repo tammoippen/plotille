@@ -48,34 +48,28 @@ class Plot:
         if interp not in ("linear", None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        # Store original data for backward compatibility
-        self.X = X
-        self.Y = Y
-
-        # Normalize data to float and track metadata
         self._formatter = formatter if formatter is not None else InputFormatter()
         self.X_metadata = DataMetadata.from_sequence(X)
         self.Y_metadata = DataMetadata.from_sequence(Y)
-        self.X_normalized = [self._formatter.convert(x) for x in X]
-        self.Y_normalized = [self._formatter.convert(y) for y in Y]
+        self.X = [self._formatter.convert(x) for x in X]
+        self.Y = [self._formatter.convert(y) for y in Y]
 
         self.lc = lc
         self.interp = interp
         self.label = label
         self.marker = marker
 
-    def width_vals(self) -> DataValues:
-        """Return raw X values for axis calculation."""
+    def width_vals(self) -> list[float]:
+        """Return X values as floats for limit calculation."""
         return self.X
 
-    def height_vals(self) -> DataValues:
-        """Return raw Y values for axis calculation."""
+    def height_vals(self) -> list[float]:
+        """Return Y values as floats for limit calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterators from normalized data
-        from_points = zip(self.X_normalized, self.Y_normalized, strict=True)
-        to_points = zip(self.X_normalized, self.Y_normalized, strict=True)
+        from_points = zip(self.X, self.Y, strict=True)
+        to_points = zip(self.X, self.Y, strict=True)
 
         # remove first point of to_points
         (x0, y0) = next(to_points)
@@ -146,30 +140,24 @@ class Text:
         if len(X) != len(Y) != len(texts):
             raise ValueError("X, Y and texts dim have to be the same.")
 
-        # Store original data for backward compatibility
-        self.X = X
-        self.Y = Y
-        self.texts = texts
-        self.lc = lc
-
-        # Normalize data to float and track metadata
         self._formatter = formatter if formatter is not None else InputFormatter()
         self.X_metadata = DataMetadata.from_sequence(X)
         self.Y_metadata = DataMetadata.from_sequence(Y)
-        self.X_normalized = [self._formatter.convert(x) for x in X]
-        self.Y_normalized = [self._formatter.convert(y) for y in Y]
+        self.X = [self._formatter.convert(x) for x in X]
+        self.Y = [self._formatter.convert(y) for y in Y]
+        self.texts = texts
+        self.lc = lc
 
-    def width_vals(self) -> DataValues:
-        """Return raw X values for axis calculation."""
+    def width_vals(self) -> list[float]:
+        """Return X values as floats for limit calculation."""
         return self.X
 
-    def height_vals(self) -> DataValues:
-        """Return raw Y values for axis calculation."""
+    def height_vals(self) -> list[float]:
+        """Return Y values as floats for limit calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterator from normalized data
-        points = zip(self.X_normalized, self.Y_normalized, self.texts, strict=True)
+        points = zip(self.X, self.Y, self.texts, strict=True)
 
         color = self.lc if with_colors else None
 
