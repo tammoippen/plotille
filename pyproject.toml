@@ -132,6 +132,3 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-name = "plotille"
 module-root = "."
-
-[tool.distutils.bdist_wheel]
-universal = true
