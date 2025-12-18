@@ -264,3 +264,40 @@ def test_plot_width_height_vals_return_raw():
     # But internally normalized data should exist
     assert all(isinstance(x, float) for x in plot.X_normalized)
     assert all(isinstance(y, float) for y in plot.Y_normalized)
+
+
+"""Tests for data normalization in Text class."""
+
+
+def test_text_stores_normalized_data():
+    """Text should normalize X and Y data to float."""
+    from plotille._figure_data import Text
+
+    X = [1, 2, 3]
+    Y = [4, 5, 6]
+    texts = ["a", "b", "c"]
+
+    text = Text(X, Y, texts, lc=None)
+
+    assert all(isinstance(x, float) for x in text.X_normalized)
+    assert all(isinstance(y, float) for y in text.Y_normalized)
+    assert not text.X_metadata.is_datetime
+    assert not text.Y_metadata.is_datetime
+
+
+def test_text_with_datetime_data():
+    """Text should handle datetime data."""
+    from plotille._figure_data import Text
+
+    X = [
+        datetime(2024, 1, 1, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, tzinfo=timezone.utc),
+    ]
+    Y = [10, 20]
+    texts = ["point1", "point2"]
+
+    text = Text(X, Y, texts, lc=None)
+
+    assert all(isinstance(x, float) for x in text.X_normalized)
+    assert text.X_metadata.is_datetime
+    assert not text.Y_metadata.is_datetime
