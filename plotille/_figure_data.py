@@ -48,7 +48,7 @@ class Plot:
         if interp not in ("linear", None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        # Store original data for backward compatibility (if needed)
+        # Store original data for backward compatibility
         self.X = X
         self.Y = Y
 
@@ -73,7 +73,7 @@ class Plot:
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterators - now using pre-normalized data
+        # make point iterators from normalized data
         from_points = zip(self.X_normalized, self.Y_normalized, strict=True)
         to_points = zip(self.X_normalized, self.Y_normalized, strict=True)
 
@@ -136,30 +136,40 @@ class Histogram:
 @final
 class Text:
     def __init__(
-        self, X: DataValues, Y: DataValues, texts: Sequence[str], lc: ColorDefinition
+        self,
+        X: DataValues,
+        Y: DataValues,
+        texts: Sequence[str],
+        lc: ColorDefinition,
+        formatter: InputFormatter | None = None,
     ) -> None:
         if len(X) != len(Y) != len(texts):
             raise ValueError("X, Y and texts dim have to be the same.")
 
+        # Store original data for backward compatibility
         self.X = X
         self.Y = Y
         self.texts = texts
         self.lc = lc
 
+        # Normalize data to float and track metadata
+        self._formatter = formatter if formatter is not None else InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.Y_metadata = DataMetadata.from_sequence(Y)
+        self.X_normalized = [self._formatter.convert(x) for x in X]
+        self.Y_normalized = [self._formatter.convert(y) for y in Y]
+
     def width_vals(self) -> DataValues:
+        """Return raw X values for axis calculation."""
         return self.X
 
     def height_vals(self) -> DataValues:
+        """Return raw Y values for axis calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterator
-        points = zip(
-            map(in_fmt.convert, self.X),
-            map(in_fmt.convert, self.Y),
-            self.texts,
-            strict=True,
-        )
+        # make point iterator from normalized data
+        points = zip(self.X_normalized, self.Y_normalized, self.texts, strict=True)
 
         color = self.lc if with_colors else None
 

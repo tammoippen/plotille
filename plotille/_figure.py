@@ -456,7 +456,7 @@ class Figure:
             lc: multiple       The (text) line color.
         """
         if len(X) > 0:
-            self._texts += [Text(X, Y, texts, lc)]
+            self._texts += [Text(X, Y, texts, lc, self._in_fmt)]
 
     def axvline(
         self, x: float, ymin: float = 0, ymax: float = 1, lc: ColorDefinition = None
