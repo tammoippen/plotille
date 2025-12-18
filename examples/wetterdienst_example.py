@@ -46,7 +46,7 @@ def regression(x, y):
     sum_x = sum(x)
     sum_xx = sum(x_ * x_ for x_ in x)
     sum_y = sum(y)
-    sum_xy = sum(x_ * y_ for x_, y_ in zip(x, y))
+    sum_xy = sum(x_ * y_ for x_, y_ in zip(x, y, strict=True))
 
     m = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x)
     b = (sum_y - m * sum_x) / n
@@ -107,8 +107,8 @@ def main():
     fig.y_label = "Celsius"
     fig.x_label = "Year"
 
-    fig.x_ticks_fkt = lambda min_, max_: "{:d}".format(int(min_))
-    fig.y_ticks_fkt = lambda min_, max_: "{:.3f}".format(min_)
+    fig.x_ticks_fkt = lambda min_, max_: f"{int(min_):d}"
+    fig.y_ticks_fkt = lambda min_, max_: f"{min_:.3f}"
 
     markers = ["x", "o"]
     for idx, station in enumerate(Xs.keys()):
@@ -116,7 +116,7 @@ def main():
         m, b = regression(Xs[station], Ys[station])
         start = m * 1970 + b
         end = m * 2021 + b
-        fig.plot([1970, 2021], [start, end], label="{} - regression".format(station))
+        fig.plot([1970, 2021], [start, end], label=f"{station} - regression")
 
     print("\033[2J")  # clear screen
     print(" " * 50 + "Temperature of two stations in Germany at 1. Januar")

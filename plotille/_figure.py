@@ -96,7 +96,7 @@ class Figure:
     @width.setter
     def width(self, value):
         if not (isinstance(value, int) and value > 0):
-            raise ValueError("Invalid width: {}".format(value))
+            raise ValueError(f"Invalid width: {value}")
         self._width = value
 
     @property
@@ -108,7 +108,7 @@ class Figure:
     @height.setter
     def height(self, value):
         if not (isinstance(value, int) and value > 0):
-            raise ValueError("Invalid height: {}".format(value))
+            raise ValueError(f"Invalid height: {value}")
         self._height = value
 
     @property
@@ -130,7 +130,7 @@ class Figure:
     @color_full_reset.setter
     def color_full_reset(self, value):
         if not isinstance(value, bool):
-            raise ValueError("Only supports bool.")
+            raise TypeError("Only supports bool.")
         self._color_kwargs["full_reset"] = value
 
     @property
@@ -141,7 +141,7 @@ class Figure:
     @with_colors.setter
     def with_colors(self, value):
         if not isinstance(value, bool):
-            raise ValueError('Only bool allowed: "{}"'.format(value))
+            raise TypeError(f'Only bool allowed: "{value}"')
         self._with_colors = value
 
     @property
@@ -152,7 +152,7 @@ class Figure:
     @origin.setter
     def origin(self, value):
         if not isinstance(value, bool):
-            raise ValueError("Invalid origin: {}".format(value))
+            raise TypeError(f"Invalid origin: {value}")
         self._origin = value
 
     def register_label_formatter(self, type_, formatter):
@@ -263,7 +263,7 @@ class Figure:
             value = self.y_ticks_fkt(value, value + y_delta)
         res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + " |"]
 
-        ylbl = "({})".format(label)
+        ylbl = f"({label})"
         ylbl_left = (10 - len(ylbl)) // 2
         ylbl_right = ylbl_left + len(ylbl) % 2
 
@@ -452,7 +452,7 @@ class Figure:
         if len(X) > 0:
             self._heats += [Heat(X, cmap)]
 
-    def show(self, legend=False):  # noqa: C901 complex (12)
+    def show(self, legend=False):
         """Compute the plot.
 
         Parameters:
@@ -512,7 +512,8 @@ class Figure:
             + yaxis[1]
             + self.linesep  # maximum
             + self.linesep.join(
-                lbl + line for lbl, line in zip(yaxis[2:], res.split(self.linesep))
+                lbl + line
+                for lbl, line in zip(yaxis[2:], res.split(self.linesep), strict=True)
             )
         )
 
@@ -525,15 +526,15 @@ class Figure:
         )
 
         if legend:
-            res += "{0}{0}Legend:{0}-------{0}".format(self.linesep)
+            res += f"{self.linesep}{self.linesep}Legend:{self.linesep}-------{self.linesep}"
             lines = []
             for i, p in enumerate(self._plots):
                 if isinstance(p, Plot):
-                    lbl = p.label or "Label {}".format(i)
+                    lbl = p.label or f"Label {i}"
                     marker = p.marker or ""
                     lines += [
                         color(
-                            "⠤{}⠤ {}".format(marker, lbl),
+                            f"⠤{marker}⠤ {lbl}",
                             fg=p.lc,
                             mode=self.color_mode,
                             no_color=not self.with_colors,

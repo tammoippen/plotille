@@ -5,12 +5,12 @@ import pytest
 from plotille._input_formatter import _convert_date, _date_formatter
 
 
-@pytest.fixture()
+@pytest.fixture
 def date_a():
     return date(2019, 1, 2)
 
 
-@pytest.fixture()
+@pytest.fixture
 def day():
     return timedelta(days=1)
 

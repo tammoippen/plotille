@@ -62,7 +62,7 @@ def main():
             X, Y = plt_data.ellipse(
                 x_center=xx, y_center=yy, x_amplitude=1, y_amplitude=1, n=20
             )
-            fig.plot(X, Y, label=("{},{}".format(xx, yy)))
+            fig.plot(X, Y, label=(f"{xx},{yy}"))
 
     fig.scatter([4], [4])
 

@@ -7,29 +7,29 @@ requires-python = ">=3.10,<4"
 readme = "README.md"
 license = "MIT"
 keywords = [
-    "plot",
-    "scatter",
-    "histogram",
-    "terminal",
-    "braille",
-    "unicode",
-    "timeseries",
+  "plot",
+  "scatter",
+  "histogram",
+  "terminal",
+  "braille",
+  "unicode",
+  "timeseries",
 ]
 classifiers = [
-    "Environment :: Console",
-    "License :: OSI Approved :: MIT License",
-    "Intended Audience :: Science/Research",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
-    "Topic :: Scientific/Engineering :: Visualization",
-    "Topic :: Terminals",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Terminals",
 ]
 
 [project.urls]
@@ -37,23 +37,61 @@ Homepage = "https://github.com/tammoippen/plotille"
 Repository = "https://github.com/tammoippen/plotille"
 
 [dependency-groups]
-dev = [
-    "mypy",
-    "numpy",
-    "Pillow",
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "ruff",
-]
+dev = ["mypy", "numpy", "Pillow", "pytest", "pytest-cov", "pytest-mock", "ruff"]
+
+[tool.pytest.ini_options]
+addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html"
+
 
 [tool.ruff.lint]
-select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
-pylint.max-args = 6
+# select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
+# pylint.max-args = 6
+select = [
+  # "A",
+  "B",
+  "BLE",
+  # "C4",
+  # "DTZ",
+  "E",
+  # "EM",
+  "F",
+  "FA",
+  # "FBT",
+  "I",
+  "PT",
+  "RSE",
+  "RUF",
+  "S",
+  "T20",
+  "TRY",
+  "UP",
+  "W605",
+]
+ignore = [
+  "E111",
+  "E114",
+  "E117",
+  "E501",
+  "PT011",
+  "PT013",
+  "S101",
+  "S110",
+  "S112",
+  "S311",
+  "TRY002",
+  "TRY003",
+  "UP007",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "**/examples/*" = ["T201"]
-"**/tests/*" = ["E501", "PLR2004", "PLR0913", "PLR0915", "T201"] #["B011", "PLR2004"]
+"**/tests/*" = [
+  "E501",
+  "PLR2004",
+  "PLR0913",
+  "PLR0915",
+  "T201",
+] #["B011", "PLR2004"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["plotille"]
@@ -88,5 +126,12 @@ disallow_any_unimported = true
 # warn_unreachable = false
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "plotille"
+module-root = "."
+
+[tool.distutils.bdist_wheel]
+universal = true

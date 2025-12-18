@@ -1,17 +1,18 @@
 .PHONY: style tests install
 
 fmt:
-	poetry run ruff format .
-	poetry run ruff check --fix .
+	uv run --locked ruff format .
+	uv run --locked ruff check --fix .
 
-style:
-	poetry run ruff format --check .
-	poetry run ruff check .
-	poetry run mypy ./plotille
-	bunx pyright ./plotille
+check:
+	uv run --locked ruff format --check .
+	uv run --locked ruff check .
+
+typing:
+	uv run --locked mypy ./plotille
 
 tests:
-	poetry run pytest -s -vvv
+	uv run --locked pytest -s -vvv
 
 install:
-	poetry install
+	uv install

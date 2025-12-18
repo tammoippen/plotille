@@ -126,5 +126,5 @@ def test_edge():
     assert "inf       " == _num_formatter(2.1e1234, chars=10, left=True, delta=0)
     assert "-inf      " == _num_formatter(-2.1e1234, chars=10, left=True, delta=0)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         _num_formatter("hello", chars=10, delta=0)

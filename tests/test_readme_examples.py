@@ -10,7 +10,7 @@ except ImportError:
     have_numpy = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def seed():
     np.random.seed(42)
 
@@ -275,7 +275,7 @@ def test_hist_log(seed, cleandoc):
     assert cleandoc(expected) == plotille.hist(x, log_scale=True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def empty(cleandoc):
     return cleandoc("""
     {}^

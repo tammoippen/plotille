@@ -85,7 +85,7 @@ def main():
     lines[-1] += " " * (max_line - len(lines[-1])) + "| "
 
     plot = (os.linesep).join(
-        l1 + l2 for (l1, l2) in zip(lines, plot2.split(os.linesep))
+        l1 + l2 for (l1, l2) in zip(lines, plot2.split(os.linesep), strict=True)
     )
 
     print(plot)

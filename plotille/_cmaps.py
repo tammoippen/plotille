@@ -22,7 +22,7 @@
 
 import math
 from collections.abc import Sequence
-from typing import Optional, Union
+from typing import Union
 
 from . import _cmaps_data
 
@@ -50,13 +50,13 @@ class Colormap:
         """
         self.name = name
         self._lookup_table = lookup_table
-        self.bad: Optional[Sequence[Number]] = None
-        self.over: Optional[Sequence[Number]] = None
-        self.under: Optional[Sequence[Number]] = None
+        self.bad: Sequence[Number] | None = None
+        self.over: Sequence[Number] | None = None
+        self.under: Sequence[Number] | None = None
 
     def __call__(
         self, X: Union[Number, Sequence[Number]]
-    ) -> Union[None, Sequence[Number], list[Optional[Sequence[Number]]]]:
+    ) -> Union[None, Sequence[Number], list[Sequence[Number] | None]]:
         """
         Parameters
         ----------
@@ -77,20 +77,20 @@ class Colormap:
             assert isinstance(X, (int, float))
             return self._process_value(X)
 
-    def _process_value(self, x: Number) -> Optional[Sequence[Number]]:
+    def _process_value(self, x: Number) -> Sequence[Number] | None:
         if not isinstance(x, (int, float)) or math.isnan(x) or math.isinf(x):
             return self.bad
         if x < 0:
             return self.under
         if x > 1:
             return self.over
-        idx = int(round(x * (len(self._lookup_table) - 1)))
+        idx = round(x * (len(self._lookup_table) - 1))
         return self._lookup_table[idx]
 
 
 class ListedColormap(Colormap):
     def __init__(self, name: str, colors: Sequence[Sequence[int]]) -> None:
-        super(ListedColormap, self).__init__(name, lookup_table=colors)
+        super().__init__(name, lookup_table=colors)
 
     @classmethod
     def from_relative(

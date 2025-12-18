@@ -35,7 +35,7 @@ def main():
     t0 = time()
     for _ in range(100):
         plotille.plot(x, y, height=30, width=60)
-    print("Took {:.3f} sec".format(time() - t0))
+    print(f"Took {time() - t0:.3f} sec")
 
 
 if __name__ == "__main__":

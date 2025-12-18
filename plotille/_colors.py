@@ -24,7 +24,7 @@ import colorsys
 import os
 import sys
 from collections.abc import Sequence
-from typing import Final, Literal, Optional, Union
+from typing import Final, Literal, Union
 
 MAX_RGB: Final = 255
 MAX_HUE: Final = 360
@@ -63,7 +63,7 @@ ColorNames = Literal[
 ]
 
 
-def color(  # noqa: PLR0912 C901
+def color(
     text: str,
     fg: ColorDefinition = None,
     bg: ColorDefinition = None,
@@ -163,9 +163,7 @@ def color(  # noqa: PLR0912 C901
         assert bg is None or isinstance(bg, (list, tuple))
         start = _rgb(fg, bg)
     else:
-        raise ValueError(
-            'Invalid mode "{}". Use one of "names", "byte" or "rgb".'.format(mode)
-        )
+        raise ValueError(f'Invalid mode "{mode}". Use one of "names", "byte" or "rgb".')
 
     assert start
     res = start + text
@@ -191,7 +189,7 @@ def hsl(hue: float, saturation: float, lightness: float) -> tuple[int, int, int]
     assert 0 <= lightness <= 1
 
     r, g, b = colorsys.hls_to_rgb(hue / 360.0, lightness, saturation)
-    return int(round(r * 255)), int(round(g * 255)), int(round(b * 255))
+    return round(r * 255), round(g * 255), round(b * 255)
 
 
 def rgb2byte(r: int, g: int, b: int) -> int:
@@ -209,7 +207,7 @@ def rgb2byte(r: int, g: int, b: int) -> int:
     assert 0 <= g <= MAX_RGB
     assert 0 <= b <= MAX_RGB
 
-    if r == g == b < 244:  # noqa: PLR2004
+    if r == g == b < 244:
         # gray:
         gray_idx = _value_to_index(min(238, r), off=8, steps=10)
         return gray_idx + 232
@@ -226,14 +224,14 @@ def _value_to_index(v: int, off: int = 55, steps: int = 40) -> int:
     idx = (v - off) / steps
     if idx < 0:
         return 0
-    return int(round(idx))
+    return round(idx)
 
 
 def _isatty() -> bool:
     return sys.stdout.isatty()
 
 
-def _names(fg: Optional[str], bg: Optional[str]) -> str:
+def _names(fg: str | None, bg: str | None) -> str:
     """3/4 bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#3.2F4_bit
@@ -252,7 +250,7 @@ def _names(fg: Optional[str], bg: Optional[str]) -> str:
     return _join_codes(fg_, bg_)
 
 
-def _byte(fg: Optional[int], bg: Optional[int]) -> str:
+def _byte(fg: int | None, bg: int | None) -> str:
     """8-bite encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
@@ -277,15 +275,15 @@ def _hex2rgb(h: str) -> tuple[int, int, int]:
     assert isinstance(h, str)
     if h.lower().startswith("0x"):
         h = h[2:]
-    if len(h) == 3:  # noqa: PLR2004
+    if len(h) == 3:
         return (int(h[0] * 2, base=16), int(h[1] * 2, base=16), int(h[2] * 2, base=16))
-    if len(h) == 6:  # noqa: PLR2004
+    if len(h) == 6:
         return (int(h[0:2], base=16), int(h[2:4], base=16), int(h[4:6], base=16))
 
     raise ValueError("Invalid hex RGB value.")
 
 
-def _rgb(fg: Optional[Sequence[int]], bg: Optional[Sequence[int]]) -> str:
+def _rgb(fg: Sequence[int] | None, bg: Sequence[int] | None) -> str:
     """24-bit encoding part
 
     c.f. https://en.wikipedia.org/wiki/ANSI_escape_code#24-bit
@@ -326,7 +324,7 @@ def _join_codes(fg: str, bg: str) -> str:
     return ""
 
 
-_BACKGROUNDS: dict[Optional[str], str] = {
+_BACKGROUNDS: dict[str | None, str] = {
     "black": "40",
     "red": "41",
     "green": "42",
@@ -353,7 +351,7 @@ _BACKGROUNDS: dict[Optional[str], str] = {
     "bright_white_old": "1;47",
 }
 
-_FOREGROUNDS: dict[Optional[str], str] = {
+_FOREGROUNDS: dict[str | None, str] = {
     "black": "30",
     "red": "31",
     "green": "32",

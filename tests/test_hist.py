@@ -12,7 +12,7 @@ except ImportError:
     have_numpy = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def expected_hist(cleandoc):
     return cleandoc("""
             bucket       | ________________________________________________________________________________ Total Counts
@@ -27,7 +27,7 @@ def expected_hist(cleandoc):
     ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾""")
 
 
-@pytest.fixture()
+@pytest.fixture
 def expected_hist_aggregated(cleandoc):
     return cleandoc("""
         bucket       | ________________________________________________________________________________ Total Counts

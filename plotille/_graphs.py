@@ -23,20 +23,17 @@
 import os
 from datetime import datetime, timedelta
 from math import log
-from typing import Optional, Union
 
 from ._colors import ColorDefinition, ColorMode, color
 from ._figure import Figure
 from ._input_formatter import InputFormatter
+from ._util import DataValue, DataValues
 from ._util import hist as compute_hist
 
-Value = Union[float, int, datetime]
-Values = Union[list[Union[float, int]], list[datetime]]
 
-
-def hist_aggregated(  # noqa: PLR0913
+def hist_aggregated(
     counts: list[int],
-    bins: Values,
+    bins: DataValues,
     width: int = 80,
     log_scale: bool = False,
     linesep: str = os.linesep,
@@ -63,7 +60,7 @@ def hist_aggregated(  # noqa: PLR0913
         str: histogram over `X` from left to right.
     """
 
-    def _scale(a: int) -> Union[float, int]:
+    def _scale(a: int) -> float | int:
         if log_scale and a > 0:
             return log(a)
         return a
@@ -75,7 +72,7 @@ def hist_aggregated(  # noqa: PLR0913
     h_max = _scale(max(h)) or 1
     max_ = b[-1]
     min_ = b[0]
-    delta: Union[float, timedelta]
+    delta: float | timedelta
     if isinstance(max_, (float, int)) and isinstance(min_, (float, int)):
         delta = max_ - min_
     elif isinstance(max_, datetime) and isinstance(min_, datetime):
@@ -109,8 +106,8 @@ def hist_aggregated(  # noqa: PLR0913
     return linesep.join(canvas)
 
 
-def hist(  # noqa: PLR0913
-    X: Values,
+def hist(
+    X: DataValues,
     bins: int = 40,
     width: int = 80,
     log_scale: bool = False,
@@ -151,18 +148,18 @@ def hist(  # noqa: PLR0913
     )
 
 
-def histogram(  # noqa: PLR0913
-    X: Values,
+def histogram(
+    X: DataValues,
     bins: int = 160,
     width: int = 80,
     height: int = 40,
     X_label: str = "X",
     Y_label: str = "Counts",
     linesep: str = os.linesep,
-    x_min: Union[float, int, datetime, None] = None,
-    x_max: Union[float, int, datetime, None] = None,
-    y_min: Union[float, int, datetime, None] = None,
-    y_max: Union[float, int, datetime, None] = None,
+    x_min: DataValue | None = None,
+    x_max: DataValue | None = None,
+    y_min: DataValue | None = None,
+    y_max: DataValue | None = None,
     lc: ColorDefinition = None,
     bg: ColorDefinition = None,
     color_mode: ColorMode = "names",
@@ -215,23 +212,23 @@ def histogram(  # noqa: PLR0913
     return fig.show()
 
 
-def scatter(  # noqa: PLR0913
-    X: Values,
-    Y: Values,
+def scatter(
+    X: DataValues,
+    Y: DataValues,
     width: int = 80,
     height: int = 40,
     X_label: str = "X",
     Y_label: str = "Y",
     linesep: str = os.linesep,
-    x_min: Value = None,
-    x_max: Value = None,
-    y_min: Value = None,
-    y_max: Value = None,
+    x_min: DataValue | None = None,
+    x_max: DataValue | None = None,
+    y_min: DataValue | None = None,
+    y_max: DataValue | None = None,
     lc: ColorDefinition = None,
     bg: ColorDefinition = None,
     color_mode: ColorMode = "names",
     origin: bool = True,
-    marker: Optional[str] = None,
+    marker: str | None = None,
 ):
     """Create scatter plot with X , Y values
 
@@ -281,7 +278,7 @@ def scatter(  # noqa: PLR0913
     )
 
 
-def plot(  # noqa: PLR0913
+def plot(
     X,
     Y,
     width=80,

@@ -20,16 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from collections.abc import Sequence
-from datetime import datetime
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from plotille._canvas import Canvas
 from plotille._colors import ColorDefinition
 from plotille._input_formatter import InputFormatter
 
 from . import _cmaps
-from ._util import DataValue, DataValues, hist
+from ._util import DataValues, hist
 
 
 class Plot:
@@ -38,9 +36,9 @@ class Plot:
         X: DataValues,
         Y: DataValues,
         lc: ColorDefinition,
-        interp: Optional[Literal["linear"]],
-        label: Optional[str],
-        marker: Optional[str],
+        interp: Literal["linear"] | None,
+        label: str | None,
+        marker: str | None,
     ) -> None:
         if len(X) != len(Y):
             raise ValueError("X and Y dim have to be the same.")
@@ -62,8 +60,12 @@ class Plot:
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # make point iterators
-        from_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
-        to_points = zip(map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y))
+        from_points = zip(
+            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
+        )
+        to_points = zip(
+            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
+        )
 
         # remove first point of to_points
         (x0, y0) = next(to_points)
@@ -74,7 +76,7 @@ class Plot:
         canvas.point(x0, y0, color=color, marker=self.marker)
 
         # plot other points and lines
-        for (x0, y0), (x, y) in zip(from_points, to_points):
+        for (x0, y0), (x, y) in zip(from_points, to_points, strict=False):
             canvas.point(x, y, color=color, marker=self.marker)
             if self.interp == "linear":
                 # no marker for interpolated values
@@ -141,7 +143,10 @@ class Text:
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # make point iterator
         points = zip(
-            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), self.texts
+            map(in_fmt.convert, self.X),
+            map(in_fmt.convert, self.Y),
+            self.texts,
+            strict=True,
         )
 
         color = self.lc if with_colors else None
@@ -158,7 +163,7 @@ class Span:
         xmax: float,
         ymin: float,
         ymax: float,
-        lc: Optional[ColorDefinition] = None,
+        lc: ColorDefinition | None = None,
     ):
         if not (0 <= xmin <= xmax <= 1):
             raise ValueError(
@@ -238,7 +243,7 @@ class Heat:
 
         flat = [x for xs in self.X for x in xs]
         try:
-            assert all(len(pixel) == 3 for pixel in flat)  # noqa: PLR2004
+            assert all(len(pixel) == 3 for pixel in flat)
             # assume rgb
             if all(0 <= v <= 1 for pixel in flat for v in pixel):
                 # 0 - 1 values => make 0-255 int values

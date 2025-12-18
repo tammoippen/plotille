@@ -98,7 +98,7 @@ def test_heat_bad_values(tty):
     res = cvs.plot()
     # print()
     # print(res)
-    assert res == "⠀⠀⠀{}⠀⠀⠀".format(os.linesep)
+    assert res == f"⠀⠀⠀{os.linesep}⠀⠀⠀"
 
 
 def test_heat_bad_values_own_values(tty):
@@ -118,6 +118,6 @@ def test_heat_bad_values_own_values(tty):
     # print()
     # print(res)
     assert res == (
-        "\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m{}"
+        f"\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m{os.linesep}"
         "\x1b[48;2;0;255;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m"
-    ).format(os.linesep)
+    )

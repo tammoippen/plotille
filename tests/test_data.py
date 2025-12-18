@@ -58,7 +58,7 @@ def test_circle_and_ellipse(n, radius):
     X1, Y1 = plt_data.ellipse(0, 0, x_amplitude=radius, y_amplitude=radius, n=n)
     X2, Y2 = plt_data.circle(0, 0, radius=radius, n=n)
 
-    for x1, y1, x2, y2 in zip(X1, Y1, X2, Y2):
+    for x1, y1, x2, y2 in zip(X1, Y1, X2, Y2, strict=True):
         assert x1 == pytest.approx(x2, abs=0.000001)
         assert y1 == pytest.approx(y2, abs=0.000001)
 
@@ -70,10 +70,10 @@ def test_circle(radius):
     assert X[0] == pytest.approx(X[-1], abs=0.001)
     assert Y[0] == pytest.approx(Y[-1], abs=0.001)
 
-    for x, y in zip(X, Y):
+    for x, y in zip(X, Y, strict=True):
         assert math.hypot(x, y) == pytest.approx(radius**10, abs=0.001)
         equal = 0
-        for x2, y2 in zip(X, Y):
+        for x2, y2 in zip(X, Y, strict=True):
             if x2 == x and y2 == y:
                 equal += 1
         assert equal <= 2

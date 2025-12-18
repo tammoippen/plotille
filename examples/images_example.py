@@ -115,7 +115,7 @@ def figure_cmap_handcrafted():
         # only rgb and byte are supported right now
         fig.color_mode = "byte"
 
-        print('\nSome data using color in the background using "{}" cmap:'.format(cmap))
+        print(f'\nSome data using color in the background using "{cmap}" cmap:')
         fig.imgshow(data, cmap=cmap)
 
         # you can plot whatever you want on top of it

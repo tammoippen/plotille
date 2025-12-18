@@ -4,7 +4,7 @@ import os
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture
 def get_canvas(mocker):
     def get():
         canvas = mocker.Mock()
@@ -16,17 +16,17 @@ def get_canvas(mocker):
     return get
 
 
-@pytest.fixture()
+@pytest.fixture
 def tty(mocker):
     mocker.patch("plotille._colors._isatty", return_value=True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def notty(mocker):
     mocker.patch("plotille._colors._isatty", return_value=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def cleandoc():
     def f(s):
         return inspect.cleandoc(s).replace("\n", os.linesep)

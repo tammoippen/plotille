@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from typing import Any, Optional
+from typing import Any
 
 from ._colors import ColorDefinition, color
 
@@ -54,7 +54,7 @@ class Dots:
 
     def __init__(
         self,
-        marker: Optional[str] = None,
+        marker: str | None = None,
         fg: ColorDefinition = None,
         bg: ColorDefinition = None,
         **color_kwargs: Any,
@@ -87,7 +87,7 @@ class Dots:
 
     @property
     def dots(self) -> list[int]:
-        assert self._dots.bit_length() <= 8  # noqa: PLR2004
+        assert self._dots.bit_length() <= 8
         dots = []
         x = self._dots
         bit = 1
@@ -99,11 +99,11 @@ class Dots:
         return sorted(dots)
 
     @property
-    def marker(self) -> Optional[str]:
+    def marker(self) -> str | None:
         return self._marker
 
     @marker.setter
-    def marker(self, value: Optional[str]) -> None:
+    def marker(self, value: str | None) -> None:
         assert value is None or isinstance(value, str)
         assert value is None or len(value) == 1
         self._marker = value
@@ -114,7 +114,7 @@ class Dots:
             self.marker,
             self.fg,
             self.bg,
-            " ".join("{}: {}".format(k, v) for k, v in self.color_kwargs.items()),
+            " ".join(f"{k}: {v}" for k, v in self.color_kwargs.items()),
         )
 
     def __str__(self) -> str:
@@ -137,7 +137,7 @@ class Dots:
         x: int,
         y: int,
         set_: bool = True,
-        marker: Optional[str] = None,
+        marker: str | None = None,
     ) -> None:
         """(Un)Set dot at position x, y, with (0, 0) is top left corner.
 
@@ -192,7 +192,7 @@ def dots_from(braille: str) -> list[int]:
     Returns:
         List[int]: dots that are set in braille sign
     """
-    assert 0x2800 <= ord(braille) <= 0x28FF  # noqa: PLR2004
+    assert 0x2800 <= ord(braille) <= 0x28FF
 
     code = str(bin(ord(braille) - 0x2800))[2:].rjust(8, "0")
 

@@ -38,7 +38,7 @@ def draw_scene(mouse_list, cat_list):
     for idx, mouse in enumerate(mouse_list):
         listx.append(mouse[0])
         listy.append(mouse[1])
-        names.append("o MOUSE {}".format(idx))
+        names.append(f"o MOUSE {idx}")
 
     fig.text(listy, listx, names, lc="red")
 

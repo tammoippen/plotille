@@ -1,5 +1,4 @@
 import os
-import sys
 
 import pytest
 
@@ -130,7 +129,7 @@ def test_point(color, tty):
         prefix = "\x1b[31m"
         postfix = "\x1b[0m"
 
-    assert "{}⡀{}".format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⡀{postfix}" == str(c._canvas[0][0])
     c.point(0, 0, set_=False, color=color)
     assert "⠀" == str(c._canvas[0][0])
 
@@ -146,8 +145,8 @@ def test_set_text(color, tty):
         prefix = "\x1b[31m"
         postfix = "\x1b[0m"
 
-    assert "{}H{}".format(prefix, postfix) == str(c._canvas[0][0])
-    assert "{}i{}".format(prefix, postfix) == str(c._canvas[0][1])
+    assert f"{prefix}H{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}i{postfix}" == str(c._canvas[0][1])
     c.text(0, 0, "Hi", False, color=color)
     assert "⠀" == str(c._canvas[0][0])
     assert "⠀" == str(c._canvas[0][1])
@@ -201,11 +200,11 @@ def test_unset_keep_color_text(tty, other_color):
     prefix = "\x1b[31m"
     postfix = "\x1b[0m"
 
-    assert "{}H{}".format(prefix, postfix) == str(c._canvas[0][0])
-    assert "{}i{}".format(prefix, postfix) == str(c._canvas[0][1])
+    assert f"{prefix}H{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}i{postfix}" == str(c._canvas[0][1])
     c.text(0, 0, "Hi", False, color=other_color)
-    assert "{}⠀{}".format(prefix, postfix) == str(c._canvas[0][0])
-    assert "{}⠀{}".format(prefix, postfix) == str(c._canvas[0][1])
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][1])
 
 
 @pytest.mark.parametrize("other_color", [None, "blue"])
@@ -216,9 +215,9 @@ def test_unset_keep_color_dots(tty, other_color):
     prefix = "\x1b[31m"
     postfix = "\x1b[0m"
 
-    assert "{}⡀{}".format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⡀{postfix}" == str(c._canvas[0][0])
     c.point(0, 0, set_=False, color=other_color)
-    assert "{}⠀{}".format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][0])
 
 
 @pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
@@ -229,29 +228,7 @@ def test_braille_image(cleandoc):
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata())
 
-    expected_27 = """
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠛⠛⠙⢿⠿⢿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠛⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠁⠀⠀⠀⠹⢻⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⣀⣴⣶⣾⣶⣷⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠉⠀⠀⠀⠀⣠⣿⣿⣾⣿⣿⣷⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⡀⠀⠀⠀⢠⣿⢿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠙
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⡴⣡⣶⣦⣉⣿⣿⡟⠋⢀⣤⠄⠀⡀⠉⠉⠙⠻⣿⣿⣿⣿⣿⣿⣿⣧
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠧⠀⠀⢠⣿⢃⡔⠚⣤⢌⣿⣷⣤⣿⠇⡀⠁⠀⠐⠀⠀⡀⠙⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡂⣄⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⠸⡦⠀⠁⠀⠀⣀⠀⠀⠁⠀⢹⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣧⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠈⠃⠈⠠⣤⡄⠤⠀⠀⠀⠈⣻⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⠆⠹⢿⣿⣿⣿⣇⢈⠉⢉⡑⣄⡀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠰⣾⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠸⣿⠿⠉⢀⣨⣟⡁⠉⠃⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠈⠻⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⡏⢲⣚⣛⡛⠻⠿⣶⣀⠃⠀⠐⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⡻⣿⣿⣿⣿⣿⡷⣿⠰⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠘⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠀⠃⠀⠀⢻⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘
-    ⣿⣿⣿⣿⣿⣿⣿⠿⠛⣻⣿⣿⡟⠀⠀⠀⠠⣀⠈⠉⠁⡠⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⣿⣿⡿⠿⠛⠉⠀⠀⠀⠻⣿⣿⣳⡄⠀⠀⠀⠙⠿⠻⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
-
-    expected_3 = """
+    expected = """
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠛⠛⠙⠿⠿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -273,10 +250,7 @@ def test_braille_image(cleandoc):
     ⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
 
-    if sys.version_info[0] == 2:
-        assert cleandoc(expected_27) == cvs.plot()
-    else:
-        assert cleandoc(expected_3) == cvs.plot()
+    assert cleandoc(expected) == cvs.plot()
 
     cvs.braille_image(img.getdata(), set_=False)
     # empty canvas
@@ -309,29 +283,7 @@ def test_braille_image_inverse(cleandoc):
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), inverse=True)
 
-    expected_27 = """
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣦⡀⣀⡀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣴⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⣾⣿⣿⣿⣆⡄⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⠿⠋⠉⠁⠉⠈⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣶⣿⣿⣿⣿⠟⠀⠀⠁⠀⠀⠈⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⢿⣿⣿⣿⡟⠀⡀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣦
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⢋⠞⠉⠙⠶⠀⠀⢠⣴⡿⠛⣻⣿⢿⣶⣶⣦⣄⠀⠀⠀⠀⠀⠀⠀⠘
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣘⣿⣿⡟⠀⡼⢫⣥⠛⡳⠀⠈⠛⠀⣸⢿⣾⣿⣯⣿⣿⢿⣦⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢽⠻⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⢙⣿⣾⣿⣿⠿⣿⣿⣾⣿⡆⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣷⣼⣷⣟⠛⢻⣛⣿⣿⣿⣷⠄⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⣹⣆⡀⠀⠀⠀⠸⡷⣶⡶⢮⠻⢿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣏⠁⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣇⠀⣀⣶⡿⠗⠠⢾⣶⣼⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣷⣄⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⢰⡍⠥⠤⢤⣄⣀⠉⠿⣼⣿⣯⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⢄⠀⠀⠀⠀⠀⢈⠀⣏⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣧⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣿⣼⣿⣿⡄⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧
-    ⠀⠀⠀⠀⠀⠀⠀⣀⣤⠄⠀⠀⢠⣿⣿⣿⣟⠿⣷⣶⣾⢟⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⠀⠀⢀⣀⣤⣶⣿⣿⣿⣄⠀⠀⠌⢻⣿⣿⣿⣦⣀⣄⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
-
-    expected_3 = """
+    expected = """
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣦⣀⣀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -353,10 +305,7 @@ def test_braille_image_inverse(cleandoc):
     ⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
 
-    if sys.version_info[0] == 2:
-        assert cleandoc(expected_27) == cvs.plot()
-    else:
-        assert cleandoc(expected_3) == cvs.plot()
+    assert cleandoc(expected) == cvs.plot()
 
     cvs.braille_image(img.getdata(), inverse=True, set_=False)
     # empty canvas
@@ -387,7 +336,7 @@ def test_image_one_px(tty, r, g, b):
     cvs = Canvas(1, 1, mode="rgb")
     cvs.image([(r, g, b)])
 
-    assert "\x1b[48;2;{};{};{}m⠀\x1b[0m".format(r, g, b) == cvs.plot()
+    assert f"\x1b[48;2;{r};{g};{b}m⠀\x1b[0m" == cvs.plot()
 
     cvs.image([(r, g, b)], set_=False)
     # empty canvas

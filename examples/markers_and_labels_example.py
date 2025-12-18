@@ -37,7 +37,7 @@ def main():
     xs = x[::5]
     ys = y[::5]
 
-    fig.text(xs, ys, ["x {:.3f}".format(val) for val in ys], lc="green")
+    fig.text(xs, ys, [f"x {val:.3f}" for val in ys], lc="green")
 
     print(fig.show(legend=True))
 

@@ -48,7 +48,7 @@ def mean_y_value(Y, min_, max_):
 
 
 def str_tick(min_, max_):
-    return "{:.3f}".format(min_ + (max_ - min_) / 2)
+    return f"{min_ + (max_ - min_) / 2:.3f}"
 
 
 def main():

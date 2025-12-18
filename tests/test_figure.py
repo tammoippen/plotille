@@ -120,7 +120,7 @@ def test_color_full_reset(mocker):
     assert all(args.kwargs["full_reset"] is False for args in mock.call_args_lists)
     mock.reset_mock()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         fig.color_full_reset = "no"
 
 
@@ -133,7 +133,7 @@ def test_with_colors():
 
     assert not fig.with_colors
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         fig.with_colors = 1
 
 
@@ -146,7 +146,7 @@ def test_origin():
 
     assert not fig.origin
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         fig.origin = 1
 
 
@@ -308,7 +308,7 @@ def test_plot(get_canvas):
     assert plot2.lc == "red"
 
     with pytest.raises(ValueError):
-        fig.plot([1], [0], interp=23)
+        fig.plot([1], [0], interp=23)  # type: ignore
 
     with pytest.raises(ValueError):
         fig.plot([1, 2], [0])
@@ -440,9 +440,11 @@ def test_show(cleandoc):
     assert cleandoc(expected) == fig.show()
 
     # no label for histograms
-    assert fig.show(legend=True) == cleandoc(
-        expected
-    ) + "{0}{0}Legend:{0}-------{0}".format(os.linesep)
+    assert (
+        fig.show(legend=True)
+        == cleandoc(expected)
+        + f"{os.linesep}{os.linesep}Legend:{os.linesep}-------{os.linesep}"
+    )
 
     fig.clear()
     fig.plot([-0.1, 0.2], [-0.2, 0.3])
@@ -496,12 +498,14 @@ def test_show(cleandoc):
     assert cleandoc(expected) == fig.show()  # no legend, origin
 
     # no label for histograms
-    assert fig.show(legend=True) == cleandoc(
-        expected
-    ) + "{0}{0}Legend:{0}-------{0}⠤⠤ Label 0".format(os.linesep)
+    assert (
+        fig.show(legend=True)
+        == cleandoc(expected)
+        + f"{os.linesep}{os.linesep}Legend:{os.linesep}-------{os.linesep}⠤⠤ Label 0"
+    )
 
 
-@pytest.fixture()
+@pytest.fixture
 def timeseries(cleandoc):
     return cleandoc("""
        (Y)     ^
@@ -582,7 +586,7 @@ def test_timeseries_orig_dt(timeseries):
     assert timeseries == fig.show()
 
 
-@pytest.fixture()
+@pytest.fixture
 def histogram(cleandoc):
     return cleandoc("""
        (Y)     ^

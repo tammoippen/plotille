@@ -156,7 +156,7 @@ def main():
     print("\n\n")
     logo()
     print()
-    for lines in zip(histogram(), plot(), heat(), crappyhist()):
+    for lines in zip(histogram(), plot(), heat(), crappyhist(), strict=True):
         print(" ".join(lines))
     print("\n\n")
 

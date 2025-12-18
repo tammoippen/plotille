@@ -21,7 +21,8 @@
 # THE SOFTWARE.
 
 import os
-from typing import Any, Optional, Sequence, Union
+from collections.abc import Sequence
+from typing import Any, Union
 
 from ._colors import MAX_RGB, RGB_VALUES, ColorDefinition, RGB_t, rgb2byte
 from ._dots import Dots
@@ -47,7 +48,7 @@ class Canvas:
     outside the reference system, they are not plotted.
     """
 
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
         width: DotCoord,
         height: DotCoord,
@@ -82,12 +83,8 @@ class Canvas:
         assert isinstance(xmax, (int, float))
         assert isinstance(ymin, (int, float))
         assert isinstance(ymax, (int, float))
-        assert xmin < xmax, "xmin ({}) has to be smaller than xmax ({})".format(
-            xmin, xmax
-        )
-        assert ymin < ymax, "ymin ({}) has to be smaller than ymax ({})".format(
-            ymin, ymax
-        )
+        assert xmin < xmax, f"xmin ({xmin}) has to be smaller than xmax ({xmax})"
+        assert ymin < ymax, f"ymin ({ymin}) has to be smaller than ymax ({ymax})"
 
         # characters in X / Y direction
         self._width = width
@@ -109,14 +106,7 @@ class Canvas:
         ]
 
     def __str__(self) -> str:
-        return "Canvas(width={}, height={}, xmin={}, ymin={}, xmax={}, ymax={})".format(
-            self.width,
-            self.height,
-            self.xmin,
-            self.ymin,
-            self.xmax,
-            self.ymax,
-        )
+        return f"Canvas(width={self.width}, height={self.height}, xmin={self.xmin}, ymin={self.ymin}, xmax={self.xmax}, ymax={self.ymax})"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -173,7 +163,7 @@ class Canvas:
         y_idx: int,
         set_: bool = True,
         color: ColorDefinition = None,
-        marker: Optional[str] = None,
+        marker: str | None = None,
     ) -> None:
         """Put a dot into the canvas at (x_idx, y_idx) [canvas coordinate system]
 
@@ -241,7 +231,7 @@ class Canvas:
         for idx in range(self.width - x_idx):
             if text is None or len(text) <= idx:
                 break
-            val: Optional[str] = text[idx]
+            val: str | None = text[idx]
             if not set_:
                 val = None
             self._canvas[y_idx][x_idx + idx].marker = val
@@ -257,7 +247,7 @@ class Canvas:
         y: RefCoord,
         set_: bool = True,
         color: ColorDefinition = None,
-        marker: Optional[str] = None,
+        marker: str | None = None,
     ) -> None:
         """Put a point into the canvas at (x, y) [reference coordinate system]
 
@@ -396,7 +386,7 @@ class Canvas:
 
             self._set(x, y, color=color, set_=set_)
 
-    def image(self, pixels: Sequence[Optional[RGB_t]], set_: bool = True) -> None:
+    def image(self, pixels: Sequence[RGB_t | None], set_: bool = True) -> None:
         """Print an image using background colors into the canvas.
 
         The pixels of the image and the characters in the canvas are a

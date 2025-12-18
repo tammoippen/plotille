@@ -5,17 +5,17 @@ import pytest
 from plotille._input_formatter import _convert_datetime, _datetime_formatter
 
 
-@pytest.fixture()
+@pytest.fixture
 def date():
     return datetime(2018, 1, 21, 15, 3, 12, 1234)
 
 
-@pytest.fixture()
+@pytest.fixture
 def day():
     return timedelta(days=1)
 
 
-@pytest.fixture()
+@pytest.fixture
 def hour():
     return timedelta(hours=1)
 
