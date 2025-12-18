@@ -26,6 +26,7 @@ from numbers import Real
 from typing import Literal
 
 from ._colors import ColorDefinition, ColorMode, color
+from ._data_metadata import DataMetadata
 from ._figure import Figure
 from ._input_formatter import InputFormatter
 from ._util import DataValue, DataValues, DatetimeLike
@@ -137,7 +138,14 @@ def hist(
     Returns:
         str: histogram over `X` from left to right.
     """
-    counts, bins_list = compute_hist(X, bins)
+    # Normalize data to float before computing histogram
+    formatter = InputFormatter()
+    metadata = DataMetadata.from_sequence(X)
+    X_normalized = [formatter.convert(x) for x in X]
+
+    counts, bins_list = compute_hist(X_normalized, bins, is_datetime=metadata.is_datetime)
+
+    # bins_list are floats (timestamps if datetime), keep as floats for display
     return hist_aggregated(
         counts=counts,
         bins=bins_list,
