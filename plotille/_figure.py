@@ -21,10 +21,16 @@
 # THE SOFTWARE.
 
 import os
+import sys
 from collections.abc import Callable, Iterator, Sequence
-from datetime import UTC, datetime, timedelta, tzinfo
+from datetime import datetime, timedelta, tzinfo
 from itertools import cycle
-from typing import Any, Final, Literal, NotRequired, TypedDict
+
+if sys.version_info >= (3, 11):
+    from typing import Any, Final, Literal, NotRequired, TypedDict
+else:
+    from typing import Any, Final, Literal, TypedDict
+    from typing_extensions import NotRequired
 
 from ._canvas import Canvas
 from ._cmaps import Colormap
