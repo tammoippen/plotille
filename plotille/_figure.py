@@ -80,10 +80,10 @@ class Figure:
         )
         self._width: int | None = None
         self._height: int | None = None
-        self._x_min: DataValue | None = None
-        self._x_max: DataValue | None = None
-        self._y_min: DataValue | None = None
-        self._y_max: DataValue | None = None
+        self._x_min: float | None = None
+        self._x_max: float | None = None
+        self._y_min: float | None = None
+        self._y_max: float | None = None
         self._color_kwargs: _ColorKwargs = {"mode": "names"}
         self._with_colors: bool = True
         self._origin: bool = True
@@ -174,7 +174,7 @@ class Figure:
             raise TypeError(f"Invalid origin: {value}")
         self._origin = value
 
-    def _aggregate_metadata(self, is_height: bool) -> DataMetadata:
+    def _aggregate_metadata(self, is_height: bool) -> DataMetadata | None:
         """Aggregate metadata from all plots for one axis.
 
         Determines whether the axis should display as numeric or datetime,
@@ -184,7 +184,7 @@ class Figure:
             is_height: True for Y-axis, False for X-axis
 
         Returns:
-            DataMetadata for the axis (with display timezone)
+            DataMetadata for the axis (with display timezone), or None if no plots
 
         Raises:
             ValueError: If plots have incompatible types on same axis
@@ -198,8 +198,8 @@ class Figure:
                 metadatas.append(p.X_metadata)
 
         if not metadatas:
-            # No plots yet, default to numeric
-            return DataMetadata(is_datetime=False, timezone=None)
+            # No plots yet, no metadata to aggregate
+            return None
 
         # Check if all numeric or all datetime (no mixing)
         datetime_flags = {m.is_datetime for m in metadatas}
@@ -321,56 +321,95 @@ class Figure:
         """
         self._in_fmt.register_converter(type_, converter)
 
-    def x_limits(self) -> tuple[DataValue, DataValue]:
+    def x_limits(self) -> tuple[float, float]:
+        """Get the X-axis limits as normalized floats."""
         return self._limits(self._x_min, self._x_max, False)
 
     def set_x_limits(
         self, min_: DataValue | None = None, max_: DataValue | None = None
     ) -> None:
-        """Set min and max X values for displaying."""
+        """Set min and max X values for displaying.
+
+        Args:
+            min_: Minimum X value (can be datetime or numeric)
+            max_: Maximum X value (can be datetime or numeric)
+
+        Note: Values will be normalized to float internally.
+        """
+        values = [v for v in [min_, max_] if v is not None]
+        if values:
+            self._x_display_metadata = DataMetadata.from_sequence(values)
+
+        min_float = self._in_fmt.convert(min_) if min_ is not None else None
+        max_float = self._in_fmt.convert(max_) if max_ is not None else None
+
         self._x_min, self._x_max = self._set_limits(
-            self._x_min, self._x_max, min_, max_
+            self._x_min, self._x_max, min_float, max_float
         )
 
-    def y_limits(self) -> tuple[DataValue, DataValue]:
+    def y_limits(self) -> tuple[float, float]:
+        """Get the Y-axis limits as normalized floats."""
         return self._limits(self._y_min, self._y_max, True)
 
     def set_y_limits(
         self, min_: DataValue | None = None, max_: DataValue | None = None
     ) -> None:
-        """Set min and max Y values for displaying."""
+        """Set min and max Y values for displaying.
+
+        Args:
+            min_: Minimum Y value (can be datetime or numeric)
+            max_: Maximum Y value (can be datetime or numeric)
+
+        Note: Values will be normalized to float internally.
+        """
+        values = [v for v in [min_, max_] if v is not None]
+        if values:
+            self._y_display_metadata = DataMetadata.from_sequence(values)
+
+        min_float = self._in_fmt.convert(min_) if min_ is not None else None
+        max_float = self._in_fmt.convert(max_) if max_ is not None else None
+
         self._y_min, self._y_max = self._set_limits(
-            self._y_min, self._y_max, min_, max_
+            self._y_min, self._y_max, min_float, max_float
         )
 
     def _set_limits(
         self,
-        init_min: DataValue | None,
-        init_max: DataValue | None,
-        min_: DataValue | None = None,
-        max_: DataValue | None = None,
-    ) -> tuple[DataValue | None, DataValue | None]:
+        init_min: float | None,
+        init_max: float | None,
+        min_: float | None = None,
+        max_: float | None = None,
+    ) -> tuple[float | None, float | None]:
+        """Set limits for an axis.
+
+        All parameters are already normalized to float.
+
+        Args:
+            init_min: Current minimum value
+            init_max: Current maximum value
+            min_: New minimum value (if setting)
+            max_: New maximum value (if setting)
+
+        Returns:
+            (min, max) tuple of floats or Nones
+        """
         values = list(filter(lambda v: v is not None, [init_min, init_max, min_, max_]))
         if not values:
             return None, None
 
-        if any(isinstance(v, datetime) for v in values):
-            if not all(isinstance(v, datetime) for v in values):
-                raise ValueError(
-                    "Either all or none of the min/max values can be datetime."
-                )
+        # All values are floats now, no datetime check needed
 
         if min_ is not None and max_ is not None:
-            if min_ >= max_:  # type: ignore[operator]
+            if min_ >= max_:
                 raise ValueError("min_ is larger or equal than max_.")
             init_min = min_
             init_max = max_
         elif min_ is not None:
-            if init_max is not None and min_ >= init_max:  # type: ignore[operator]
+            if init_max is not None and min_ >= init_max:
                 raise ValueError("Previous max is smaller or equal to new min_.")
             init_min = min_
         elif max_ is not None:
-            if init_min is not None and init_min >= max_:  # type: ignore[operator]
+            if init_min is not None and init_min >= max_:
                 raise ValueError("Previous min is larger or equal to new max_.")
             init_max = max_
         else:
@@ -380,11 +419,32 @@ class Figure:
         return init_min, init_max
 
     def _limits(
-        self, low_set: DataValue | None, high_set: DataValue | None, is_height: bool
-    ) -> tuple[DataValue, DataValue]:
+        self, low_set: float | None, high_set: float | None, is_height: bool
+    ) -> tuple[float, float]:
+        """Calculate the limits for an axis.
+
+        Aggregates metadata from all plots and works with normalized float values.
+
+        Args:
+            low_set: User-specified minimum value (already converted to float)
+            high_set: User-specified maximum value (already converted to float)
+            is_height: True for Y-axis, False for X-axis
+
+        Returns:
+            (min, max) as floats
+        """
+        # Aggregate and store metadata for this axis
+        metadata = self._aggregate_metadata(is_height)
+        if metadata is not None:
+            if is_height:
+                self._y_display_metadata = metadata
+            else:
+                self._x_display_metadata = metadata
+
         if low_set is not None and high_set is not None:
             return low_set, high_set
 
+        # Get limits from normalized data (all floats now)
         low, high = None, None
         for p in self._plots + self._texts:
             if is_height:
@@ -394,63 +454,65 @@ class Figure:
             if low is None or high is None:
                 low = _min
                 high = _max
-
-            try:
+            else:
                 low = min(_min, low)
                 high = max(_max, high)
-            except TypeError as e:
-                raise TypeError(
-                    "Cannot mix float,int values with datetime within one axis"
-                ) from e
 
-        is_datetime = False
-        timezone = False
-        if isinstance(low, datetime):
-            timezone = low.tzinfo is not None
-            low = low.timestamp()
-            is_datetime = True
-        if isinstance(high, datetime):
-            timezone = high.tzinfo is not None
-            high = high.timestamp()
-            is_datetime = True
-        if isinstance(low_set, datetime):
-            timezone = low_set.tzinfo is not None
-            low_set = low_set.timestamp()
-            is_datetime = True
-        if isinstance(high_set, datetime):
-            timezone = high_set.tzinfo is not None
-            high_set = high_set.timestamp()
-            is_datetime = True
-
+        # Calculate final limits
         result = _choose(low, high, low_set, high_set)
+        return result
 
-        if is_datetime:
-            tzinfo = UTC if timezone else None
-            return datetime.fromtimestamp(result[0], tz=tzinfo), datetime.fromtimestamp(
-                result[1], tz=tzinfo
-            )
-        else:
-            return result
+    def _y_axis(self, ymin: float, ymax: float, label: str = "Y") -> list[str]:
+        """Generate Y-axis labels.
 
-    def _y_axis(self, ymin: DataValue, ymax: DataValue, label: str = "Y") -> list[str]:
+        Uses stored metadata to convert float values back to display format
+        (datetime or numeric).
+
+        Args:
+            ymin: Minimum Y value (as normalized float/timestamp)
+            ymax: Maximum Y value (as normalized float/timestamp)
+            label: Axis label
+
+        Returns:
+            List of formatted axis labels
+        """
+        if self._y_display_metadata is None:
+            self._y_display_metadata = DataMetadata(is_datetime=False, timezone=None)
+
         delta = abs(ymax - ymin)
-        if isinstance(delta, timedelta):
-            y_delta = mk_timedelta(delta.total_seconds() / self.height)
-        else:
-            y_delta = delta / self.height
+        y_delta = delta / self.height
+
+        # Convert delta for display formatting
+        delta_display = timedelta(seconds=delta) if self._y_display_metadata.is_datetime else delta
 
         res = []
         for i in range(self.height):
-            value = i * y_delta + ymin
+            value_float = i * y_delta + ymin
+
+            # Convert to display type using metadata
+            value_display = self._convert_for_display(
+                value_float,
+                self._y_display_metadata,
+                self._y_display_timezone_override
+            )
+
             if self.y_ticks_fkt:
-                value = self.y_ticks_fkt(value, value + y_delta)
-            res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + " | "]
+                value_display = self.y_ticks_fkt(value_display, value_display)
+
+            res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " | "]
 
         # add max separately
-        value = self.height * y_delta + ymin
+        value_float = self.height * y_delta + ymin
+        value_display = self._convert_for_display(
+            value_float,
+            self._y_display_metadata,
+            self._y_display_timezone_override
+        )
+
         if self.y_ticks_fkt:
-            value = self.y_ticks_fkt(value, value + y_delta)
-        res += [self._in_fmt.fmt(value, abs(ymax - ymin), chars=10) + " |"]
+            value_display = self.y_ticks_fkt(value_display, value_display)
+
+        res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " |"]
 
         ylbl = f"({label})"
         ylbl_left = (10 - len(ylbl)) // 2
@@ -459,12 +521,32 @@ class Figure:
         res += [" " * (ylbl_left) + ylbl + " " * (ylbl_right) + " ^"]
         return list(reversed(res))
 
-    def _x_axis(self, xmin, xmax, label="X", with_y_axis=False):
+    def _x_axis(
+        self, xmin: float, xmax: float, label: str = "X", with_y_axis: bool = False
+    ) -> list[str]:
+        """Generate X-axis labels.
+
+        Uses stored metadata to convert float values back to display format
+        (datetime or numeric).
+
+        Args:
+            xmin: Minimum X value (as normalized float/timestamp)
+            xmax: Maximum X value (as normalized float/timestamp)
+            label: Axis label
+            with_y_axis: Whether to add spacing for Y-axis labels
+
+        Returns:
+            List of formatted axis labels
+        """
+        if self._x_display_metadata is None:
+            self._x_display_metadata = DataMetadata(is_datetime=False, timezone=None)
+
         delta = abs(xmax - xmin)
-        if isinstance(delta, timedelta):
-            x_delta = mk_timedelta(delta.total_seconds() / self.width)
-        else:
-            x_delta = delta / self.width
+        x_delta = delta / self.width
+
+        # Convert delta for display formatting
+        delta_display = timedelta(seconds=delta) if self._x_display_metadata.is_datetime else delta
+
         starts = ["", ""]
         if with_y_axis:
             starts = ["-" * 11 + "|-", " " * 11 + "| "]
@@ -482,10 +564,19 @@ class Figure:
         bottom = []
 
         for i in range(self.width // 10 + 1):
-            value = i * 10 * x_delta + xmin
+            value_float = i * 10 * x_delta + xmin
+
+            # Convert to display type using metadata
+            value_display = self._convert_for_display(
+                value_float,
+                self._x_display_metadata,
+                self._x_display_timezone_override
+            )
+
             if self.x_ticks_fkt:
-                value = self.x_ticks_fkt(value, value + x_delta)
-            bottom += [self._in_fmt.fmt(value, delta, left=True, chars=9)]
+                value_display = self.x_ticks_fkt(value_display, value_display)
+
+            bottom += [self._in_fmt.fmt(value_display, delta_display, left=True, chars=9)]
 
         res += [starts[1] + " ".join(bottom)]
         return res

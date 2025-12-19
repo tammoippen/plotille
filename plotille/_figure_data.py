@@ -94,6 +94,8 @@ class Histogram:
         self._formatter = InputFormatter()
         self.X_metadata = DataMetadata.from_sequence(X)
         self.X = [self._formatter.convert(x) for x in X]
+        # Histogram Y values are always numeric (frequency counts)
+        self.Y_metadata = DataMetadata(is_datetime=False, timezone=None)
 
         # Compute histogram on normalized data
         frequencies, buckets = hist(
