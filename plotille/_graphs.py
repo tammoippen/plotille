@@ -138,9 +138,9 @@ def hist(
     # Normalize data to float before computing histogram
     formatter = InputFormatter()
     metadata = DataMetadata.from_sequence(X)
-    X_normalized = [formatter.convert(x) for x in X]
+    X_floats = [formatter.convert(x) for x in X]
 
-    counts, bins_list = compute_hist(X_normalized, bins, is_datetime=metadata.is_datetime)
+    counts, bins_list = compute_hist(X_floats, bins, is_datetime=metadata.is_datetime)
 
     # bins_list are floats (timestamps if datetime), keep as floats for display
     return hist_aggregated(
