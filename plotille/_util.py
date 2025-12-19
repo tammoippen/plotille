@@ -33,8 +33,15 @@ try:
 except ImportError:
     DatetimeLike: TypeAlias = datetime  # type: ignore[misc,no-redef]
 
+# Legacy types - used only for public API compatibility
+# These allow users to pass datetime or numeric values to plot functions
+# Internally, everything is normalized to float
 DataValue = Real | DatetimeLike
 DataValues = Sequence[Real] | Sequence[DatetimeLike]
+
+# New internal types - what we actually work with after normalization
+NormalizedValue: TypeAlias = float
+NormalizedValues: TypeAlias = Sequence[float]
 
 
 def roundeven(x: float) -> float:
