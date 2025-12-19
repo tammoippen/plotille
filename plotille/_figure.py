@@ -785,7 +785,7 @@ class Figure:
         xmin, xmax = self.x_limits()
         ymin, ymax = self.y_limits()
         if self._plots and all(isinstance(p, Histogram) for p in self._plots):
-            ymin = 0
+            ymin = 0.0
 
         if self._heats and self._width is None and self._height is None:
             self.height = len(self._heats[0].X)
@@ -795,10 +795,10 @@ class Figure:
         canvas = Canvas(
             self.width,
             self.height,
-            self._in_fmt.convert(xmin),
-            self._in_fmt.convert(ymin),
-            self._in_fmt.convert(xmax),
-            self._in_fmt.convert(ymax),
+            xmin,
+            ymin,
+            xmax,
+            ymax,
             self.background,
             **self._color_kwargs,
         )
@@ -820,8 +820,8 @@ class Figure:
 
         if self.origin and plot_origin:
             # print X / Y origin axis
-            canvas.line(self._in_fmt.convert(xmin), 0, self._in_fmt.convert(xmax), 0)
-            canvas.line(0, self._in_fmt.convert(ymin), 0, self._in_fmt.convert(ymax))
+            canvas.line(xmin, 0.0, xmax, 0.0)
+            canvas.line(0.0, ymin, 0.0, ymax)
 
         res = canvas.plot(linesep=self.linesep)
 
