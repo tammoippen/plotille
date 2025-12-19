@@ -21,12 +21,13 @@
 # THE SOFTWARE.
 
 import os
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from datetime import UTC, datetime, timedelta, tzinfo
 from itertools import cycle
 from typing import Any, Final, Literal, NotRequired, TypedDict
 
 from ._canvas import Canvas
+from ._cmaps import Colormap
 from ._colors import ColorDefinition, ColorMode, color, rgb2byte
 from ._data_metadata import DataMetadata
 from ._figure_data import Heat, HeatInput, Histogram, Plot, Span, Text
@@ -92,8 +93,8 @@ class Figure:
         self.x_label: str = "X"
         self.y_label: str = "Y"
         # min, max -> value
-        self.y_ticks_fkt = None
-        self.x_ticks_fkt = None
+        self.y_ticks_fkt: Callable[[float | datetime, float | datetime], float | datetime | str] | None = None
+        self.x_ticks_fkt: Callable[[float | datetime, float | datetime], float | datetime | str] | None = None
         self._plots: list[Plot | Histogram] = []
         self._texts: list[Text] = []
         self._spans: list[Span] = []
@@ -497,7 +498,7 @@ class Figure:
             )
 
             if self.y_ticks_fkt:
-                value_display = self.y_ticks_fkt(value_display, value_display)
+                value_display = self.y_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
 
             res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " | "]
 
@@ -510,7 +511,7 @@ class Figure:
         )
 
         if self.y_ticks_fkt:
-            value_display = self.y_ticks_fkt(value_display, value_display)
+            value_display = self.y_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
 
         res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " |"]
 
@@ -574,7 +575,7 @@ class Figure:
             )
 
             if self.x_ticks_fkt:
-                value_display = self.x_ticks_fkt(value_display, value_display)
+                value_display = self.x_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
 
             bottom += [self._in_fmt.fmt(value_display, delta_display, left=True, chars=9)]
 
@@ -655,7 +656,7 @@ class Figure:
         Y: DataValues,
         texts: Sequence[str],
         lc: ColorDefinition = None,
-    ):
+    ) -> None:
         """Plot texts at coordinates X, Y.
 
         Always print the first character of a text at its
@@ -674,7 +675,7 @@ class Figure:
 
     def axvline(
         self, x: float, ymin: float = 0, ymax: float = 1, lc: ColorDefinition = None
-    ):
+    ) -> None:
         """Plot a vertical line at x.
 
         Parameters:
@@ -750,7 +751,7 @@ class Figure:
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
-    def imgshow(self, X: HeatInput, cmap=None):
+    def imgshow(self, X: HeatInput, cmap: str | Colormap | None = None) -> None:
         """Display data as an image, i.e., on a 2D regular raster.
 
         Parameters:

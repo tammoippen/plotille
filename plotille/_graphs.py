@@ -21,6 +21,7 @@
 # THE SOFTWARE.
 
 import os
+from collections.abc import Sequence
 from math import log
 from numbers import Real
 from typing import Literal
@@ -35,7 +36,7 @@ from ._util import hist as compute_hist
 
 def hist_aggregated(
     counts: list[int],
-    bins: DataValues,
+    bins: Sequence[float],
     width: int = 80,
     log_scale: bool = False,
     linesep: str = os.linesep,
@@ -74,12 +75,8 @@ def hist_aggregated(
     h_max = _scale(max(h)) or 1
     max_ = b[-1]
     min_ = b[0]
-    if isinstance(max_, Real) and isinstance(min_, Real):
-        delta = max_ - min_
-    elif isinstance(max_, DatetimeLike) and isinstance(min_, DatetimeLike):
-        delta = max_ - min_  # type: ignore[assignment]
-    else:
-        raise TypeError(type(max_))
+    # bins are always normalized to float now
+    delta = max_ - min_
 
     bins_count = len(h)
 
