@@ -118,8 +118,7 @@ cmaps["copper"] = lambda: ListedColormap.from_relative(
     "copper", _cmaps_data.copper_data
 )
 cmaps["gray"] = lambda: ListedColormap(
-    name="gray",
-    colors=[(idx, idx, idx) for idx in range(256)],
+    name="gray", colors=[(idx, idx, idx) for idx in range(256)]
 )
 
 # for more, have a look at https://matplotlib.org/stable/tutorials/colors/colormaps.html

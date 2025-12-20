@@ -186,11 +186,7 @@ class Canvas:
                     self._canvas[y_c][x_c].fg = None
 
     def dots_between(
-        self,
-        x0: RefCoord,
-        y0: RefCoord,
-        x1: RefCoord,
-        y1: RefCoord,
+        self, x0: RefCoord, y0: RefCoord, x1: RefCoord, y1: RefCoord
     ) -> tuple[DotCoord, DotCoord]:
         """Number of dots between (x0, y0) and (x1, y1).
 

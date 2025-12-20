@@ -25,12 +25,14 @@ from typing import Any
 from ._colors import ColorDefinition, color
 
 # I plot upside down, hence the different order
+# fmt: off
 _xy2dot = [
     [1 << 6, 1 << 7],
     [1 << 2, 1 << 5],
     [1 << 1, 1 << 4],
     [1 << 0, 1 << 3],
 ]
+# fmt: on
 
 
 class Dots:
@@ -133,11 +135,7 @@ class Dots:
         self.marker = None
 
     def update(
-        self,
-        x: int,
-        y: int,
-        set_: bool = True,
-        marker: str | None = None,
+        self, x: int, y: int, set_: bool = True, marker: str | None = None
     ) -> None:
         """(Un)Set dot at position x, y, with (0, 0) is top left corner.
 

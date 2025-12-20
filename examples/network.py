@@ -46,12 +46,7 @@ def main():
     for edge in edges:
         from_node = nodes[edge[0]]
         to_node = nodes[edge[1]]
-        canvas.line(
-            x0=from_node[0],
-            y0=from_node[1],
-            x1=to_node[0],
-            y1=to_node[1],
-        )
+        canvas.line(x0=from_node[0], y0=from_node[1], x1=to_node[0], y1=to_node[1])
 
     print(canvas.plot())
 

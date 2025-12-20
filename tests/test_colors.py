@@ -51,8 +51,7 @@ def test_names(tty):
                 "bright_" + fg, "bright_" + bg
             )
             assert f"\x1b[1;{30 + i};1;{40 + j}m" == clr._names(
-                "bright_" + fg + "_old",
-                "bright_" + bg + "_old",
+                "bright_" + fg + "_old", "bright_" + bg + "_old"
             )
 
             assert f"\x1b[{30 + i};{40 + j}m \x1b[0m" == clr.color(" ", fg, bg)
@@ -60,19 +59,13 @@ def test_names(tty):
                 " ", "bright_" + fg, "bright_" + bg
             )
             assert f"\x1b[{90 + i};1;{40 + j}m \x1b[0m" == clr.color(
-                " ",
-                "bright_" + fg,
-                "bright_" + bg + "_old",
+                " ", "bright_" + fg, "bright_" + bg + "_old"
             )
             assert f"\x1b[1;{30 + i};{100 + j}m \x1b[0m" == clr.color(
-                " ",
-                "bright_" + fg + "_old",
-                "bright_" + bg,
+                " ", "bright_" + fg + "_old", "bright_" + bg
             )
             assert f"\x1b[1;{30 + i};1;{40 + j}m \x1b[0m" == clr.color(
-                " ",
-                "bright_" + fg + "_old",
-                "bright_" + bg + "_old",
+                " ", "bright_" + fg + "_old", "bright_" + bg + "_old"
             )
 
     with pytest.raises(ValueError):
@@ -126,9 +119,7 @@ def test_hex2rgb():
         r, g, b = choice(good), choice(good), choice(good)
 
         h = "{}{}{}".format(
-            hex(r)[2:].rjust(2, "0"),
-            hex(g)[2:].rjust(2, "0"),
-            hex(b)[2:].rjust(2, "0"),
+            hex(r)[2:].rjust(2, "0"), hex(g)[2:].rjust(2, "0"), hex(b)[2:].rjust(2, "0")
         )
 
         assert (r, g, b) == clr._hex2rgb(h)
