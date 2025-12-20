@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from plotille import plot
 
 
@@ -202,7 +204,6 @@ def test_single_value(cleandoc):
 
 
 """Tests for data normalization in Plot class."""
-from datetime import datetime, timezone
 
 
 def test_plot_stores_normalized_numeric_data():
@@ -305,7 +306,7 @@ def test_figure_with_datetime_plot_integration():
     values = [10, 15, 20, 15, 10]
 
     # Plot
-    fig.plot(times, values, lc='red', label='Temperature')
+    fig.plot(times, values, lc="red", label="Temperature")
 
     # Generate plot
     result = fig.show(legend=True)
@@ -313,9 +314,9 @@ def test_figure_with_datetime_plot_integration():
     # Verify output
     assert isinstance(result, str)
     assert len(result) > 0
-    assert 'Temperature' in result  # Legend should appear
+    assert "Temperature" in result  # Legend should appear
     # The plot should contain Y-axis labels with numbers
-    assert '10' in result or '15' in result or '20' in result
+    assert "10" in result or "15" in result or "20" in result
 
 
 def test_figure_with_numeric_plot_integration():
@@ -329,13 +330,13 @@ def test_figure_with_numeric_plot_integration():
     X = [1, 2, 3, 4, 5]
     Y = [1, 4, 9, 16, 25]
 
-    fig.plot(X, Y, lc='blue', label='Quadratic')
+    fig.plot(X, Y, lc="blue", label="Quadratic")
 
     result = fig.show(legend=True)
 
     assert isinstance(result, str)
     assert len(result) > 0
-    assert 'Quadratic' in result
+    assert "Quadratic" in result
 
 
 def test_figure_set_limits_with_datetime():
@@ -345,10 +346,7 @@ def test_figure_set_limits_with_datetime():
     fig = Figure()
 
     # Should accept datetime values
-    fig.set_x_limits(
-        min_=datetime(2024, 1, 1),
-        max_=datetime(2024, 12, 31)
-    )
+    fig.set_x_limits(min_=datetime(2024, 1, 1), max_=datetime(2024, 12, 31))
 
     # Internally stored as float, but should work
     xmin, xmax = fig.x_limits()
