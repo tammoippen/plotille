@@ -38,14 +38,14 @@ Repository = "https://github.com/tammoippen/plotille"
 
 [dependency-groups]
 dev = [
-    "mypy",
-    "numpy",
-    "Pillow",
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
-    "ruff",
-    "ty>=0.0.3",
+  "mypy",
+  "numpy",
+  "Pillow",
+  "pytest",
+  "pytest-cov",
+  "pytest-mock",
+  "ruff",
+  "ty>=0.0.3",
 ]
 
 [tool.pytest.ini_options]
@@ -104,6 +104,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["plotille"]
+split-on-trailing-comma = false
 
 [tool.ruff.format]
 skip-magic-trailing-comma = true
