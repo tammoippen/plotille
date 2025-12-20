@@ -24,8 +24,7 @@
 
 Architecture Note:
 ------------------
-As of the normalization refactor, all input data (X, Y values) is normalized
-to float immediately upon construction:
+All input data (X, Y values) is normalized to float immediately upon construction:
 
 - Numeric values (int, float, Real) are converted to float
 - Datetime values are converted to timestamps (float)
