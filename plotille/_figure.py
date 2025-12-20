@@ -604,15 +604,25 @@ class Figure:
         label: str | None = None,
         marker: str | None = None,
     ) -> None:
-        """Create plot with X , Y values.
+        """Create plot with X, Y values.
+
+        X and Y can contain either numeric values (int, float) or datetime values,
+        but not both in the same array. Data is normalized to float internally
+        for efficient processing.
 
         Parameters:
-            X: List[float]     X values.
-            Y: List[float]     Y values. X and Y must have the same number of entries.
-            lc: multiple       The line color.
-            interp: str        The interpolation method. (None or 'linear').
-            label: str         The label for the legend.
-            marker: str        Instead of braille dots set a marker char.
+            X: Sequence[float] | Sequence[datetime]
+               X values. Can be numeric or datetime, but must be consistent.
+            Y: Sequence[float] | Sequence[datetime]
+               Y values. X and Y must have the same number of entries.
+            lc: multiple
+               The line color.
+            interp: str
+               The interpolation method. (None or 'linear').
+            label: str
+               The label for the legend.
+            marker: str
+               Instead of braille dots set a marker char.
         """
         if len(X) > 0:
             if lc is None:
@@ -627,14 +637,23 @@ class Figure:
         label: str | None = None,
         marker: str | None = None,
     ) -> None:
-        """Create a scatter plot with X , Y values
+        """Create a scatter plot with X, Y values.
+
+        X and Y can contain either numeric values (int, float) or datetime values,
+        but not both in the same array. Data is normalized to float internally
+        for efficient processing.
 
         Parameters:
-            X: List[float]     X values.
-            Y: List[float]     Y values. X and Y must have the same number of entries.
-            lc: multiple       The line color.
-            label: str         The label for the legend.
-            marker: str        Instead of braille dots set a marker char.
+            X: Sequence[float] | Sequence[datetime]
+               X values. Can be numeric or datetime, but must be consistent.
+            Y: Sequence[float] | Sequence[datetime]
+               Y values. X and Y must have the same number of entries.
+            lc: multiple
+               The line color.
+            label: str
+               The label for the legend.
+            marker: str
+               Instead of braille dots set a marker char.
         """
         if len(X) > 0:
             if lc is None:
@@ -646,10 +665,16 @@ class Figure:
     ) -> None:
         """Compute and plot the histogram over X.
 
+        X can contain either numeric values (int, float) or datetime values.
+        Data is normalized to float internally for efficient processing.
+
         Parameters:
-            X: List[float]     X values.
-            bins: int          The number of bins to put X entries in (columns).
-            lc: multiple       The line color.
+            X: Sequence[float] | Sequence[datetime]
+               X values. Can be numeric or datetime.
+            bins: int
+               The number of bins to put X entries in (columns).
+            lc: multiple
+               The line color.
         """
         if len(X) > 0:
             if lc is None:
@@ -669,12 +694,19 @@ class Figure:
         x, y coordinate and continue to the right. Character
         extending the canvas are cut.
 
+        X and Y can contain either numeric values (int, float) or datetime values,
+        but not both in the same array. Data is normalized to float internally
+        for efficient processing.
+
         Parameters:
-            X: List[float]     X values.
-            Y: List[float]     Y values.
-            texts: List[str]   Texts to print. X, Y and texts must have the same
-                               number of entries.
-            lc: multiple       The (text) line color.
+            X: Sequence[float] | Sequence[datetime]
+               X values. Can be numeric or datetime, but must be consistent.
+            Y: Sequence[float] | Sequence[datetime]
+               Y values.
+            texts: List[str]
+               Texts to print. X, Y and texts must have the same number of entries.
+            lc: multiple
+               The (text) line color.
         """
         if len(X) > 0:
             self._texts += [Text(X, Y, texts, lc, self._in_fmt)]
