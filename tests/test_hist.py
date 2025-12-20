@@ -53,8 +53,8 @@ def test_timehist_numpy(expected_hist):
 
     res = hist(x, bins=8)
 
-    # print()
-    # print(res)
+    print()
+    print(res)
     assert expected_hist == res
 
 

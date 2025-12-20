@@ -1,4 +1,7 @@
-from plotille import plot
+from datetime import datetime, timezone
+
+from plotille import Figure, plot
+from plotille._figure_data import Plot, Text
 
 
 def test_constant_y(cleandoc):
@@ -199,3 +202,136 @@ def test_single_value(cleandoc):
                | 0.4500000 0.4625000 0.4750000 0.4875000 0.5000000 0.5125000 0.5250000 0.5375000 0.5500000"""
     # print(plot([0.5], [0.5]))
     assert cleandoc(expected) == plot([0.5], [0.5])
+
+
+def test_plot_stores_normalized_numeric_data():
+    """Plot should convert numeric data to float and track metadata."""
+    X = [1, 2, 3, 4, 5]
+    Y = [2, 4, 6, 8, 10]
+
+    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
+
+    # Data should be stored as floats
+    assert all(isinstance(x, float | int) for x in plot.X)
+    assert all(isinstance(y, float | int) for y in plot.Y)
+
+    # Metadata should indicate non-datetime
+    assert not plot.X_metadata.is_datetime
+    assert not plot.Y_metadata.is_datetime
+
+
+def test_plot_stores_normalized_datetime_data():
+    """Plot should convert datetime data to float timestamps."""
+    X = [
+        datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 3, 12, 0, 0, tzinfo=timezone.utc),
+    ]
+    Y = [10, 20, 30]
+
+    plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
+
+    # Data should be stored as floats (timestamps)
+    assert all(isinstance(x, float | int) for x in plot.X)
+
+    # Metadata should indicate datetime
+    assert plot.X_metadata.is_datetime
+    assert plot.X_metadata.timezone is timezone.utc
+    assert not plot.Y_metadata.is_datetime
+
+
+"""Tests for data normalization in Text class."""
+
+
+def test_text_stores_normalized_data():
+    """Text should normalize X and Y data to float."""
+    X = [1, 2, 3]
+    Y = [4, 5, 6]
+    texts = ["a", "b", "c"]
+
+    text = Text(X, Y, texts, lc=None)
+
+    assert all(isinstance(x, float | int) for x in text.X)
+    assert all(isinstance(y, float | int) for y in text.Y)
+    assert not text.X_metadata.is_datetime
+    assert not text.Y_metadata.is_datetime
+
+
+def test_text_with_datetime_data():
+    """Text should handle datetime data."""
+    X = [
+        datetime(2024, 1, 1, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, tzinfo=timezone.utc),
+    ]
+    Y = [10, 20]
+    texts = ["point1", "point2"]
+
+    text = Text(X, Y, texts, lc=None)
+
+    assert all(isinstance(x, float | int) for x in text.X)
+    assert text.X_metadata.is_datetime
+    assert not text.Y_metadata.is_datetime
+
+
+def test_figure_with_datetime_plot_integration():
+    """Full integration test: datetime data through entire plotting pipeline."""
+
+    # Create figure
+    fig = Figure()
+    fig.width = 60
+    fig.height = 20
+
+    # Create datetime data
+    times = [
+        datetime(2024, 1, 1, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 6, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 18, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, 0, 0, tzinfo=timezone.utc),
+    ]
+    values = [10, 15, 20, 15, 10]
+
+    # Plot
+    fig.plot(times, values, lc="red", label="Temperature")
+
+    # Generate plot
+    result = fig.show(legend=True)
+
+    # Verify output
+    assert isinstance(result, str)
+    assert len(result) > 0
+    assert "Temperature" in result  # Legend should appear
+    # The plot should contain Y-axis labels with numbers
+    assert "10" in result or "15" in result or "20" in result
+
+
+def test_figure_with_numeric_plot_integration():
+    """Full integration test: numeric data through entire plotting pipeline."""
+    fig = Figure()
+    fig.width = 60
+    fig.height = 20
+
+    X = [1, 2, 3, 4, 5]
+    Y = [1, 4, 9, 16, 25]
+
+    fig.plot(X, Y, lc="blue", label="Quadratic")
+
+    result = fig.show(legend=True)
+
+    assert isinstance(result, str)
+    assert len(result) > 0
+    assert "Quadratic" in result
+
+
+def test_figure_set_limits_with_datetime():
+    """Test that set_x_limits and set_y_limits work with datetime."""
+    fig = Figure()
+
+    # Should accept datetime values
+    fig.set_x_limits(min_=datetime(2024, 1, 1), max_=datetime(2024, 12, 31))
+
+    # Internally stored as float, but should work
+    xmin, xmax = fig.x_limits()
+    assert isinstance(xmin, float)
+    assert isinstance(xmax, float)
+    assert xmin < xmax

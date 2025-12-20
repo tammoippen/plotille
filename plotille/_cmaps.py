@@ -1,6 +1,6 @@
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -118,8 +118,7 @@ cmaps["copper"] = lambda: ListedColormap.from_relative(
     "copper", _cmaps_data.copper_data
 )
 cmaps["gray"] = lambda: ListedColormap(
-    name="gray",
-    colors=[(idx, idx, idx) for idx in range(256)],
+    name="gray", colors=[(idx, idx, idx) for idx in range(256)]
 )
 
 # for more, have a look at https://matplotlib.org/stable/tutorials/colors/colormaps.html

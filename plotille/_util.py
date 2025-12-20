@@ -1,6 +1,6 @@
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,18 @@
 
 import math
 from collections.abc import Sequence
-from datetime import datetime, timedelta
-from numbers import Real
-from typing import Any, TypeAlias, TypeGuard
+from datetime import datetime
 
-try:
-    import numpy as np
+DataValue = float | int | datetime
+"""Basically any datetime like value and any numeric value.
 
-    DatetimeLike: TypeAlias = np.datetime64 | datetime
-except ImportError:
-    DatetimeLike: TypeAlias = datetime  # type: ignore[misc,no-redef]
+Eventually, you have to add a float_converter for the type, e.g. with Decimal see
+test `test_timeseries_decimals`.
 
-DataValue = Real | DatetimeLike
-DataValues = Sequence[Real] | Sequence[DatetimeLike]
+There are already converters for numpy numeric and datetime data.
+"""
+DataValues = Sequence[float | int] | Sequence[datetime]
+"""Either a list of numeric data or a list of datetime like data."""
 
 
 def roundeven(x: float) -> float:
@@ -53,81 +52,41 @@ def roundeven(x: float) -> float:
     return round(x)
 
 
-def is_datetimes(xs: Sequence[DataValue]) -> TypeGuard[Sequence[DatetimeLike]]:
-    is_datetime = None
-    for x in xs:
-        if is_datetime is None:
-            is_datetime = isinstance(x, DatetimeLike)
-        elif is_datetime != isinstance(x, DatetimeLike):
-            raise TypeError("Mixed types in sequence.")
-    return is_datetime or False
-
-
-def _numpy_to_native(x: Any) -> Any:
-    # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
-    if (
-        "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
-    ) and callable(x.item):
-        return x.item()
-    return x
-
-
-def hist(X: DataValues, bins: int) -> tuple[list[int], list[Real] | list[datetime]]:
+def hist(X: Sequence[float], bins: int) -> tuple[list[int], list[float]]:
     """Create histogram similar to `numpy.hist()`
 
+    NOTE: This function expects X to be already normalized to numeric.
+
     Parameters:
-        X: List[float|datetime]  The items to count over.
-        bins: int                The number of bins to put X entries in.
+        X: Sequence[float]  Already normalized to float (timestamps if datetime)
+        bins: int           The number of bins to put X entries in.
 
     Returns:
         (counts, bins):
-            counts: List[int]  The counts for all bins.
-            bins: List[float]  The range for each bin:
-                                bin `i` is in [bins[i], bins[i+1])
+            counts: list[int]  The counts for all bins.
+            bins: list[float]  The range for each bin:
+                               bin `i` is in [bins[i], bins[i+1])
     """
     assert bins > 0
 
-    xs = [_numpy_to_native(x) for x in X]
-
-    if len(xs) == 0:
+    if len(X) == 0:
         xmin = 0.0
         xmax = 1.0
     else:
-        # raises, if there are Real and DatetimeLike
-        xmin = min(xs)
-        xmax = max(xs)
-
-    is_datetime = isinstance(xmax, DatetimeLike)
+        xmin = float(min(X))
+        xmax = float(max(X))
 
     if xmin == xmax:
-        if is_datetime:
-            xmin -= timedelta(seconds=1)  # type: ignore[operator]
-            xmax += timedelta(seconds=1)  # type: ignore[operator]
-        else:
-            xmin -= 0.5
-            xmax += 0.5
+        xmin -= 0.5
+        xmax += 0.5
 
     delta = xmax - xmin
-    if isinstance(delta, timedelta):  # type: ignore[unreachable]
-        delta = delta.total_seconds()  # type: ignore[unreachable]
-
     xwidth = delta / bins
 
     y = [0] * bins
-    for x in xs:
-        delta = x - xmin
-        if isinstance(delta, timedelta):
-            delta = delta.total_seconds()
-        x_idx = min(bins - 1, int(delta // xwidth))
+    for x in X:
+        delta_x = x - xmin
+        x_idx = min(bins - 1, int(delta_x // xwidth))
         y[x_idx] += 1
 
-    if is_datetime:
-        xwidth = mk_timedelta(xwidth)  # type: ignore[assignment]
-
-    return y, [i * xwidth + xmin for i in range(bins + 1)]  # type: ignore[return-value]
-
-
-def mk_timedelta(v: float) -> timedelta:
-    seconds = int(v)
-    microseconds = int((v - seconds) * 1e6)
-    return timedelta(seconds=seconds, microseconds=microseconds)
+    return y, [i * xwidth + xmin for i in range(bins + 1)]

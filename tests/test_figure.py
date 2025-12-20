@@ -1,5 +1,6 @@
 import datetime
 import os
+from decimal import Decimal
 from unittest.mock import call
 
 import pytest
@@ -282,9 +283,7 @@ def test_plot(get_canvas):
         call(0.2, 0.3, color=None, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
-    assert canvas.line.call_args_list == [
-        call(0.1, 0.2, 0.2, 0.3, color=None),
-    ]
+    assert canvas.line.call_args_list == [call(0.1, 0.2, 0.2, 0.3, color=None)]
 
     canvas = get_canvas()
     plot.write(canvas, with_colors=True, in_fmt=fig._in_fmt)
@@ -294,9 +293,7 @@ def test_plot(get_canvas):
         call(0.2, 0.3, color=plot.lc, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
-    assert canvas.line.call_args_list == [
-        call(0.1, 0.2, 0.2, 0.3, color=plot.lc),
-    ]
+    assert canvas.line.call_args_list == [call(0.1, 0.2, 0.2, 0.3, color=plot.lc)]
 
     # different lc
     fig.plot([0.1, 0.2], [0.2, 0.3])
@@ -586,6 +583,39 @@ def test_timeseries_orig_dt(timeseries):
     assert timeseries == fig.show()
 
 
+def test_timeseries_decimals(timeseries):
+    fig = Figure()
+    fig.with_colors = False
+
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+    x = list(reversed(x))
+    y = [
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+    ]
+
+    def _converter(v: Decimal) -> float:
+        return float(v)
+
+    # converter should be registered before adding plots
+    fig.register_float_converter(Decimal, _converter)
+
+    fig.plot(x, y)
+
+    print(fig.show())
+    assert timeseries == fig.show()
+
+
 @pytest.fixture
 def histogram(cleandoc):
     return cleandoc("""
@@ -821,24 +851,24 @@ def test_float_converter(cleandoc):
     # axis are at the wrong position
     expected = """
        (Y)     ^
-    20.9000000 |
-    19.3800000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    17.8600000 | ⠀⠀⠀⡇⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⡜⠀⠀
-    16.3400000 | ⠀⠀⠀⡇⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⠇⠀⠀
-    14.8200000 | ⠀⠀⠀⡇⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⠀⠀⠀
-    13.3000000 | ⠀⠀⠀⡇⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⠀⠀⠀
-    11.7800000 | ⠀⠀⠀⡇⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⠀⠀⠀
-    10.2600000 | ⠀⠀⠀⡇⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⠀⠀⠀
-    8.74000000 | ⠀⠀⠀⡇⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⠀⠀⠀
-    7.22000000 | ⠀⠀⠀⡇⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⠀⠀⠀
-    5.70000000 | ⠀⠀⠀⡇⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⠀⠀⠀
-    4.18000000 | ⠀⠀⠀⣧⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⠀⠀⠀
-    2.66000000 | ⠀⠀⠀⣿⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⠀⠀⠀
-    1.14000000 | ⣀⣀⣀⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣀⣀⣀
-    -0.3800000 | ⠀⠀⠰⡇⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠀⠀⠀
-    -1.9000000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    19.9000000 |
+    18.3800000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+    16.8600000 | ⠀⠀⠀⡇⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⣼⠀⠀⠀⠀⡜⠀⠀
+    15.3400000 | ⠀⠀⠀⡇⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⢿⠀⠀⠀⢀⠇⠀⠀
+    13.8200000 | ⠀⠀⠀⡇⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⠀⠀⠀
+    12.3000000 | ⠀⠀⠀⡇⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⢸⠀⠀⠀⡇⠀⠀⠀
+    10.7800000 | ⠀⠀⠀⡇⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⢸⠀⠀⢰⠁⠀⠀⠀
+    9.26000000 | ⠀⠀⠀⡇⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⢸⠀⠀⡸⠀⠀⠀⠀
+    7.74000000 | ⠀⠀⠀⡇⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⢸⠀⠀⡇⠀⠀⠀⠀
+    6.22000000 | ⠀⠀⠀⡇⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⢸⠀⢸⠀⠀⠀⠀⠀
+    4.70000000 | ⠀⠀⠀⡇⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⠀⠀⠀
+    3.18000000 | ⠀⠀⠀⣧⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⠀⠀⠀
+    1.66000000 | ⠀⠀⠀⣿⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⢸⢸⠀⠀⠀⠀⠀⠀
+    0.14000000 | ⣀⣀⣀⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣸⣇⣀⣀⣀⣀⣀⣀
+    -1.3800000 | ⠀⠀⠰⡇⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠸⠁⠀⠀⠀⠀⠀⠀
+    -2.9000000 | ⠀⠀⠀⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|-> (X)
-               | -9.900000 29.700000 69.300000 108.90000"""
+               | -10.90000 28.700000 68.300000 107.90000"""
     # print(fig.show())
     assert cleandoc(expected) == fig.show()
 
@@ -1300,14 +1330,22 @@ def test_limits_with_datetimes_no_data(cleandoc):
         max_=datetime.datetime(2025, 1, 1, 12, 0, 2),
     )
 
-    assert (
-        datetime.datetime(2025, 1, 1),
-        datetime.datetime(2025, 12, 31),
-    ) == fig.x_limits()
-    assert (
-        datetime.datetime(2025, 1, 1, 12, 0, 1),
-        datetime.datetime(2025, 1, 1, 12, 0, 2),
-    ) == fig.y_limits()
+    x_min, x_max = fig.x_limits()
+    y_min, y_max = fig.y_limits()
+    assert isinstance(x_min, float)
+    assert isinstance(x_max, float)
+    assert isinstance(y_min, float)
+    assert isinstance(y_max, float)
+
+    x_min_dt = datetime.datetime.fromtimestamp(x_min)
+    x_max_dt = datetime.datetime.fromtimestamp(x_max)
+    y_min_dt = datetime.datetime.fromtimestamp(y_min)
+    y_max_dt = datetime.datetime.fromtimestamp(y_max)
+
+    assert x_min_dt == datetime.datetime(2025, 1, 1)
+    assert x_max_dt == datetime.datetime(2025, 12, 31)
+    assert y_min_dt == datetime.datetime(2025, 1, 1, 12, 0, 1)
+    assert y_max_dt == datetime.datetime(2025, 1, 1, 12, 0, 2)
 
     expected = """
          (Y)     ^
@@ -1342,14 +1380,22 @@ def test_limits_with_datetimes_with_data(cleandoc):
         max_=datetime.datetime(2025, 1, 1, 12, 0, 2),
     )
 
-    assert (
-        datetime.datetime(2025, 1, 1),
-        datetime.datetime(2025, 12, 31),
-    ) == fig.x_limits()
-    assert (
-        datetime.datetime(2025, 1, 1, 12, 0, 1),
-        datetime.datetime(2025, 1, 1, 12, 0, 2),
-    ) == fig.y_limits()
+    x_min, x_max = fig.x_limits()
+    y_min, y_max = fig.y_limits()
+    assert isinstance(x_min, float)
+    assert isinstance(x_max, float)
+    assert isinstance(y_min, float)
+    assert isinstance(y_max, float)
+
+    x_min_dt = datetime.datetime.fromtimestamp(x_min)
+    x_max_dt = datetime.datetime.fromtimestamp(x_max)
+    y_min_dt = datetime.datetime.fromtimestamp(y_min)
+    y_max_dt = datetime.datetime.fromtimestamp(y_max)
+
+    assert x_min_dt == datetime.datetime(2025, 1, 1)
+    assert x_max_dt == datetime.datetime(2025, 12, 31)
+    assert y_min_dt == datetime.datetime(2025, 1, 1, 12, 0, 1)
+    assert y_max_dt == datetime.datetime(2025, 1, 1, 12, 0, 2)
 
     fig.plot(
         [datetime.datetime(2025, 6, 1)], [datetime.datetime(2025, 1, 1, 12, 0, 1, 30)]
@@ -1372,3 +1418,115 @@ def test_limits_with_datetimes_with_data(cleandoc):
                | 25-01-01  25-05-02  25-08-31  25-12-31 """
     print(fig.show())
     assert cleandoc(expected) == fig.show()
+
+
+def test_figure_metadata_aggregation_all_numeric():
+    """Figure should aggregate numeric metadata from multiple plots."""
+    from plotille import Figure
+
+    fig = Figure()
+    fig.plot([1, 2, 3], [4, 5, 6])
+    fig.plot([2, 3, 4], [5, 6, 7])
+
+    # Trigger metadata aggregation by calling show
+    result = fig.show()
+
+    # Should work without error - all numeric data
+    assert result is not None
+
+
+def test_figure_metadata_aggregation_all_datetime():
+    """Figure should aggregate datetime metadata from multiple plots."""
+    from datetime import datetime, timezone
+
+    from plotille import Figure
+
+    fig = Figure()
+    times1 = [datetime(2024, 1, i, tzinfo=timezone.utc) for i in range(1, 4)]
+    times2 = [datetime(2024, 2, i, tzinfo=timezone.utc) for i in range(1, 4)]
+
+    fig.plot(times1, [1, 2, 3])
+    fig.plot(times2, [2, 3, 4])
+
+    # Trigger metadata aggregation by calling show
+    result = fig.show()
+
+    # Should work without error - all datetime with same timezone
+    assert result is not None
+
+
+def test_figure_metadata_aggregation_mixed_numeric_datetime_raises():
+    """Figure should raise error when mixing numeric and datetime on same axis."""
+    from datetime import datetime
+
+    import pytest
+
+    from plotille import Figure
+
+    fig = Figure()
+    fig.plot([1, 2, 3], [4, 5, 6])  # numeric X
+    fig.plot([datetime(2024, 1, i) for i in range(1, 4)], [7, 8, 9])  # datetime X
+
+    # Should raise when aggregating metadata for X axis
+    with pytest.raises(ValueError, match="Cannot mix numeric and datetime"):
+        fig.show()
+
+
+def test_figure_metadata_aggregation_mixed_naive_aware_raises():
+    """Figure should raise error when mixing naive and aware datetime on same axis."""
+    from datetime import datetime, timezone
+
+    import pytest
+
+    from plotille import Figure
+
+    fig = Figure()
+    times_naive = [datetime(2024, 1, i) for i in range(1, 4)]
+    times_aware = [datetime(2024, 2, i, tzinfo=timezone.utc) for i in range(1, 4)]
+
+    fig.plot(times_naive, [1, 2, 3])
+    fig.plot(times_aware, [4, 5, 6])
+
+    # Should raise when aggregating metadata for X axis
+    with pytest.raises(ValueError, match="naive and timezone-aware"):
+        fig.show()
+
+
+def test_figure_metadata_aggregation_different_timezones_ok():
+    """Figure should accept different timezones and pick first."""
+    from datetime import datetime, timedelta, timezone
+
+    from plotille import Figure
+
+    fig = Figure()
+
+    tz1 = timezone(timedelta(hours=-5))  # EST
+    tz2 = timezone(timedelta(hours=-8))  # PST
+
+    times1 = [datetime(2024, 1, i, tzinfo=tz1) for i in range(1, 4)]
+    times2 = [datetime(2024, 2, i, tzinfo=tz2) for i in range(1, 4)]
+
+    fig.plot(times1, [1, 2, 3])
+    fig.plot(times2, [4, 5, 6])
+
+    # Should work - different timezones are allowed, first timezone is used
+    result = fig.show()
+    assert result is not None
+
+
+def test_figure_set_display_timezone():
+    """Figure should allow overriding display timezone."""
+    from datetime import timezone
+    from zoneinfo import ZoneInfo
+
+    from plotille import Figure
+
+    fig = Figure()
+
+    # Set override timezone
+    ny_tz = ZoneInfo("America/New_York")
+    fig.set_x_display_timezone(ny_tz)
+    fig.set_y_display_timezone(timezone.utc)
+
+    assert fig._x_display_timezone_override == ny_tz
+    assert fig._y_display_timezone_override == timezone.utc

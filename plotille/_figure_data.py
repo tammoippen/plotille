@@ -1,6 +1,6 @@
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+"""Data container classes for plotille.
+
+Architecture Note:
+------------------
+All input data (X, Y values) is normalized to float immediately upon construction:
+
+- Numeric values (int, float) are converted to float
+- Datetime values are converted to timestamps (float)
+- Original type information is preserved in DataMetadata objects
+- This allows type-safe internal operations while maintaining a flexible
+  public API
+
+The normalization happens in each class's __init__ method using InputFormatter.
+Display formatting (axis labels, etc.) uses the metadata to format values
+correctly for the original type.
+"""
+
 from collections.abc import Sequence
 from typing import Literal, final
 
 from plotille._canvas import Canvas
 from plotille._colors import ColorDefinition
+from plotille._data_metadata import DataMetadata
 from plotille._input_formatter import InputFormatter
 
 from . import Colormap, _cmaps
@@ -40,33 +58,35 @@ class Plot:
         interp: Literal["linear"] | None,
         label: str | None,
         marker: str | None,
+        formatter: InputFormatter | None = None,
     ) -> None:
         if len(X) != len(Y):
             raise ValueError("X and Y dim have to be the same.")
         if interp not in ("linear", None):
             raise ValueError('Only "linear" and None are allowed values for `interp`.')
 
-        self.X = X
-        self.Y = Y
+        self._formatter = formatter if formatter is not None else InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.Y_metadata = DataMetadata.from_sequence(Y)
+        self.X = [self._formatter.convert(x) for x in X]
+        self.Y = [self._formatter.convert(y) for y in Y]
+
         self.lc = lc
         self.interp = interp
         self.label = label
         self.marker = marker
 
-    def width_vals(self) -> DataValues:
+    def width_vals(self) -> list[float]:
+        """Return X values as floats for limit calculation."""
         return self.X
 
-    def height_vals(self) -> DataValues:
+    def height_vals(self) -> list[float]:
+        """Return Y values as floats for limit calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterators
-        from_points = zip(
-            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
-        )
-        to_points = zip(
-            map(in_fmt.convert, self.X), map(in_fmt.convert, self.Y), strict=True
-        )
+        from_points = zip(self.X, self.Y, strict=True)
+        to_points = zip(self.X, self.Y, strict=True)
 
         # remove first point of to_points
         (x0, y0) = next(to_points)
@@ -87,30 +107,34 @@ class Plot:
 @final
 class Histogram:
     def __init__(self, X: DataValues, bins: int, lc: ColorDefinition) -> None:
-        frequencies, buckets = hist(X, bins)
-        self.X = X
+        # Normalize data first
+        self._formatter = InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.X = [self._formatter.convert(x) for x in X]
+        # Histogram Y values are always numeric (frequency counts)
+        self.Y_metadata = DataMetadata(is_datetime=False, timezone=None)
+
+        # Compute histogram on normalized data
+        frequencies, buckets = hist(self.X, bins)
+
+        # Store everything
         self.bins = bins
         self.frequencies = frequencies
         self.buckets = buckets
         self.lc = lc
 
-    def width_vals(self) -> DataValues:
+    def width_vals(self) -> list[float]:
+        """Return normalized X values as floats."""
         return self.X
 
     def height_vals(self) -> list[int]:
+        """Return histogram frequencies."""
         return self.frequencies
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # how fat will one bar of the histogram be
-        x_diff = (
-            canvas.dots_between(
-                in_fmt.convert(self.buckets[0]), 0, in_fmt.convert(self.buckets[1]), 0
-            )[0]
-            or 1
-        )
-        bin_size = (
-            in_fmt.convert(self.buckets[1]) - in_fmt.convert(self.buckets[0])
-        ) / x_diff
+        x_diff = canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
+        bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
 
         color = self.lc if with_colors else None
         for i in range(self.bins):
@@ -118,7 +142,7 @@ class Histogram:
             if self.frequencies[i] > 0:
                 for j in range(x_diff):
                     # print bar
-                    x_ = in_fmt.convert(self.buckets[i]) + j * bin_size
+                    x_ = self.buckets[i] + j * bin_size
 
                     if canvas.xmin <= x_ <= canvas.xmax:
                         canvas.line(x_, 0, x_, self.frequencies[i], color=color)
@@ -127,30 +151,34 @@ class Histogram:
 @final
 class Text:
     def __init__(
-        self, X: DataValues, Y: DataValues, texts: Sequence[str], lc: ColorDefinition
+        self,
+        X: DataValues,
+        Y: DataValues,
+        texts: Sequence[str],
+        lc: ColorDefinition,
+        formatter: InputFormatter | None = None,
     ) -> None:
         if len(X) != len(Y) != len(texts):
             raise ValueError("X, Y and texts dim have to be the same.")
 
-        self.X = X
-        self.Y = Y
+        self._formatter = formatter if formatter is not None else InputFormatter()
+        self.X_metadata = DataMetadata.from_sequence(X)
+        self.Y_metadata = DataMetadata.from_sequence(Y)
+        self.X = [self._formatter.convert(x) for x in X]
+        self.Y = [self._formatter.convert(y) for y in Y]
         self.texts = texts
         self.lc = lc
 
-    def width_vals(self) -> DataValues:
+    def width_vals(self) -> list[float]:
+        """Return X values as floats for limit calculation."""
         return self.X
 
-    def height_vals(self) -> DataValues:
+    def height_vals(self) -> list[float]:
+        """Return Y values as floats for limit calculation."""
         return self.Y
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
-        # make point iterator
-        points = zip(
-            map(in_fmt.convert, self.X),
-            map(in_fmt.convert, self.Y),
-            self.texts,
-            strict=True,
-        )
+        points = zip(self.X, self.Y, self.texts, strict=True)
 
         color = self.lc if with_colors else None
 

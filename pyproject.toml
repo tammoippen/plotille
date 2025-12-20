@@ -105,6 +105,9 @@ ignore = [
 [tool.ruff.lint.isort]
 known-first-party = ["plotille"]
 
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
 [tool.mypy]
 files = "plotille/"
 namespace_packages = true

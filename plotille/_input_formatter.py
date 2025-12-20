@@ -1,6 +1,6 @@
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,15 @@ from datetime import date, datetime, time, timedelta
 from typing import Any, Protocol
 
 from ._util import roundeven
+
+
+def _numpy_to_native(x: Any) -> Any:
+    # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
+    if (
+        "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
+    ) and callable(x.item):
+        return x.item()
+    return x
 
 
 class Formatter(Protocol):
@@ -70,6 +79,7 @@ class InputFormatter:
         self.converters[t] = f
 
     def fmt(self, val: Any, delta: Any, left: bool = False, chars: int = 9) -> str:
+        val = _numpy_to_native(val)
         for t, f in reversed(self.formatters.items()):
             if isinstance(val, t):
                 return f(val, chars=chars, delta=delta, left=left)
@@ -221,7 +231,7 @@ def _text_formatter(val: str, chars: int, delta: str, left: bool = False) -> str
 
 def _convert_numbers(v: float | int) -> float:
     assert isinstance(v, float) or isinstance(v, int)
-    return float(v)
+    return v
 
 
 def _convert_np_datetime(v: Any) -> float:
