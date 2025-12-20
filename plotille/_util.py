@@ -56,7 +56,7 @@ def roundeven(x: float) -> float:
 def hist(X: Sequence[float], bins: int) -> tuple[list[int], list[float]]:
     """Create histogram similar to `numpy.hist()`
 
-    NOTE: This function now expects X to be already normalized to float.
+    NOTE: This function expects X to be already normalized to numeric.
 
     Parameters:
         X: Sequence[float]  Already normalized to float (timestamps if datetime)

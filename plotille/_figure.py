@@ -443,7 +443,7 @@ class Figure:
         if low_set is not None and high_set is not None:
             return low_set, high_set
 
-        # Get limits from normalized data (all floats now)
+        # Get limits from normalized data (all floats)
         low, high = None, None
         for p in self._plots + self._texts:
             if is_height:

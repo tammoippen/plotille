@@ -80,7 +80,7 @@ def hist_aggregated(
     h_max = _scale(max(h)) or 1
     max_ = b[-1]
     min_ = b[0]
-    # bins are always normalized to float now
+    # bins are always normalized to float
     delta = max_ - min_
     delta_display = timedelta(seconds=delta) if meta.is_datetime else delta
 
