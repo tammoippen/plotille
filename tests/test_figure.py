@@ -1505,7 +1505,7 @@ def test_figure_metadata_aggregation_different_timezones_ok():
     assert result is not None
 
 
-@pytest.mark.skipif(sys.platform == "win32")
+@pytest.mark.skipif(sys.platform == "win32", reason="Windows has no ZoneInfo")
 def test_figure_set_display_timezone():
     """Figure should allow overriding display timezone."""
 
