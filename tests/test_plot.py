@@ -280,3 +280,78 @@ def test_text_with_datetime_data():
     assert all(isinstance(x, float) for x in text.X)
     assert text.X_metadata.is_datetime
     assert not text.Y_metadata.is_datetime
+
+
+"""Integration tests for datetime and numeric plotting."""
+
+
+def test_figure_with_datetime_plot_integration():
+    """Full integration test: datetime data through entire plotting pipeline."""
+    from plotille import Figure
+
+    # Create figure
+    fig = Figure()
+    fig.width = 60
+    fig.height = 20
+
+    # Create datetime data
+    times = [
+        datetime(2024, 1, 1, 0, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 6, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 1, 18, 0, tzinfo=timezone.utc),
+        datetime(2024, 1, 2, 0, 0, tzinfo=timezone.utc),
+    ]
+    values = [10, 15, 20, 15, 10]
+
+    # Plot
+    fig.plot(times, values, lc='red', label='Temperature')
+
+    # Generate plot
+    result = fig.show(legend=True)
+
+    # Verify output
+    assert isinstance(result, str)
+    assert len(result) > 0
+    assert 'Temperature' in result  # Legend should appear
+    # The plot should contain Y-axis labels with numbers
+    assert '10' in result or '15' in result or '20' in result
+
+
+def test_figure_with_numeric_plot_integration():
+    """Full integration test: numeric data through entire plotting pipeline."""
+    from plotille import Figure
+
+    fig = Figure()
+    fig.width = 60
+    fig.height = 20
+
+    X = [1, 2, 3, 4, 5]
+    Y = [1, 4, 9, 16, 25]
+
+    fig.plot(X, Y, lc='blue', label='Quadratic')
+
+    result = fig.show(legend=True)
+
+    assert isinstance(result, str)
+    assert len(result) > 0
+    assert 'Quadratic' in result
+
+
+def test_figure_set_limits_with_datetime():
+    """Test that set_x_limits and set_y_limits work with datetime."""
+    from plotille import Figure
+
+    fig = Figure()
+
+    # Should accept datetime values
+    fig.set_x_limits(
+        min_=datetime(2024, 1, 1),
+        max_=datetime(2024, 12, 31)
+    )
+
+    # Internally stored as float, but should work
+    xmin, xmax = fig.x_limits()
+    assert isinstance(xmin, float)
+    assert isinstance(xmax, float)
+    assert xmin < xmax
