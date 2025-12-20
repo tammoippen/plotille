@@ -20,6 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+"""Data container classes for plotille.
+
+Architecture Note:
+------------------
+As of the normalization refactor, all input data (X, Y values) is normalized
+to float immediately upon construction:
+
+- Numeric values (int, float, Real) are converted to float
+- Datetime values are converted to timestamps (float)
+- Original type information is preserved in DataMetadata objects
+- This allows type-safe internal operations while maintaining a flexible
+  public API
+
+The normalization happens in each class's __init__ method using InputFormatter.
+Display formatting (axis labels, etc.) uses the metadata to format values
+correctly for the original type.
+"""
+
 from collections.abc import Sequence
 from typing import Literal, final
 

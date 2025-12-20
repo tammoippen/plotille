@@ -40,6 +40,22 @@ from ._figure_data import Heat, HeatInput, Histogram, Plot, Span, Text
 from ._input_formatter import Converter, Formatter, InputFormatter
 from ._util import DataValue, DataValues, mk_timedelta
 
+"""Figure class for composing plots.
+
+Architecture Note:
+------------------
+The Figure class manages plot composition and rendering. It works internally
+with normalized float values:
+
+- All limit calculations use float
+- Axis generation uses float
+- Canvas operations use float
+
+The public API (plot, scatter, histogram, text methods) still accepts both
+numeric and datetime values for backward compatibility. Conversion to float
+happens in the data container classes (Plot, Text, Histogram).
+"""
+
 # TODO documentation!!!
 # TODO tests
 
