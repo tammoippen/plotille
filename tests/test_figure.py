@@ -1,7 +1,9 @@
 import datetime
 import os
 from decimal import Decimal
+import sys
 from unittest.mock import call
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -1416,14 +1418,12 @@ def test_limits_with_datetimes_with_data(cleandoc):
       12:00:01 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|-> (X)
                | 25-01-01  25-05-02  25-08-31  25-12-31 """
-    print(fig.show())
+    # print(fig.show())
     assert cleandoc(expected) == fig.show()
 
 
 def test_figure_metadata_aggregation_all_numeric():
     """Figure should aggregate numeric metadata from multiple plots."""
-    from plotille import Figure
-
     fig = Figure()
     fig.plot([1, 2, 3], [4, 5, 6])
     fig.plot([2, 3, 4], [5, 6, 7])
@@ -1437,13 +1437,14 @@ def test_figure_metadata_aggregation_all_numeric():
 
 def test_figure_metadata_aggregation_all_datetime():
     """Figure should aggregate datetime metadata from multiple plots."""
-    from datetime import datetime, timezone
-
-    from plotille import Figure
 
     fig = Figure()
-    times1 = [datetime(2024, 1, i, tzinfo=timezone.utc) for i in range(1, 4)]
-    times2 = [datetime(2024, 2, i, tzinfo=timezone.utc) for i in range(1, 4)]
+    times1 = [
+        datetime.datetime(2024, 1, i, tzinfo=datetime.timezone.utc) for i in range(1, 4)
+    ]
+    times2 = [
+        datetime.datetime(2024, 2, i, tzinfo=datetime.timezone.utc) for i in range(1, 4)
+    ]
 
     fig.plot(times1, [1, 2, 3])
     fig.plot(times2, [2, 3, 4])
@@ -1457,15 +1458,11 @@ def test_figure_metadata_aggregation_all_datetime():
 
 def test_figure_metadata_aggregation_mixed_numeric_datetime_raises():
     """Figure should raise error when mixing numeric and datetime on same axis."""
-    from datetime import datetime
-
-    import pytest
-
-    from plotille import Figure
-
     fig = Figure()
     fig.plot([1, 2, 3], [4, 5, 6])  # numeric X
-    fig.plot([datetime(2024, 1, i) for i in range(1, 4)], [7, 8, 9])  # datetime X
+    fig.plot(
+        [datetime.datetime(2024, 1, i) for i in range(1, 4)], [7, 8, 9]
+    )  # datetime X
 
     # Should raise when aggregating metadata for X axis
     with pytest.raises(ValueError, match="Cannot mix numeric and datetime"):
@@ -1474,15 +1471,12 @@ def test_figure_metadata_aggregation_mixed_numeric_datetime_raises():
 
 def test_figure_metadata_aggregation_mixed_naive_aware_raises():
     """Figure should raise error when mixing naive and aware datetime on same axis."""
-    from datetime import datetime, timezone
-
-    import pytest
-
-    from plotille import Figure
 
     fig = Figure()
-    times_naive = [datetime(2024, 1, i) for i in range(1, 4)]
-    times_aware = [datetime(2024, 2, i, tzinfo=timezone.utc) for i in range(1, 4)]
+    times_naive = [datetime.datetime(2024, 1, i) for i in range(1, 4)]
+    times_aware = [
+        datetime.datetime(2024, 2, i, tzinfo=datetime.timezone.utc) for i in range(1, 4)
+    ]
 
     fig.plot(times_naive, [1, 2, 3])
     fig.plot(times_aware, [4, 5, 6])
@@ -1494,17 +1488,14 @@ def test_figure_metadata_aggregation_mixed_naive_aware_raises():
 
 def test_figure_metadata_aggregation_different_timezones_ok():
     """Figure should accept different timezones and pick first."""
-    from datetime import datetime, timedelta, timezone
-
-    from plotille import Figure
 
     fig = Figure()
 
-    tz1 = timezone(timedelta(hours=-5))  # EST
-    tz2 = timezone(timedelta(hours=-8))  # PST
+    tz1 = datetime.timezone(datetime.timedelta(hours=-5))  # EST
+    tz2 = datetime.timezone(datetime.timedelta(hours=-8))  # PST
 
-    times1 = [datetime(2024, 1, i, tzinfo=tz1) for i in range(1, 4)]
-    times2 = [datetime(2024, 2, i, tzinfo=tz2) for i in range(1, 4)]
+    times1 = [datetime.datetime(2024, 1, i, tzinfo=tz1) for i in range(1, 4)]
+    times2 = [datetime.datetime(2024, 2, i, tzinfo=tz2) for i in range(1, 4)]
 
     fig.plot(times1, [1, 2, 3])
     fig.plot(times2, [4, 5, 6])
@@ -1514,19 +1505,16 @@ def test_figure_metadata_aggregation_different_timezones_ok():
     assert result is not None
 
 
+@pytest.mark.skipif(sys.platform == "win32")
 def test_figure_set_display_timezone():
     """Figure should allow overriding display timezone."""
-    from datetime import timezone
-    from zoneinfo import ZoneInfo
-
-    from plotille import Figure
 
     fig = Figure()
 
     # Set override timezone
     ny_tz = ZoneInfo("America/New_York")
     fig.set_x_display_timezone(ny_tz)
-    fig.set_y_display_timezone(timezone.utc)
+    fig.set_y_display_timezone(datetime.timezone.utc)
 
     assert fig._x_display_timezone_override == ny_tz
-    assert fig._y_display_timezone_override == timezone.utc
+    assert fig._y_display_timezone_override == datetime.timezone.utc
