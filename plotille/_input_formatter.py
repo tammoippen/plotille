@@ -230,9 +230,8 @@ def _text_formatter(val: str, chars: int, delta: str, left: bool = False) -> str
 
 
 def _convert_numbers(v: float | int) -> float:
-    # Convert numpy scalars to native Python types first to avoid overflow
     assert isinstance(v, float) or isinstance(v, int)
-    return float(v)
+    return v
 
 
 def _convert_np_datetime(v: Any) -> float:

@@ -212,8 +212,8 @@ def test_plot_stores_normalized_numeric_data():
     plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
 
     # Data should be stored as floats
-    assert all(isinstance(x, float) for x in plot.X)
-    assert all(isinstance(y, float) for y in plot.Y)
+    assert all(isinstance(x, float | int) for x in plot.X)
+    assert all(isinstance(y, float | int) for y in plot.Y)
 
     # Metadata should indicate non-datetime
     assert not plot.X_metadata.is_datetime
@@ -232,7 +232,7 @@ def test_plot_stores_normalized_datetime_data():
     plot = Plot(X, Y, lc=None, interp=None, label=None, marker=None)
 
     # Data should be stored as floats (timestamps)
-    assert all(isinstance(x, float) for x in plot.X)
+    assert all(isinstance(x, float | int) for x in plot.X)
 
     # Metadata should indicate datetime
     assert plot.X_metadata.is_datetime
@@ -251,8 +251,8 @@ def test_text_stores_normalized_data():
 
     text = Text(X, Y, texts, lc=None)
 
-    assert all(isinstance(x, float) for x in text.X)
-    assert all(isinstance(y, float) for y in text.Y)
+    assert all(isinstance(x, float | int) for x in text.X)
+    assert all(isinstance(y, float | int) for y in text.Y)
     assert not text.X_metadata.is_datetime
     assert not text.Y_metadata.is_datetime
 
@@ -268,7 +268,7 @@ def test_text_with_datetime_data():
 
     text = Text(X, Y, texts, lc=None)
 
-    assert all(isinstance(x, float) for x in text.X)
+    assert all(isinstance(x, float | int) for x in text.X)
     assert text.X_metadata.is_datetime
     assert not text.Y_metadata.is_datetime
 

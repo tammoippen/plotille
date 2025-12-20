@@ -23,18 +23,17 @@
 import math
 from collections.abc import Sequence
 from datetime import datetime
-from numbers import Real
-from typing import TypeAlias
 
-try:
-    import numpy as np
+DataValue = float | int | datetime
+"""Basically any datetime like value and any numeric value.
 
-    DatetimeLike: TypeAlias = np.datetime64 | datetime
-except ImportError:
-    DatetimeLike: TypeAlias = datetime  # type: ignore[misc,no-redef]
+Eventually, you have to add a float_converter for the type, e.g. with Decimal see
+test `test_timeseries_decimals`.
 
-DataValue = Real | int | DatetimeLike
-DataValues = Sequence[Real | int] | Sequence[DatetimeLike]
+There are already converters for numpy numeric and datetime data.
+"""
+DataValues = Sequence[float | int] | Sequence[datetime]
+"""Either a list of numeric data or a list of datetime like data."""
 
 
 def roundeven(x: float) -> float:

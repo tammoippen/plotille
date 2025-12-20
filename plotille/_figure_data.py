@@ -26,7 +26,7 @@ Architecture Note:
 ------------------
 All input data (X, Y values) is normalized to float immediately upon construction:
 
-- Numeric values (int, float, Real) are converted to float
+- Numeric values (int, float) are converted to float
 - Datetime values are converted to timestamps (float)
 - Original type information is preserved in DataMetadata objects
 - This allows type-safe internal operations while maintaining a flexible

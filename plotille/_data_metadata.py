@@ -96,7 +96,7 @@ class DataMetadata:
         """
         if not self.is_datetime:
             # if not datetime, we assume we have some numeric value ... no conversion there
-            return value  # type: ignore[return-value]
+            return value
 
         display_tz = tz_override or self.timezone
 

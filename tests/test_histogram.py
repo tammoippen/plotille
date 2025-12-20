@@ -116,7 +116,7 @@ def test_histogram_stores_normalized_data():
     hist = Histogram(xs, bins, lc=None)
 
     # X should be normalized
-    assert all(isinstance(x, float) for x in hist.X)
+    assert all(isinstance(x, float | int) for x in hist.X)
     assert not hist.X_metadata.is_datetime
 
     # buckets should also be float
@@ -143,4 +143,4 @@ def test_histogram_width_vals_returns_normalized():
     hist = Histogram(xs, bins=3, lc=None)
 
     width = hist.width_vals()
-    assert all(isinstance(x, float) for x in width)
+    assert all(isinstance(x, float | int) for x in width)

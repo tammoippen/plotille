@@ -1,5 +1,6 @@
 import datetime
 import os
+from decimal import Decimal
 from unittest.mock import call
 
 import pytest
@@ -579,6 +580,39 @@ def test_timeseries_orig_dt(timeseries):
     fig.plot(x, y)
 
     # print(fig.show())
+    assert timeseries == fig.show()
+
+
+def test_timeseries_decimals(timeseries):
+    fig = Figure()
+    fig.with_colors = False
+
+    day = datetime.timedelta(days=1)
+    now = datetime.datetime(2018, 1, 16, 11, 9, 42, 100)
+    x = [now - i * day for i in range(10)]
+    x = list(reversed(x))
+    y = [
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+        Decimal("0.5"),
+        Decimal("-0.5"),
+    ]
+
+    def _converter(v: Decimal) -> float:
+        return float(v)
+
+    # converter should be registered before adding plots
+    fig.register_float_converter(Decimal, _converter)
+
+    fig.plot(x, y)
+
+    print(fig.show())
     assert timeseries == fig.show()
 
 
