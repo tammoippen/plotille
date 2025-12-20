@@ -1,5 +1,7 @@
 """Tests for data type metadata tracking."""
+
 from datetime import datetime, timezone
+
 from plotille._data_metadata import DataMetadata
 
 
@@ -60,8 +62,9 @@ def test_metadata_from_empty_sequence():
 
 def test_metadata_mixed_timezones_raises():
     """Mixed timezones should raise an error."""
-    import pytest
     from datetime import timezone
+
+    import pytest
 
     dts = [
         datetime(2024, 1, 1, tzinfo=timezone.utc),

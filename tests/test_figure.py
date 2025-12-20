@@ -1407,8 +1407,9 @@ def test_figure_metadata_aggregation_all_numeric():
 
 def test_figure_metadata_aggregation_all_datetime():
     """Figure should aggregate datetime metadata from multiple plots."""
-    from plotille import Figure
     from datetime import datetime, timezone
+
+    from plotille import Figure
 
     fig = Figure()
     times1 = [datetime(2024, 1, i, tzinfo=timezone.utc) for i in range(1, 4)]
@@ -1426,9 +1427,11 @@ def test_figure_metadata_aggregation_all_datetime():
 
 def test_figure_metadata_aggregation_mixed_numeric_datetime_raises():
     """Figure should raise error when mixing numeric and datetime on same axis."""
-    from plotille import Figure
     from datetime import datetime
+
     import pytest
+
+    from plotille import Figure
 
     fig = Figure()
     fig.plot([1, 2, 3], [4, 5, 6])  # numeric X
@@ -1441,9 +1444,11 @@ def test_figure_metadata_aggregation_mixed_numeric_datetime_raises():
 
 def test_figure_metadata_aggregation_mixed_naive_aware_raises():
     """Figure should raise error when mixing naive and aware datetime on same axis."""
-    from plotille import Figure
     from datetime import datetime, timezone
+
     import pytest
+
+    from plotille import Figure
 
     fig = Figure()
     times_naive = [datetime(2024, 1, i) for i in range(1, 4)]
@@ -1459,8 +1464,9 @@ def test_figure_metadata_aggregation_mixed_naive_aware_raises():
 
 def test_figure_metadata_aggregation_different_timezones_ok():
     """Figure should accept different timezones and pick first."""
+    from datetime import datetime, timedelta, timezone
+
     from plotille import Figure
-    from datetime import datetime, timezone, timedelta
 
     fig = Figure()
 
@@ -1480,9 +1486,10 @@ def test_figure_metadata_aggregation_different_timezones_ok():
 
 def test_figure_set_display_timezone():
     """Figure should allow overriding display timezone."""
-    from plotille import Figure
     from datetime import timezone
     from zoneinfo import ZoneInfo
+
+    from plotille import Figure
 
     fig = Figure()
 

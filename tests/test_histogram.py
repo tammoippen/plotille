@@ -124,8 +124,9 @@ def test_histogram_stores_normalized_data():
 
 def test_histogram_with_datetime_data():
     """Histogram should handle datetime data."""
-    from plotille._figure_data import Histogram
     from datetime import datetime
+
+    from plotille._figure_data import Histogram
 
     X = [
         datetime(2024, 1, 1),

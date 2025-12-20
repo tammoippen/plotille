@@ -30,6 +30,7 @@ if sys.version_info >= (3, 11):
     from typing import Any, Final, Literal, NotRequired, TypedDict
 else:
     from typing import Any, Final, Literal, TypedDict
+
     from typing_extensions import NotRequired
 
 from ._canvas import Canvas
@@ -38,7 +39,7 @@ from ._colors import ColorDefinition, ColorMode, color, rgb2byte
 from ._data_metadata import DataMetadata
 from ._figure_data import Heat, HeatInput, Histogram, Plot, Span, Text
 from ._input_formatter import Converter, Formatter, InputFormatter
-from ._util import DataValue, DataValues, mk_timedelta
+from ._util import DataValue, DataValues
 
 """Figure class for composing plots.
 
@@ -115,8 +116,14 @@ class Figure:
         self.x_label: str = "X"
         self.y_label: str = "Y"
         # min, max -> value
-        self.y_ticks_fkt: Callable[[float | datetime, float | datetime], float | datetime | str] | None = None
-        self.x_ticks_fkt: Callable[[float | datetime, float | datetime], float | datetime | str] | None = None
+        self.y_ticks_fkt: (
+            Callable[[float | datetime, float | datetime], float | datetime | str]
+            | None
+        ) = None
+        self.x_ticks_fkt: (
+            Callable[[float | datetime, float | datetime], float | datetime | str]
+            | None
+        ) = None
         self._plots: list[Plot | Histogram] = []
         self._texts: list[Text] = []
         self._spans: list[Span] = []
@@ -506,7 +513,9 @@ class Figure:
         y_delta = delta / self.height
 
         # Convert delta for display formatting
-        delta_display = timedelta(seconds=delta) if self._y_display_metadata.is_datetime else delta
+        delta_display = (
+            timedelta(seconds=delta) if self._y_display_metadata.is_datetime else delta
+        )
 
         res = []
         for i in range(self.height):
@@ -514,9 +523,7 @@ class Figure:
 
             # Convert to display type using metadata
             value_display = self._convert_for_display(
-                value_float,
-                self._y_display_metadata,
-                self._y_display_timezone_override
+                value_float, self._y_display_metadata, self._y_display_timezone_override
             )
 
             if self.y_ticks_fkt:
@@ -527,9 +534,7 @@ class Figure:
         # add max separately
         value_float = self.height * y_delta + ymin
         value_display = self._convert_for_display(
-            value_float,
-            self._y_display_metadata,
-            self._y_display_timezone_override
+            value_float, self._y_display_metadata, self._y_display_timezone_override
         )
 
         if self.y_ticks_fkt:
@@ -568,7 +573,9 @@ class Figure:
         x_delta = delta / self.width
 
         # Convert delta for display formatting
-        delta_display = timedelta(seconds=delta) if self._x_display_metadata.is_datetime else delta
+        delta_display = (
+            timedelta(seconds=delta) if self._x_display_metadata.is_datetime else delta
+        )
 
         starts = ["", ""]
         if with_y_axis:
@@ -591,15 +598,15 @@ class Figure:
 
             # Convert to display type using metadata
             value_display = self._convert_for_display(
-                value_float,
-                self._x_display_metadata,
-                self._x_display_timezone_override
+                value_float, self._x_display_metadata, self._x_display_timezone_override
             )
 
             if self.x_ticks_fkt:
                 value_display = self.x_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
 
-            bottom += [self._in_fmt.fmt(value_display, delta_display, left=True, chars=9)]
+            bottom += [
+                self._in_fmt.fmt(value_display, delta_display, left=True, chars=9)
+            ]
 
         res += [starts[1] + " ".join(bottom)]
         return res

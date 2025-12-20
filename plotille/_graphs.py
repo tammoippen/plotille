@@ -23,14 +23,13 @@
 import os
 from collections.abc import Sequence
 from math import log
-from numbers import Real
 from typing import Literal
 
 from ._colors import ColorDefinition, ColorMode, color
 from ._data_metadata import DataMetadata
 from ._figure import Figure
 from ._input_formatter import InputFormatter
-from ._util import DataValue, DataValues, DatetimeLike
+from ._util import DataValue, DataValues
 from ._util import hist as compute_hist
 
 

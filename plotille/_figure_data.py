@@ -136,9 +136,7 @@ class Histogram:
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # how fat will one bar of the histogram be
         # buckets are already normalized to float, no conversion needed
-        x_diff = (
-            canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
-        )
+        x_diff = canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
         bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
 
         color = self.lc if with_colors else None

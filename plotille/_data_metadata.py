@@ -74,8 +74,7 @@ class DataMetadata:
 
         if len(timezones) > 1:
             raise ValueError(
-                f"All datetime values must have the same timezone. "
-                f"Found: {timezones}"
+                f"All datetime values must have the same timezone. Found: {timezones}"
             )
 
         return cls(is_datetime=True, timezone=first_meta.timezone)
