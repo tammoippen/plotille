@@ -22,9 +22,9 @@
 
 import math
 from collections.abc import Sequence
-from datetime import datetime, timedelta
+from datetime import datetime
 from numbers import Real
-from typing import Any, TypeAlias, TypeGuard
+from typing import TypeAlias
 
 try:
     import numpy as np
@@ -33,13 +33,8 @@ try:
 except ImportError:
     DatetimeLike: TypeAlias = datetime  # type: ignore[misc,no-redef]
 
-# Public API types - accept datetime or numeric values from users
-DataValue = Real | DatetimeLike
-DataValues = Sequence[Real] | Sequence[DatetimeLike]
-
-# Internal types - float representation used for calculations
-NormalizedValue: TypeAlias = float
-NormalizedValues: TypeAlias = Sequence[float]
+DataValue = Real | int | DatetimeLike
+DataValues = Sequence[Real | int] | Sequence[DatetimeLike]
 
 
 def roundeven(x: float) -> float:
@@ -58,54 +53,29 @@ def roundeven(x: float) -> float:
     return round(x)
 
 
-def is_datetimes(xs: Sequence[DataValue]) -> TypeGuard[Sequence[DatetimeLike]]:
-    is_datetime = None
-    for x in xs:
-        if is_datetime is None:
-            is_datetime = isinstance(x, DatetimeLike)
-        elif is_datetime != isinstance(x, DatetimeLike):
-            raise TypeError("Mixed types in sequence.")
-    return is_datetime or False
-
-
-def _numpy_to_native(x: Any) -> Any:
-    # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
-    if (
-        "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
-    ) and callable(x.item):
-        return x.item()
-    return x
-
-
-def hist(
-    X: Sequence[float], bins: int, is_datetime: bool = False
-) -> tuple[list[int], list[float]]:
+def hist(X: Sequence[float], bins: int) -> tuple[list[int], list[float]]:
     """Create histogram similar to `numpy.hist()`
 
     NOTE: This function now expects X to be already normalized to float.
-    The is_datetime parameter indicates if the original data was datetime.
 
     Parameters:
         X: Sequence[float]  Already normalized to float (timestamps if datetime)
         bins: int           The number of bins to put X entries in.
-        is_datetime: bool   Whether original data was datetime (for bucket calculation)
 
     Returns:
         (counts, bins):
             counts: list[int]  The counts for all bins.
-            bins: list[float]  The range for each bin (as floats/timestamps)
+            bins: list[float]  The range for each bin:
+                               bin `i` is in [bins[i], bins[i+1])
     """
     assert bins > 0
 
-    # Convert numpy scalars to native types to avoid overflow
-    xs = [_numpy_to_native(x) for x in X]
-
-    if len(xs) == 0:
+    if len(X) == 0:
         xmin = 0.0
         xmax = 1.0
     else:
-        xmin = float(min(xs))
-        xmax = float(max(xs))
+        xmin = float(min(X))
+        xmax = float(max(X))
 
     if xmin == xmax:
         xmin -= 0.5
@@ -115,15 +85,9 @@ def hist(
     xwidth = delta / bins
 
     y = [0] * bins
-    for x in xs:
+    for x in X:
         delta_x = x - xmin
         x_idx = min(bins - 1, int(delta_x // xwidth))
         y[x_idx] += 1
 
     return y, [i * xwidth + xmin for i in range(bins + 1)]
-
-
-def mk_timedelta(v: float) -> timedelta:
-    seconds = int(v)
-    microseconds = int((v - seconds) * 1e6)
-    return timedelta(seconds=seconds, microseconds=microseconds)

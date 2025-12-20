@@ -23,7 +23,7 @@
 import os
 import sys
 from collections.abc import Callable, Iterator, Sequence
-from datetime import datetime, timedelta, tzinfo
+from datetime import timedelta, tzinfo
 from itertools import cycle
 
 if sys.version_info >= (3, 11):
@@ -52,9 +52,9 @@ with normalized float values:
 - Axis generation uses float
 - Canvas operations use float
 
-The public API (plot, scatter, histogram, text methods) still accepts both
-numeric and datetime values for backward compatibility. Conversion to float
-happens in the data container classes (Plot, Text, Histogram).
+The public API (plot, scatter, histogram, text methods) accepts both
+numeric and datetime. Conversion to float happens in the data container
+classes (Plot, Text, Histogram).
 """
 
 # TODO documentation!!!
@@ -76,16 +76,16 @@ class Figure:
     and define the properties of the underlying Canvas. Possible properties that
     can be defined are:
 
-        width, height: int    Define the number of characters in X / Y direction
-                              which are used for plotting.
-        x_limits: float       Define the X limits of the reference coordinate system,
-                              that will be plottered.
-        y_limits: float       Define the Y limits of the reference coordinate system,
-                              that will be plottered.
-        color_mode: str       Define the used color mode. See `plotille.color()`.
-        with_colors: bool     Define, whether to use colors at all.
-        background: multiple  Define the background color.
-        x_label, y_label: str Define the X / Y axis label.
+        width, height: int           Define the number of characters in X / Y direction
+                                     which are used for plotting.
+        x_limits: DataValue          Define the X limits of the reference coordinate system,
+                                     that will be plotted.
+        y_limits: DataValue          Define the Y limits of the reference coordinate system,
+                                     that will be plotted.
+        color_mode: str              Define the used color mode. See `plotille.color()`.
+        with_colors: bool            Define, whether to use colors at all.
+        background: ColorDefinition  Define the background color.
+        x_label, y_label: str        Define the X / Y axis label.
     """
 
     _COLOR_SEQ: Final[list[dict[ColorMode, ColorDefinition]]] = [
@@ -116,14 +116,12 @@ class Figure:
         self.x_label: str = "X"
         self.y_label: str = "Y"
         # min, max -> value
-        self.y_ticks_fkt: (
-            Callable[[float | datetime, float | datetime], float | datetime | str]
-            | None
-        ) = None
-        self.x_ticks_fkt: (
-            Callable[[float | datetime, float | datetime], float | datetime | str]
-            | None
-        ) = None
+        self.y_ticks_fkt: Callable[[DataValue, DataValue], DataValue | str] | None = (
+            None
+        )
+        self.x_ticks_fkt: Callable[[DataValue, DataValue], DataValue | str] | None = (
+            None
+        )
         self._plots: list[Plot | Histogram] = []
         self._texts: list[Text] = []
         self._spans: list[Span] = []
@@ -231,7 +229,6 @@ class Figure:
             # No plots yet, no metadata to aggregate
             return None
 
-        # Check if all numeric or all datetime (no mixing)
         datetime_flags = {m.is_datetime for m in metadatas}
         if len(datetime_flags) > 1:
             axis_name = "Y" if is_height else "X"
@@ -240,11 +237,9 @@ class Figure:
                 f"All plots on an axis must use the same data type."
             )
 
-        # All numeric case
         if not metadatas[0].is_datetime:
             return DataMetadata(is_datetime=False, timezone=None)
 
-        # All datetime - validate timezone consistency
         timezones = {m.timezone for m in metadatas}
         has_naive = None in timezones
         has_aware = len(timezones - {None}) > 0
@@ -295,30 +290,6 @@ class Figure:
             fig.set_y_display_timezone(ZoneInfo("UTC"))
         """
         self._y_display_timezone_override = tz
-
-    def _convert_for_display(
-        self,
-        value: float,
-        metadata: DataMetadata,
-        tz_override: tzinfo | None = None,
-    ) -> float | datetime:
-        """Convert normalized float back to original type for display.
-
-        Args:
-            value: Normalized float value (timestamp if datetime)
-            metadata: Metadata indicating original type
-            tz_override: Optional timezone override for datetime display
-
-        Returns:
-            float for numeric data, datetime for datetime data
-        """
-        if not metadata.is_datetime:
-            return value
-
-        # Use override if provided, otherwise use metadata timezone
-        display_tz = tz_override if tz_override is not None else metadata.timezone
-
-        return datetime.fromtimestamp(value, tz=display_tz)
 
     def register_label_formatter(self, type_: type[Any], formatter: Formatter) -> None:
         """Register a formatter for labels of a certain type.
@@ -427,8 +398,6 @@ class Figure:
         if not values:
             return None, None
 
-        # All values are floats now, no datetime check needed
-
         if min_ is not None and max_ is not None:
             if min_ >= max_:
                 raise ValueError("min_ is larger or equal than max_.")
@@ -522,8 +491,8 @@ class Figure:
             value_float = i * y_delta + ymin
 
             # Convert to display type using metadata
-            value_display = self._convert_for_display(
-                value_float, self._y_display_metadata, self._y_display_timezone_override
+            value_display = self._y_display_metadata.convert_for_display(
+                value_float, self._y_display_timezone_override
             )
 
             if self.y_ticks_fkt:
@@ -533,8 +502,8 @@ class Figure:
 
         # add max separately
         value_float = self.height * y_delta + ymin
-        value_display = self._convert_for_display(
-            value_float, self._y_display_metadata, self._y_display_timezone_override
+        value_display = self._y_display_metadata.convert_for_display(
+            value_float, self._y_display_timezone_override
         )
 
         if self.y_ticks_fkt:
@@ -566,16 +535,15 @@ class Figure:
         Returns:
             List of formatted axis labels
         """
-        if self._x_display_metadata is None:
-            self._x_display_metadata = DataMetadata(is_datetime=False, timezone=None)
+        meta = self._x_display_metadata
+        if meta is None:
+            meta = DataMetadata(is_datetime=False, timezone=None)
 
         delta = abs(xmax - xmin)
         x_delta = delta / self.width
 
         # Convert delta for display formatting
-        delta_display = (
-            timedelta(seconds=delta) if self._x_display_metadata.is_datetime else delta
-        )
+        delta_display = timedelta(seconds=delta) if meta.is_datetime else delta
 
         starts = ["", ""]
         if with_y_axis:
@@ -589,7 +557,7 @@ class Figure:
             + "-" * (self.width % 10)
             + "-> ("
             + label
-            + ")",
+            + ")"
         ]
         bottom = []
 
@@ -597,8 +565,8 @@ class Figure:
             value_float = i * 10 * x_delta + xmin
 
             # Convert to display type using metadata
-            value_display = self._convert_for_display(
-                value_float, self._x_display_metadata, self._x_display_timezone_override
+            value_display = meta.convert_for_display(
+                value_float, self._x_display_timezone_override
             )
 
             if self.x_ticks_fkt:
@@ -634,11 +602,11 @@ class Figure:
         for efficient processing.
 
         Parameters:
-            X: Sequence[float] | Sequence[datetime]
+            X: DataValues
                X values. Can be numeric or datetime, but must be consistent.
-            Y: Sequence[float] | Sequence[datetime]
+            Y: DataValues
                Y values. X and Y must have the same number of entries.
-            lc: multiple
+            lc: ColorDefinition
                The line color.
             interp: str
                The interpolation method. (None or 'linear').
@@ -667,11 +635,11 @@ class Figure:
         for efficient processing.
 
         Parameters:
-            X: Sequence[float] | Sequence[datetime]
+            X: DataValues
                X values. Can be numeric or datetime, but must be consistent.
-            Y: Sequence[float] | Sequence[datetime]
+            Y: DataValues
                Y values. X and Y must have the same number of entries.
-            lc: multiple
+            lc: ColorDefinition
                The line color.
             label: str
                The label for the legend.
@@ -688,15 +656,15 @@ class Figure:
     ) -> None:
         """Compute and plot the histogram over X.
 
-        X can contain either numeric values (int, float) or datetime values.
+        X can contain either numeric values (e.g. int, float) or datetime values.
         Data is normalized to float internally for efficient processing.
 
         Parameters:
-            X: Sequence[float] | Sequence[datetime]
+            X: DataValues
                X values. Can be numeric or datetime.
             bins: int
                The number of bins to put X entries in (columns).
-            lc: multiple
+            lc: ColorDefinition
                The line color.
         """
         if len(X) > 0:
@@ -722,13 +690,13 @@ class Figure:
         for efficient processing.
 
         Parameters:
-            X: Sequence[float] | Sequence[datetime]
+            X: DataValues
                X values. Can be numeric or datetime, but must be consistent.
-            Y: Sequence[float] | Sequence[datetime]
+            Y: DataValues
                Y values.
-            texts: List[str]
+            texts: Sequence[str]
                Texts to print. X, Y and texts must have the same number of entries.
-            lc: multiple
+            lc: ColorDefinition
                The (text) line color.
         """
         if len(X) > 0:
@@ -740,13 +708,13 @@ class Figure:
         """Plot a vertical line at x.
 
         Parameters:
-            x: float       x-coordinate of the vertical line.
-                           In the range [0, 1]
-            ymin: float    Minimum y-coordinate of the vertical line.
-                           In the range [0, 1]
-            ymax: float    Maximum y-coordinate of the vertical line.
-                           In the range [0, 1]
-            lc: multiple   The line color.
+            x: float              x-coordinate of the vertical line.
+                                  In the range [0, 1]
+            ymin: float           Minimum y-coordinate of the vertical line.
+                                  In the range [0, 1]
+            ymax: float           Maximum y-coordinate of the vertical line.
+                                  In the range [0, 1]
+            lc: ColorDefinition   The line color.
         """
         self._spans.append(Span(x, x, ymin, ymax, lc))
 
@@ -761,15 +729,15 @@ class Figure:
         """Plot a vertical rectangle from (xmin,ymin) to (xmax, ymax).
 
         Parameters:
-            xmin: float    Minimum x-coordinate of the rectangle.
-                           In the range [0, 1]
-            xmax: float    Maximum x-coordinate of the rectangle.
-                           In the range [0, 1]
-            ymin: float    Minimum y-coordinate of the rectangle.
-                           In the range [0, 1]
-            ymax: float    Maximum y-coordinate of the rectangle.
-                           In the range [0, 1]
-            lc: multiple   The line color.
+            xmin: float           Minimum x-coordinate of the rectangle.
+                                  In the range [0, 1]
+            xmax: float           Maximum x-coordinate of the rectangle.
+                                  In the range [0, 1]
+            ymin: float           Minimum y-coordinate of the rectangle.
+                                  In the range [0, 1]
+            ymax: float           Maximum y-coordinate of the rectangle.
+                                  In the range [0, 1]
+            lc: ColorDefinition   The line color.
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
@@ -779,13 +747,13 @@ class Figure:
         """Plot a horizontal line at y.
 
         Parameters:
-            y: float       y-coordinate of the horizontal line.
-                           In the range [0, 1]
-            x_min: float   Minimum x-coordinate of the vertical line.
-                           In the range [0, 1]
-            x_max: float   Maximum x-coordinate of the vertical line.
-                           In the range [0, 1]
-            lc: multiple   The line color.
+            y: float              y-coordinate of the horizontal line.
+                                  In the range [0, 1]
+            x_min: float          Minimum x-coordinate of the vertical line.
+                                  In the range [0, 1]
+            x_max: float          Maximum x-coordinate of the vertical line.
+                                  In the range [0, 1]
+            lc: ColorDefinition   The line color.
         """
         self._spans.append(Span(xmin, xmax, y, y, lc))
 
@@ -800,15 +768,15 @@ class Figure:
         """Plot a horizontal rectangle from (xmin,ymin) to (xmax, ymax).
 
         Parameters:
-            ymin: float    Minimum y-coordinate of the rectangle.
-                           In the range [0, 1]
-            ymax: float    Maximum y-coordinate of the rectangle.
-                           In the range [0, 1]
-            xmin: float    Minimum x-coordinate of the rectangle.
-                           In the range [0, 1]
-            xmax: float    Maximum x-coordinate of the rectangle.
-                           In the range [0, 1]
-            lc: multiple   The line color.
+            ymin: float           Minimum y-coordinate of the rectangle.
+                                  In the range [0, 1]
+            ymax: float           Maximum y-coordinate of the rectangle.
+                                  In the range [0, 1]
+            xmin: float           Minimum x-coordinate of the rectangle.
+                                  In the range [0, 1]
+            xmax: float           Maximum x-coordinate of the rectangle.
+                                  In the range [0, 1]
+            lc: ColorDefinition   The line color.
         """
         self._spans.append(Span(xmin, xmax, ymin, ymax, lc))
 
@@ -921,7 +889,7 @@ class Figure:
                             fg=p.lc,
                             mode=self.color_mode,
                             no_color=not self.with_colors,
-                        ),
+                        )
                     ]
             res += self.linesep.join(lines)
         return res
@@ -978,10 +946,7 @@ def _default(low_set: float | None, high_set: float | None) -> tuple[float, floa
 
 
 def _choose(
-    low: float | None,
-    high: float | None,
-    low_set: float | None,
-    high_set: float | None,
+    low: float | None, high: float | None, low_set: float | None, high_set: float | None
 ) -> tuple[float, float]:
     if low is None or high is None:
         # either all are set or none

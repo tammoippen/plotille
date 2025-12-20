@@ -115,9 +115,7 @@ class Histogram:
         self.Y_metadata = DataMetadata(is_datetime=False, timezone=None)
 
         # Compute histogram on normalized data
-        frequencies, buckets = hist(
-            self.X, bins, is_datetime=self.X_metadata.is_datetime
-        )
+        frequencies, buckets = hist(self.X, bins)
 
         # Store everything
         self.bins = bins
@@ -135,7 +133,6 @@ class Histogram:
 
     def write(self, canvas: Canvas, with_colors: bool, in_fmt: InputFormatter) -> None:
         # how fat will one bar of the histogram be
-        # buckets are already normalized to float, no conversion needed
         x_diff = canvas.dots_between(self.buckets[0], 0, self.buckets[1], 0)[0] or 1
         bin_size = (self.buckets[1] - self.buckets[0]) / x_diff
 

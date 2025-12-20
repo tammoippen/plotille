@@ -6,9 +6,12 @@ that they were originally datetimes so we can format them correctly later.
 
 from collections.abc import Sequence
 from datetime import datetime, tzinfo
-from typing import Any
+from typing import Any, final
+
+from ._util import DataValue
 
 
+@final
 class DataMetadata:
     """Tracks whether data was originally datetime and timezone info.
 
@@ -56,31 +59,45 @@ class DataMetadata:
             ValueError: If sequence contains mixed timezones
         """
         if len(sequence) == 0:
-            # Empty sequence defaults to numeric
             return cls(is_datetime=False, timezone=None)
 
-        # Check first element
-        first_meta = cls.from_value(sequence[0])
+        metadatas = [cls.from_value(v) for v in sequence]
+        datetime_flags = {m.is_datetime for m in metadatas}
 
-        if not first_meta.is_datetime:
-            # Numeric data - no need to check timezone
-            return first_meta
+        if len(datetime_flags) > 1:
+            raise ValueError("Cannot mix numeric and datetime values.")
 
-        # For datetime data, verify all elements have same timezone
-        timezones = set()
-        for value in sequence:
-            if isinstance(value, datetime):
-                timezones.add(value.tzinfo)
+        if not metadatas[0].is_datetime:
+            return DataMetadata(is_datetime=False, timezone=None)
 
-        if len(timezones) > 1:
-            raise ValueError(
-                f"All datetime values must have the same timezone. Found: {timezones}"
-            )
+        timezones = {m.timezone for m in metadatas}
+        has_naive = None in timezones
+        has_aware = len(timezones - {None}) > 0
 
-        return cls(is_datetime=True, timezone=first_meta.timezone)
+        if has_naive and has_aware:
+            raise ValueError("Cannot mix timezone-naive and timezone-aware datetime.")
 
-    def __repr__(self) -> str:
-        if self.is_datetime:
-            tz_info = f", timezone={self.timezone}" if self.timezone else ""
-            return f"DataMetadata(is_datetime=True{tz_info})"
-        return "DataMetadata(is_datetime=False)"
+        # Pick first encountered timezone as default
+        display_timezone = metadatas[0].timezone
+
+        return DataMetadata(is_datetime=True, timezone=display_timezone)
+
+    def convert_for_display(
+        self, value: float, tz_override: tzinfo | None = None
+    ) -> DataValue:
+        """Convert normalized float back to original type for display.
+
+        Args:
+            value: Normalized float value (timestamp if datetime)
+            tz_override: Optional timezone override for datetime display
+
+        Returns:
+            float for numeric data, datetime for datetime data
+        """
+        if not self.is_datetime:
+            # if not datetime, we assume we have some numeric value ... no conversion there
+            return value  # type: ignore[return-value]
+
+        display_tz = tz_override or self.timezone
+
+        return datetime.fromtimestamp(value, tz=display_tz)

@@ -22,6 +22,7 @@
 
 import os
 from collections.abc import Sequence
+from datetime import timedelta
 from math import log
 from typing import Literal
 
@@ -42,22 +43,24 @@ def hist_aggregated(
     lc: ColorDefinition = None,
     bg: ColorDefinition = None,
     color_mode: ColorMode = "names",
+    meta: DataMetadata | None = None,
 ) -> str:
     """
     Create histogram for aggregated data.
 
     Parameters:
-        counts: List[int]    Counts for each bucket.
-        bins: List[float]    Limits for the bins for the provided counts: limits for
-                             bin `i` are `[bins[i], bins[i+1])`.
-                             Hence, `len(bins) == len(counts) + 1`.
-        width: int           The number of characters for the width (columns).
-        log_scale: bool      Scale the histogram with `log` function.
-        linesep: str         The requested line separator. default: os.linesep
-        lc: multiple         Give the line color.
-        bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names' (default), 'byte' or
-                             'rgb' see plotille.color.__docs__
+        counts: List[int]         Counts for each bucket.
+        bins: List[float]         Limits for the bins for the provided counts: limits for
+                                  bin `i` are `[bins[i], bins[i+1])`.
+                                  Hence, `len(bins) == len(counts) + 1`.
+        width: int                The number of characters for the width (columns).
+        log_scale: bool           Scale the histogram with `log` function.
+        linesep: str              The requested line separator. default: os.linesep
+        lc: ColorDefinition       Give the line color.
+        bg: ColorDefinition       Give the background color.
+        color_mode: ColorMode     Specify color input mode; 'names' (default), 'byte' or
+                                  'rgb' see plotille.color.__docs__
+        meta: DataMetadata | None For conversion of datetime values.
     Returns:
         str: histogram over `X` from left to right.
     """
@@ -66,6 +69,9 @@ def hist_aggregated(
         if log_scale and a > 0:
             return log(a)
         return a
+
+    if meta is None:
+        meta = DataMetadata(is_datetime=False)
 
     h = counts
     b = bins
@@ -76,6 +82,7 @@ def hist_aggregated(
     min_ = b[0]
     # bins are always normalized to float now
     delta = max_ - min_
+    delta_display = timedelta(seconds=delta) if meta.is_datetime else delta
 
     bins_count = len(h)
 
@@ -85,8 +92,18 @@ def hist_aggregated(
         height = int(width * 8 * _scale(h[i]) / h_max)
         canvas += [
             "[{}, {}) | {} {}".format(
-                ipf.fmt(b[i], delta=delta, chars=8, left=True),
-                ipf.fmt(b[i + 1], delta=delta, chars=8, left=False),
+                ipf.fmt(
+                    meta.convert_for_display(b[i]),
+                    delta=delta_display,
+                    chars=8,
+                    left=True,
+                ),
+                ipf.fmt(
+                    meta.convert_for_display(b[i + 1]),
+                    delta=delta_display,
+                    chars=8,
+                    left=False,
+                ),
                 color(
                     "⣿" * (height // 8) + lasts[height % 8],
                     fg=lc,
@@ -126,9 +143,9 @@ def hist(
         width: int           The number of characters for the width (columns).
         log_scale: bool      Scale the histogram with `log` function.
         linesep: str         The requested line separator. default: os.linesep
-        lc: multiple         Give the line color.
-        bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names' (default), 'byte' or
+        lc: ColorDefinition         Give the line color.
+        bg: ColorDefinition         Give the background color.
+        color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
                              'rgb' see plotille.color.__docs__
 
     Returns:
@@ -139,9 +156,9 @@ def hist(
     metadata = DataMetadata.from_sequence(X)
     X_floats = [formatter.convert(x) for x in X]
 
-    counts, bins_list = compute_hist(X_floats, bins, is_datetime=metadata.is_datetime)
+    counts, bins_list = compute_hist(X_floats, bins)
 
-    # bins_list are floats (timestamps if datetime), keep as floats for display
+    # bins_list are floats, use metadata for display
     return hist_aggregated(
         counts=counts,
         bins=bins_list,
@@ -151,6 +168,7 @@ def hist(
         lc=lc,
         bg=bg,
         color_mode=color_mode,
+        meta=metadata,
     )
 
 
@@ -185,9 +203,9 @@ def histogram(
         linesep: str         The requested line separator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
-        lc: multiple         Give the line color.
-        bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names' (default), 'byte' or
+        lc: ColorDefinition         Give the line color.
+        bg: ColorDefinition         Give the background color.
+        color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
                              'rgb' see plotille.color.__docs__
 
     Returns:
@@ -253,9 +271,9 @@ def scatter(
         linesep: str         The requested line separator. default: os.linesep
         x_min, x_max: float  Limits for the displayed X values.
         y_min, y_max: float  Limits for the displayed Y values.
-        lc: multiple         Give the line color.
-        bg: multiple         Give the background color.
-        color_mode: str      Specify color input mode; 'names' (default), 'byte' or
+        lc: ColorDefinition         Give the line color.
+        bg: ColorDefinition         Give the background color.
+        color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
                              'rgb' see plotille.color.__docs__
         origin: bool         Whether to print the origin. default: True
         marker: str          Instead of braille dots set a marker char.
@@ -318,9 +336,9 @@ def plot(
         interp: Optional[str]  Specify interpolation; values None, 'linear'
         x_min, x_max: float    Limits for the displayed X values.
         y_min, y_max: float    Limits for the displayed Y values.
-        lc: multiple           Give the line color.
-        bg: multiple           Give the background color.
-        color_mode: str        Specify color input mode; 'names' (default), 'byte' or
+        lc: ColorDefinition           Give the line color.
+        bg: ColorDefinition           Give the background color.
+        color_mode: ColorMode        Specify color input mode; 'names' (default), 'byte' or
                                'rgb' see plotille.color.__docs__
         origin: bool           Whether to print the origin. default: True
         marker: str            Instead of braille dots set a marker char for actual

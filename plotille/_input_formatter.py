@@ -29,6 +29,15 @@ from typing import Any, Protocol
 from ._util import roundeven
 
 
+def _numpy_to_native(x: Any) -> Any:
+    # cf. https://numpy.org/doc/stable/reference/generated/numpy.ndarray.item.html
+    if (
+        "<class 'numpy." in str(type(x)) or "<type 'numpy." in str(type(x))
+    ) and callable(x.item):
+        return x.item()
+    return x
+
+
 class Formatter(Protocol):
     def __call__(self, val: Any, chars: int, delta: Any, left: bool) -> str: ...
 
@@ -70,6 +79,7 @@ class InputFormatter:
         self.converters[t] = f
 
     def fmt(self, val: Any, delta: Any, left: bool = False, chars: int = 9) -> str:
+        val = _numpy_to_native(val)
         for t, f in reversed(self.formatters.items()):
             if isinstance(val, t):
                 return f(val, chars=chars, delta=delta, left=left)
@@ -220,10 +230,7 @@ def _text_formatter(val: str, chars: int, delta: str, left: bool = False) -> str
 
 
 def _convert_numbers(v: float | int) -> float:
-    from ._util import _numpy_to_native
-
     # Convert numpy scalars to native Python types first to avoid overflow
-    v = _numpy_to_native(v)
     assert isinstance(v, float) or isinstance(v, int)
     return float(v)
 

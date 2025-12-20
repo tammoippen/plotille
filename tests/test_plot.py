@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
-from plotille import plot
+from plotille import Figure, plot
+from plotille._figure_data import Plot, Text
 
 
 def test_constant_y(cleandoc):
@@ -203,13 +204,8 @@ def test_single_value(cleandoc):
     assert cleandoc(expected) == plot([0.5], [0.5])
 
 
-"""Tests for data normalization in Plot class."""
-
-
 def test_plot_stores_normalized_numeric_data():
     """Plot should convert numeric data to float and track metadata."""
-    from plotille._figure_data import Plot
-
     X = [1, 2, 3, 4, 5]
     Y = [2, 4, 6, 8, 10]
 
@@ -226,8 +222,6 @@ def test_plot_stores_normalized_numeric_data():
 
 def test_plot_stores_normalized_datetime_data():
     """Plot should convert datetime data to float timestamps."""
-    from plotille._figure_data import Plot
-
     X = [
         datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
         datetime(2024, 1, 2, 12, 0, 0, tzinfo=timezone.utc),
@@ -251,8 +245,6 @@ def test_plot_stores_normalized_datetime_data():
 
 def test_text_stores_normalized_data():
     """Text should normalize X and Y data to float."""
-    from plotille._figure_data import Text
-
     X = [1, 2, 3]
     Y = [4, 5, 6]
     texts = ["a", "b", "c"]
@@ -267,8 +259,6 @@ def test_text_stores_normalized_data():
 
 def test_text_with_datetime_data():
     """Text should handle datetime data."""
-    from plotille._figure_data import Text
-
     X = [
         datetime(2024, 1, 1, tzinfo=timezone.utc),
         datetime(2024, 1, 2, tzinfo=timezone.utc),
@@ -283,12 +273,8 @@ def test_text_with_datetime_data():
     assert not text.Y_metadata.is_datetime
 
 
-"""Integration tests for datetime and numeric plotting."""
-
-
 def test_figure_with_datetime_plot_integration():
     """Full integration test: datetime data through entire plotting pipeline."""
-    from plotille import Figure
 
     # Create figure
     fig = Figure()
@@ -321,8 +307,6 @@ def test_figure_with_datetime_plot_integration():
 
 def test_figure_with_numeric_plot_integration():
     """Full integration test: numeric data through entire plotting pipeline."""
-    from plotille import Figure
-
     fig = Figure()
     fig.width = 60
     fig.height = 20
@@ -341,8 +325,6 @@ def test_figure_with_numeric_plot_integration():
 
 def test_figure_set_limits_with_datetime():
     """Test that set_x_limits and set_y_limits work with datetime."""
-    from plotille import Figure
-
     fig = Figure()
 
     # Should accept datetime values

@@ -282,9 +282,7 @@ def test_plot(get_canvas):
         call(0.2, 0.3, color=None, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
-    assert canvas.line.call_args_list == [
-        call(0.1, 0.2, 0.2, 0.3, color=None),
-    ]
+    assert canvas.line.call_args_list == [call(0.1, 0.2, 0.2, 0.3, color=None)]
 
     canvas = get_canvas()
     plot.write(canvas, with_colors=True, in_fmt=fig._in_fmt)
@@ -294,9 +292,7 @@ def test_plot(get_canvas):
         call(0.2, 0.3, color=plot.lc, marker=None),
     ]
     assert canvas.line.call_count == 1  # two points => one line
-    assert canvas.line.call_args_list == [
-        call(0.1, 0.2, 0.2, 0.3, color=plot.lc),
-    ]
+    assert canvas.line.call_args_list == [call(0.1, 0.2, 0.2, 0.3, color=plot.lc)]
 
     # different lc
     fig.plot([0.1, 0.2], [0.2, 0.3])
