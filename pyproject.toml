@@ -55,7 +55,8 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html"
+addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html --doctest-modules --doctest-continue-on-failure"
+testpaths = ["tests", "plotille"]
 
 
 [tool.ruff.lint]
