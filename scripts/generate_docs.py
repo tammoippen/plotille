@@ -110,6 +110,45 @@ def is_interactive(imports: set[str]) -> bool:
     return not bool(imports & blocked_modules)
 
 
+def strip_license_header(source_code: str) -> str:
+    """
+    Remove MIT license header from source code.
+
+    Args:
+        source_code: Python source code possibly containing license header
+
+    Returns:
+        Source code with license header removed
+    """
+    lines = source_code.split("\n")
+
+    # Look for MIT license pattern
+    if "# The MIT License" in source_code:
+        # Find the end of the license block (first non-comment/non-blank line after license)
+        in_license = False
+        start_index = 0
+
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+
+            # Start of license
+            if "MIT License" in line:
+                in_license = True
+                start_index = i
+                continue
+
+            # End of license block (first non-comment, non-blank line)
+            if in_license and stripped and not stripped.startswith("#"):
+                # Remove everything from start_index to just before this line
+                return "\n".join(lines[i:])
+
+        # If we didn't find the end, remove first 23 lines (typical license length)
+        if in_license:
+            return "\n".join(lines[23:])
+
+    return source_code
+
+
 def analyze_example(example_path: Path) -> ExampleInfo:
     """
     Analyze a single example file.
@@ -121,8 +160,12 @@ def analyze_example(example_path: Path) -> ExampleInfo:
         ExampleInfo with analysis results
     """
     source_code = example_path.read_text()
-    imports = extract_imports(source_code)
-    description = extract_description(source_code)
+
+    # Strip license header before analyzing
+    source_code_clean = strip_license_header(source_code)
+
+    imports = extract_imports(source_code_clean)
+    description = extract_description(source_code_clean)
     name = example_path.stem
 
     return ExampleInfo(
@@ -298,6 +341,9 @@ def generate_interactive_example_markdown(info: ExampleInfo) -> str:
     """
     source_code = info.path.read_text()
 
+    # Strip license header
+    source_code = strip_license_header(source_code)
+
     # Escape backticks in code for markdown
     escaped_code = source_code.replace("```", "\\`\\`\\`")
 
@@ -339,6 +385,9 @@ def generate_static_example_markdown(
         Markdown string with code and output
     """
     source_code = info.path.read_text()
+
+    # Strip license header
+    source_code = strip_license_header(source_code)
 
     # Read pre-rendered output
     if output_path.exists():
@@ -438,6 +487,36 @@ def generate_category_page(
     return output_file
 
 
+def generate_hero_plot() -> str:
+    """
+    Generate a sample plot for the hero animation.
+
+    Returns:
+        String containing plotille plot output
+    """
+    try:
+        import math
+
+        import plotille
+
+        X = [i / 10 for i in range(-31, 32)]
+        Y = [math.sin(x) for x in X]
+
+        plot_output = plotille.plot(
+            X,
+            Y,
+            width=60,
+            height=10,
+            X_label="X",
+            Y_label="",
+        )
+
+        return plot_output
+    except Exception as e:
+        # Fallback if generation fails
+        return f"Error generating plot: {e}"
+
+
 def generate_home_page(docs_dir: Path) -> Path:
     """
     Generate the home/index page.
@@ -448,14 +527,18 @@ def generate_home_page(docs_dir: Path) -> Path:
     Returns:
         Path to generated index.md
     """
-    content = """# plotille
+    # Generate the hero plot
+    hero_plot = generate_hero_plot()
+
+    # Change to f-string to include hero_plot
+    content = f"""# plotille
 
 <div class="hero-terminal">
     <div class="terminal-header">
         <span class="terminal-title">[root@plotille ~]$</span>
     </div>
     <div class="terminal-body">
-        <pre class="hero-plot" id="hero-animation"></pre>
+        <pre class="hero-plot" id="hero-animation">{hero_plot}</pre>
     </div>
 </div>
 
@@ -514,7 +597,12 @@ def main() -> int:
 
     # Analyze all Python files
     examples = []
+    SKIP_EXAMPLES = {"__init__.py", "performance_example.py"}
+
     for example_file in sorted(examples_dir.glob("*.py")):
+        # Skip files that aren't user-facing examples
+        if example_file.name in SKIP_EXAMPLES:
+            continue
         info = analyze_example(example_file)
         examples.append(info)
 

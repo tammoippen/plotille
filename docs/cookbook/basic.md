@@ -2,30 +2,9 @@
 
 Simple plotting examples to get started with plotille.
 
-## __init__
-
-Example: __init__
-
-<div class="terminal-window interactive-example" data-example="__init__">
-    <div class="terminal-header">
-        <span class="terminal-title">[python3 __init__.py]</span>
-        <button class="terminal-run-btn" onclick="runExample('__init__')">[EXEC]</button>
-    </div>
-    <div class="terminal-body">
-        <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-__init__"></textarea>
-        </div>
-        <div class="terminal-output" id="output-__init__">
-            <span class="terminal-prompt">root@plotille:~$ python3 __init__.py</span>
-            <div class="output-content"></div>
-        </div>
-    </div>
-</div>
-
-
 ## color_example
 
-The MIT License
+Example: color_example
 
 <div class="terminal-window interactive-example" data-example="color_example">
     <div class="terminal-header">
@@ -34,29 +13,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-color_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import os
+            <textarea class="code-editor" id="editor-color_example">import os
 
 from plotille import color
 
@@ -130,7 +87,7 @@ if __name__ == "__main__":
 
 ## custom_ticks_example
 
-The MIT License
+Custom X and Y ticks
 
 <div class="terminal-window interactive-example" data-example="custom_ticks_example">
     <div class="terminal-header">
@@ -139,29 +96,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-custom_ticks_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-from functools import partial
+            <textarea class="code-editor" id="editor-custom_ticks_example">from functools import partial
 
 import plotille as plt
 
@@ -234,7 +169,7 @@ if __name__ == "__main__":
 
 ## ellipse_example
 
-The MIT License
+The module plotille.data contains helper functions for creating interesting
 
 <div class="terminal-window interactive-example" data-example="ellipse_example">
     <div class="terminal-header">
@@ -243,29 +178,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-ellipse_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import plotille
+            <textarea class="code-editor" id="editor-ellipse_example">import plotille
 import plotille.data as plt_data
 
 # The module plotille.data contains helper functions for creating interesting
@@ -328,7 +241,7 @@ if __name__ == "__main__":
 
 ## house_example
 
-The MIT License
+The underlying canvas-implementation can be used on its own.
 
 <div class="terminal-window interactive-example" data-example="house_example">
     <div class="terminal-header">
@@ -337,29 +250,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-house_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-from plotille import Canvas
+            <textarea class="code-editor" id="editor-house_example">from plotille import Canvas
 
 # The underlying canvas-implementation can be used on its own.
 
@@ -391,7 +282,7 @@ if __name__ == "__main__":
 
 ## network
 
-The MIT License
+Example: network
 
 <div class="terminal-window interactive-example" data-example="network">
     <div class="terminal-header">
@@ -400,29 +291,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-network"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import random
+            <textarea class="code-editor" id="editor-network">import random
 
 import plotille
 
@@ -467,7 +336,7 @@ if __name__ == "__main__":
 
 ## olympic_rings_example
 
-The MIT License
+The module plotille.data contains helper functions for creating interesting
 
 <div class="terminal-window interactive-example" data-example="olympic_rings_example">
     <div class="terminal-header">
@@ -476,29 +345,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-olympic_rings_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import plotille
+            <textarea class="code-editor" id="editor-olympic_rings_example">import plotille
 import plotille.data as plt_data
 
 # The module plotille.data contains helper functions for creating interesting
@@ -539,72 +386,9 @@ if __name__ == "__main__":
 </div>
 
 
-## performance_example
-
-The MIT License
-
-<div class="terminal-window interactive-example" data-example="performance_example">
-    <div class="terminal-header">
-        <span class="terminal-title">[python3 performance_example.py]</span>
-        <button class="terminal-run-btn" onclick="runExample('performance_example')">[EXEC]</button>
-    </div>
-    <div class="terminal-body">
-        <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-performance_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-from random import random
-from time import time
-
-import plotille
-
-
-def main():
-    y = []
-    for _ in range(1000):
-        y.append(random())
-    x = list(range(1000))
-
-    t0 = time()
-    for _ in range(100):
-        plotille.plot(x, y, height=30, width=60)
-    print(f"Took {time() - t0:.3f} sec")
-
-
-if __name__ == "__main__":
-    main()
-</textarea>
-        </div>
-        <div class="terminal-output" id="output-performance_example">
-            <span class="terminal-prompt">root@plotille:~$ python3 performance_example.py</span>
-            <div class="output-content"></div>
-        </div>
-    </div>
-</div>
-
-
 ## scatter_cats_example
 
-The MIT License
+Example: scatter_cats_example
 
 <div class="terminal-window interactive-example" data-example="scatter_cats_example">
     <div class="terminal-header">
@@ -613,29 +397,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-scatter_cats_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import plotille
+            <textarea class="code-editor" id="editor-scatter_cats_example">import plotille
 
 
 def main():
@@ -682,7 +444,7 @@ if __name__ == "__main__":
 
 ## span_example
 
-The MIT License
+print a horizontal line in the middle
 
 <div class="terminal-window interactive-example" data-example="span_example">
     <div class="terminal-header">
@@ -691,29 +453,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-span_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-import plotille
+            <textarea class="code-editor" id="editor-span_example">import plotille
 
 
 def cross_at_the_center():
@@ -827,7 +567,7 @@ if __name__ == "__main__":
 
 ## wetterdienst_example
 
-The MIT License
+formula from here:
 
 <div class="terminal-window interactive-example" data-example="wetterdienst_example">
     <div class="terminal-header">
@@ -836,36 +576,7 @@ The MIT License
     </div>
     <div class="terminal-body">
         <div class="code-editor-wrapper">
-            <textarea class="code-editor" id="editor-wetterdienst_example"># The MIT License
-
-# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
-
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-# Get data for your own: https://github.com/earthobservations/wetterdienst
-# call
-# wetterdienst values --provider=dwd --kind=observation \
-#                     --parameter=kl --resolution=daily \
-#                     --station 1048,4411 \
-#                     --date=1970-01-01/2021-01-01 > wetter-data.json
-
-import gzip
+            <textarea class="code-editor" id="editor-wetterdienst_example">import gzip
 import json
 import os
 from collections import defaultdict
