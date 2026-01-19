@@ -19,3 +19,7 @@ Pipfile.lock
 cov_html/
 coverage.xml
 pip-wheel-metadata/
+site/
+.mypy_cache/
+.ruff_cache/
+.uv/
