@@ -633,6 +633,11 @@ def main() -> int:
     index_path = generate_home_page(docs_dir)
     print(f"  index: {index_path}")
 
+    # Copy plotille for Brython
+    print("\nCopying plotille for Brython...")
+    copy_script = project_root / "scripts" / "copy_plotille_for_brython.py"
+    subprocess.run([sys.executable, str(copy_script)], check=True)
+
     print("\n✓ Documentation generation complete")
     return 0
 
