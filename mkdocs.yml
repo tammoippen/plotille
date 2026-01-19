@@ -1,0 +1,35 @@
+site_name: plotille
+site_url: https://plotille.tammo.io
+site_description: Plot in the terminal using braille dots
+site_author: Tammo Ippen
+repo_url: https://github.com/tammoippen/plotille
+repo_name: tammoippen/plotille
+
+theme:
+  name: material
+  palette:
+    scheme: default
+  features:
+    - content.code.copy
+    - navigation.sections
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            separate_signature: true
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+
+nav:
+  - Home: index.md
