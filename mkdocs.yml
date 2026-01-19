@@ -45,4 +45,3 @@ nav:
   - Cookbook:
       - Basic Plots: cookbook/basic.md
       - Advanced Examples: cookbook/advanced.md
-  - Test: test-brython.md
