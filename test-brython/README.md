@@ -8,24 +8,29 @@ Brython (Browser Python) is a Python 3 implementation for client-side web progra
 
 ## Setup
 
-The test environment was created with:
+To set up the test environment:
 
 ```bash
-# Install brython as dev dependency
-uv add --dev brython
-
-# Create test directory
-mkdir test-brython
 cd test-brython
-
-# Install brython files (brython.js, brython_stdlib.js)
-uv run python -m brython install
-
-# Add plotille package for browser use
-uv run python -m brython add_package plotille
+make setup
 ```
 
-This copies the plotille source into the test-brython directory so Brython can load it.
+This will:
+1. Install Brython runtime files (brython.js, brython_stdlib.js)
+2. Copy plotille source code to Lib/site-packages/plotille/
+3. Download AnsiUp library for ANSI color rendering
+
+**Note:** We copy plotille source directly instead of using `brython add_package plotille`
+because the latter would try to include dev dependencies (numpy, PIL, etc.) which are not
+needed and would cause import errors in the browser.
+
+### Other Makefile targets
+
+```bash
+make serve   # Start web server on http://localhost:8888/test-brython/
+make clean   # Remove all generated files
+make test    # Alias for setup
+```
 
 ## Test Page
 
