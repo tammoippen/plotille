@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Initialize Brython
+    // Brython automatically searches Lib/site-packages/ for modules
     brython({
-        debug: 1,  // Show errors in console
-        pythonpath: ['/src/lib']
+        debug: 1  // Show errors in console
     });
 
     // Wait for Python executor to be ready
