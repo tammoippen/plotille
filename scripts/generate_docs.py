@@ -249,11 +249,49 @@ def save_example_output(
     return output_file
 
 
+def generate_static_outputs(
+    examples: list[ExampleInfo],
+    output_dir: Path,
+) -> dict[str, Path]:
+    """
+    Execute static examples and save their outputs.
+
+    Args:
+        examples: List of ExampleInfo to process
+        output_dir: Directory to save outputs
+
+    Returns:
+        Dict mapping example name to output file path
+    """
+    outputs = {}
+
+    static_examples = [e for e in examples if not e.is_interactive]
+
+    print(f"\nGenerating outputs for {len(static_examples)} static examples...")
+
+    for info in static_examples:
+        print(f"  Executing {info.name}...", end=" ")
+
+        output = execute_example(info.path)
+
+        if output.success:
+            output_path = save_example_output(info, output, output_dir)
+            outputs[info.name] = output_path
+            print("✓")
+        else:
+            print(f"✗ (failed)")
+            if output.stderr:
+                print(f"    Error: {output.stderr[:100]}")
+
+    return outputs
+
+
 def main() -> int:
-    """Main entry point for testing."""
+    """Main entry point."""
     # Find examples directory
     project_root = Path(__file__).parent.parent
     examples_dir = project_root / "examples"
+    output_dir = project_root / "docs" / "assets" / "example-outputs"
 
     if not examples_dir.exists():
         print(f"Error: {examples_dir} not found", file=sys.stderr)
@@ -276,6 +314,10 @@ def main() -> int:
     for category, items in sorted(categories.items()):
         interactive_count = sum(1 for e in items if e.is_interactive)
         print(f"  {category}: {len(items)} examples ({interactive_count} interactive)")
+
+    # Generate static outputs
+    outputs = generate_static_outputs(examples, output_dir)
+    print(f"\nGenerated {len(outputs)} static outputs")
 
     return 0
 
