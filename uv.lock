@@ -2,8 +2,42 @@ version = 1
 revision = 3
 requires-python = ">=3.10, <4"
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
     "python_full_version < '3.11'",
+]
+
+[[package]]
+name = "brython"
+version = "3.11.1"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version < '3.11'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bd/c0/e45c6e3810e67d2bc8bb16ceb83b318a0f5a4a2fd720fafce013ef95e279/brython-3.11.1.tar.gz", hash = "sha256:1c1a645772727f1508bdb4075491b86d4330ea55ae7ca566bcdac3c27ee87cd0", size = 1533629, upload-time = "2023-01-30T14:24:00.757Z" }
+
+[[package]]
+name = "brython"
+version = "3.11.3"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version == '3.11.*'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f6/57/03e40b5af20bbccab502c136d131fb3fc67e154034ac4ec4cff2401264f3/brython-3.11.3.tar.gz", hash = "sha256:aac080464df0f208ddc22b1b667fcdd17c13abc3eeac4d8aca04dcd424fb625b", size = 1555405, upload-time = "2023-06-19T10:29:11.799Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a2/75/7068220ab2ed9edd630d4ae1f7961307c79ef41d8e55cae2ea72556b443f/brython-3.11.3-py3-none-any.whl", hash = "sha256:a0332fdb630a759a5a8cff3a9d0ff0bcad34dd6ef600f0f7920d90bb52c92cc7", size = 1576196, upload-time = "2023-06-19T10:29:09.292Z" },
+]
+
+[[package]]
+name = "brython"
+version = "3.14.0"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.12'",
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3e/a1/fe7c4f852412be11888aa1cce8140627a0b21220ba5a6c2eb12f21c8fa56/brython-3.14.0.tar.gz", hash = "sha256:e52ee7c01cd52c62cabfc0d15313f8d47b16746523241fa14474e07de4e212de", size = 1574480, upload-time = "2025-10-11T15:19:24.349Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/39/cc486893d99eb85d276057b3b105ecd7fd37735bb5929feb72872d4516b9/brython-3.14.0-py3-none-any.whl", hash = "sha256:84cb0188e4e11ba813b756d502637da86010c9c3467eb28be3aedc3b3b96708f", size = 1598879, upload-time = "2025-10-11T15:19:22.448Z" },
 ]
 
 [[package]]
@@ -338,7 +372,8 @@ name = "numpy"
 version = "2.4.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.12'",
+    "python_full_version == '3.11.*'",
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a4/7a/6a3d14e205d292b738db449d0de649b373a59edb0d0b4493821d0a3e8718/numpy-2.4.0.tar.gz", hash = "sha256:6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934", size = 20685720, upload-time = "2025-12-20T16:18:19.023Z" }
 wheels = [
@@ -533,11 +568,14 @@ wheels = [
 
 [[package]]
 name = "plotille"
-version = "5.2.0"
+version = "6.0.0"
 source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "brython", version = "3.11.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "brython", version = "3.11.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "brython", version = "3.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "mypy" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
@@ -553,6 +591,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "brython", specifier = ">=3.11.1" },
     { name = "mypy" },
     { name = "numpy" },
     { name = "pillow" },

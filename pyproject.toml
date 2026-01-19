@@ -38,6 +38,7 @@ Repository = "https://github.com/tammoippen/plotille"
 
 [dependency-groups]
 dev = [
+  "brython>=3.11.1",
   "mypy",
   "numpy",
   "Pillow",
