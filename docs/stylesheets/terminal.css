@@ -22,15 +22,21 @@
 
 /* Global overrides for Material theme */
 [data-md-color-scheme="plotille"] {
+    /* Keep amber for accents, but use proper backgrounds */
     --md-primary-fg-color: var(--amber-base);
     --md-primary-fg-color--light: var(--amber-bright);
     --md-primary-fg-color--dark: var(--amber-dim);
     --md-accent-fg-color: var(--amber-bright);
 
+    /* Force dark backgrounds with amber text */
     --md-default-bg-color: var(--amber-black);
     --md-default-fg-color: var(--amber-base);
     --md-code-bg-color: var(--amber-dark);
     --md-code-fg-color: var(--amber-base);
+
+    /* Add these to prevent light backgrounds */
+    --md-typeset-a-color: var(--amber-bright);
+    --md-typeset-color: var(--amber-base);
 }
 
 /* Typography */
@@ -40,9 +46,11 @@ body {
     color: var(--amber-base);
 }
 
+/* Ensure headers are always readable */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'VT323', monospace;
-    color: var(--amber-bright);
+    color: var(--amber-bright) !important;
+    background: transparent !important;
     text-shadow: 0 0 8px var(--amber-glow);
     letter-spacing: 0.05em;
 }
@@ -77,6 +85,30 @@ body::before {
 /* Phosphor glow on text */
 .md-content {
     text-shadow: 0 0 2px var(--amber-glow);
+}
+
+/* Force main content area to be dark */
+.md-main,
+.md-content,
+.md-content__inner {
+    background-color: var(--amber-black) !important;
+    color: var(--amber-base) !important;
+}
+
+/* Ensure sidebar is dark */
+.md-sidebar {
+    background-color: var(--amber-black) !important;
+}
+
+/* Links should be bright amber and underlined for visibility */
+a {
+    color: var(--amber-bright) !important;
+    text-decoration: underline;
+}
+
+a:hover {
+    color: var(--amber-bright) !important;
+    text-shadow: 0 0 10px var(--amber-glow);
 }
 
 /* Terminal window styling */

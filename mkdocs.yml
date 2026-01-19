@@ -36,3 +36,6 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Cookbook:
+      - Basic Plots: cookbook/basic.md
+      - Advanced Examples: cookbook/advanced.md
