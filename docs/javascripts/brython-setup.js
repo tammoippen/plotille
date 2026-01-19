@@ -44,30 +44,36 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function runExample(exampleName) {
     const editor = document.getElementById(`editor-${exampleName}`);
-    const outputDiv = document.querySelector(`#output-${exampleName} .output-content`);
+    const outputContainer = document.getElementById(`output-${exampleName}`);
+    const outputContent = outputContainer ? outputContainer.querySelector('.output-content') : null;
 
-    if (!editor || !outputDiv) {
+    if (!editor || !outputContent) {
         console.error(`Example ${exampleName} not found`);
         return;
     }
 
     // Check if Brython executor is ready
     if (!brythonReady || !window.pythonRunCode) {
-        outputDiv.textContent = 'Brython not ready yet...';
-        outputDiv.classList.add('error');
+        outputContent.textContent = 'Brython not ready yet...';
+        outputContent.classList.add('error');
         console.error('Brython executor not ready');
         return;
     }
 
     const code = editor.value;
 
+    // Give the output content div an ID if it doesn't have one
+    if (!outputContent.id) {
+        outputContent.id = `output-content-${exampleName}`;
+    }
+
     // Call the Python function to execute the code
     // It will handle output capture and display
     try {
-        window.pythonRunCode(code, outputDiv.id);
+        window.pythonRunCode(code, outputContent.id);
     } catch (error) {
-        outputDiv.classList.add('error');
-        outputDiv.textContent = `Error: ${error.message}`;
+        outputContent.classList.add('error');
+        outputContent.textContent = `Error: ${error.message}`;
         console.error('Brython execution error:', error);
     }
 }
