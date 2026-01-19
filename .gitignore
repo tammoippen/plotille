@@ -11,6 +11,13 @@ build/
 *.c
 *.html
 !docs/overrides/*.html
+
+# Brython runtime files (generated, should be installed via make docs-setup)
+docs/brython.js
+docs/brython_stdlib.js
+docs/unicode.txt
+docs/README.txt
+docs/demo.html
 *.pyc
 __pycache__/
 dist/
