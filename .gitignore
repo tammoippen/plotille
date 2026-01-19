@@ -10,6 +10,7 @@ build/
 *.so
 *.c
 *.html
+!docs/overrides/*.html
 *.pyc
 __pycache__/
 dist/

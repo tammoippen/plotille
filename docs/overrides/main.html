@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <!-- Brython Python executor - load after Brython is initialized -->
+  <script type="text/python" src="{{ 'javascripts/brython-executor.py' | url }}"></script>
+{% endblock %}
