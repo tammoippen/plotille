@@ -1,0 +1,242 @@
+/*
+ * Plotille Documentation Theme
+ * Amber Phosphor CRT Terminal Aesthetic
+ */
+
+/* Import retro terminal fonts */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&display=swap');
+
+:root {
+    /* Amber phosphor color palette */
+    --amber-black: #0a0a0a;
+    --amber-dark: #1a1200;
+    --amber-dim: #cc8800;
+    --amber-base: #ffb000;
+    --amber-bright: #ffd000;
+    --amber-glow: rgba(255, 176, 0, 0.4);
+
+    /* Spacing */
+    --terminal-padding: 1rem;
+    --terminal-border: 2px;
+}
+
+/* Global overrides for Material theme */
+[data-md-color-scheme="plotille"] {
+    --md-primary-fg-color: var(--amber-base);
+    --md-primary-fg-color--light: var(--amber-bright);
+    --md-primary-fg-color--dark: var(--amber-dim);
+    --md-accent-fg-color: var(--amber-bright);
+
+    --md-default-bg-color: var(--amber-black);
+    --md-default-fg-color: var(--amber-base);
+    --md-code-bg-color: var(--amber-dark);
+    --md-code-fg-color: var(--amber-base);
+}
+
+/* Typography */
+body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--amber-black);
+    color: var(--amber-base);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'VT323', monospace;
+    color: var(--amber-bright);
+    text-shadow: 0 0 8px var(--amber-glow);
+    letter-spacing: 0.05em;
+}
+
+/* CRT scanline effect */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        transparent 50%,
+        rgba(0, 0, 0, 0.1) 50%
+    );
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(4px);
+    }
+}
+
+/* Phosphor glow on text */
+.md-content {
+    text-shadow: 0 0 2px var(--amber-glow);
+}
+
+/* Terminal window styling */
+.terminal-window {
+    background: var(--amber-black);
+    border: var(--terminal-border) solid var(--amber-dim);
+    border-radius: 4px;
+    margin: 1.5rem 0;
+    box-shadow: 0 0 20px var(--amber-glow);
+    overflow: hidden;
+}
+
+.terminal-header {
+    background: var(--amber-dark);
+    padding: 0.5rem var(--terminal-padding);
+    border-bottom: 1px solid var(--amber-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-title {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--amber-base);
+    font-size: 0.9rem;
+}
+
+.terminal-run-btn {
+    font-family: 'VT323', monospace;
+    background: var(--amber-dim);
+    color: var(--amber-black);
+    border: 1px solid var(--amber-base);
+    padding: 0.25rem 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.terminal-run-btn:hover {
+    background: var(--amber-base);
+    box-shadow: 0 0 10px var(--amber-glow);
+}
+
+.terminal-body {
+    padding: var(--terminal-padding);
+    background: var(--amber-black);
+}
+
+.terminal-output {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--amber-base);
+    white-space: pre;
+    margin-top: 1rem;
+    line-height: 1.4;
+}
+
+.terminal-prompt {
+    color: var(--amber-bright);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.terminal-prompt::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--amber-base);
+    margin-left: 4px;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Code editor styling */
+.code-editor-wrapper {
+    border: 1px solid var(--amber-dim);
+    border-radius: 2px;
+}
+
+.code-editor {
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--amber-dark);
+    color: var(--amber-base);
+    width: 100%;
+    min-height: 300px;
+    padding: 1rem;
+    border: none;
+    resize: vertical;
+}
+
+/* Static example output */
+.static-example .terminal-output {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+/* Hero terminal animation */
+.hero-terminal {
+    margin: 2rem 0;
+    font-size: 0.8rem;
+}
+
+.hero-plot {
+    min-height: 300px;
+    margin: 0;
+}
+
+/* Braille dot decorations */
+.braille-divider {
+    text-align: center;
+    color: var(--amber-dim);
+    font-size: 1.5rem;
+    margin: 2rem 0;
+    opacity: 0.3;
+}
+
+/* Navigation styled as terminal prompt */
+.md-sidebar--primary {
+    background: var(--amber-black);
+}
+
+.md-nav__link {
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--amber-base);
+}
+
+.md-nav__link--active {
+    color: var(--amber-bright);
+}
+
+.md-nav__link::before {
+    content: '> ';
+    color: var(--amber-dim);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.md-nav__link--active::before,
+.md-nav__link:hover::before {
+    opacity: 1;
+}
+
+/* Code blocks */
+.highlight {
+    background: var(--amber-dark) !important;
+    border: 1px solid var(--amber-dim);
+}
+
+.highlight pre {
+    color: var(--amber-base);
+}
+
+/* Admonitions (info boxes) */
+.admonition {
+    background: var(--amber-dark);
+    border-left: 4px solid var(--amber-base);
+    color: var(--amber-base);
+}
