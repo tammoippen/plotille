@@ -8,10 +8,13 @@ repo_name: tammoippen/plotille
 theme:
   name: material
   palette:
-    scheme: default
+    scheme: plotille
   features:
     - content.code.copy
     - navigation.sections
+
+extra_css:
+  - stylesheets/terminal.css
 
 plugins:
   - search
