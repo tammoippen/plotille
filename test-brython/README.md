@@ -88,8 +88,8 @@ For the documentation system to use interactive Brython examples, we need:
 - Brython must be installed with `uv run python -m brython install`
 - Plotille must be added with `uv run python -m brython add_package plotille`
 - AnsiUp must be loaded as ES6 module: `import { AnsiUp } from './ansi_up.js'`
-- Set `os.environ["FORCE_COLOR"] = "1"` to enable ANSI output
-- OutputCapture class needs `isatty()` method returning `True`
+- OutputCapture class needs `isatty()` method returning `True` (enables colors automatically)
+- No need for `FORCE_COLOR` environment variable
 
 **Limitations found:**
 - None significant for documentation use case
