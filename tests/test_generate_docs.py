@@ -125,3 +125,56 @@ def test_save_example_output(tmp_path):
 
     assert saved_path.exists()
     assert saved_path.read_text() == "test output"
+
+
+def test_generate_interactive_example_markdown(tmp_path):
+    """Test generating markdown for interactive example."""
+    from pathlib import Path
+
+    # Create actual test file
+    test_py = tmp_path / "test.py"
+    test_py.write_text('print("hi")')
+
+    info = generate_docs.ExampleInfo(
+        path=test_py,
+        name="test",
+        description="Test example",
+        imports={"plotille"},
+        is_interactive=True,
+    )
+
+    markdown = generate_docs.generate_interactive_example_markdown(info)
+
+    assert "## test" in markdown
+    assert "Test example" in markdown
+    assert "interactive-example" in markdown
+    assert 'print("hi")' in markdown
+
+
+def test_generate_static_example_markdown(tmp_path):
+    """Test generating markdown for static example."""
+    from pathlib import Path
+    import unittest.mock as mock
+
+    # Create actual test files
+    test_py = tmp_path / "test.py"
+    test_py.write_text('print("hi")')
+
+    info = generate_docs.ExampleInfo(
+        path=test_py,
+        name="test",
+        description="Test example",
+        imports={"plotille", "numpy"},
+        is_interactive=False,
+    )
+
+    # Create mock output file
+    output_path = tmp_path / "test.txt"
+    output_path.write_text("Example output here")
+
+    markdown = generate_docs.generate_static_example_markdown(info, output_path)
+
+    assert "## test" in markdown
+    assert "Test example" in markdown
+    assert "numpy" in markdown
+    assert "Example output here" in markdown

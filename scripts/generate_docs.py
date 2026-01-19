@@ -286,6 +286,97 @@ def generate_static_outputs(
     return outputs
 
 
+def generate_interactive_example_markdown(info: ExampleInfo) -> str:
+    """
+    Generate markdown for an interactive example.
+
+    Args:
+        info: ExampleInfo for the example
+
+    Returns:
+        Markdown string with interactive code editor
+    """
+    source_code = info.path.read_text()
+
+    # Escape backticks in code for markdown
+    escaped_code = source_code.replace("```", "\\`\\`\\`")
+
+    return f"""## {info.name}
+
+{info.description}
+
+<div class="terminal-window interactive-example" data-example="{info.name}">
+    <div class="terminal-header">
+        <span class="terminal-title">[python3 {info.name}.py]</span>
+        <button class="terminal-run-btn" onclick="runExample('{info.name}')">[EXEC]</button>
+    </div>
+    <div class="terminal-body">
+        <div class="code-editor-wrapper">
+            <textarea class="code-editor" id="editor-{info.name}">{escaped_code}</textarea>
+        </div>
+        <div class="terminal-output" id="output-{info.name}">
+            <span class="terminal-prompt">root@plotille:~$ python3 {info.name}.py</span>
+            <div class="output-content"></div>
+        </div>
+    </div>
+</div>
+
+"""
+
+
+def generate_static_example_markdown(
+    info: ExampleInfo,
+    output_path: Path,
+) -> str:
+    """
+    Generate markdown for a static example with pre-rendered output.
+
+    Args:
+        info: ExampleInfo for the example
+        output_path: Path to pre-rendered output file
+
+    Returns:
+        Markdown string with code and output
+    """
+    source_code = info.path.read_text()
+
+    # Read pre-rendered output
+    if output_path.exists():
+        output = output_path.read_text()
+    else:
+        output = "Output not available"
+
+    deps = ", ".join(sorted(info.imports - {"plotille"}))
+
+    return f"""## {info.name}
+
+{info.description}
+
+!!! info "External Dependencies"
+    This example requires: **{deps}**
+
+    Output is pre-rendered below. To run interactively, install dependencies locally.
+
+**Code:**
+
+```python
+{source_code}
+```
+
+**Output:**
+
+<div class="terminal-window static-example">
+    <div class="terminal-header">
+        <span class="terminal-title">[output: {info.name}.py]</span>
+    </div>
+    <div class="terminal-body">
+        <pre class="terminal-output">{output}</pre>
+    </div>
+</div>
+
+"""
+
+
 def main() -> int:
     """Main entry point."""
     # Find examples directory
