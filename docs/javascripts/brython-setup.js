@@ -2,6 +2,9 @@
  * Brython setup and initialization for plotille documentation.
  */
 
+// Track if Brython is ready
+let brythonReady = false;
+
 // Initialize Brython when page loads
 document.addEventListener('DOMContentLoaded', function() {
     // Check if Brython is loaded
@@ -16,11 +19,26 @@ document.addEventListener('DOMContentLoaded', function() {
         pythonpath: ['/src/lib']
     });
 
-    console.log('Brython initialized');
+    // Wait for Python executor to be ready
+    const checkReady = setInterval(() => {
+        if (window.pythonRunCode) {
+            brythonReady = true;
+            clearInterval(checkReady);
+            console.log('Brython initialized and executor ready');
+        }
+    }, 50);
+
+    // Timeout after 5 seconds
+    setTimeout(() => {
+        if (!brythonReady) {
+            clearInterval(checkReady);
+            console.error('Brython executor not ready after 5 seconds');
+        }
+    }, 5000);
 });
 
 /**
- * Execute Python code in an example with proper output capture.
+ * Execute Python code in an example.
  *
  * @param {string} exampleName - Name of the example to run
  */
@@ -33,103 +51,25 @@ function runExample(exampleName) {
         return;
     }
 
+    // Check if Brython executor is ready
+    if (!brythonReady || !window.pythonRunCode) {
+        outputDiv.textContent = 'Brython not ready yet...';
+        outputDiv.classList.add('error');
+        console.error('Brython executor not ready');
+        return;
+    }
+
     const code = editor.value;
 
-    // Clear previous output
-    outputDiv.textContent = '';
-    outputDiv.classList.remove('error');
-
-    // Show loading indicator
-    outputDiv.textContent = 'Running...';
-
-    // Use setTimeout to allow UI update
-    setTimeout(() => {
-        try {
-            const scriptId = `brython-script-${exampleName}`;
-
-            // Remove any existing script with this ID
-            const existingScript = document.getElementById(scriptId);
-            if (existingScript) {
-                existingScript.remove();
-            }
-
-            // Wrap code with custom output capture (StringIO doesn't work in Brython)
-            // Use exec() to avoid breaking Brython's execution context with indentation
-            const wrappedCode = `
-import sys
-
-# Custom output capture class (Brython-compatible)
-class OutputCapture:
-    def __init__(self):
-        self.output = []
-    def write(self, text):
-        self.output.append(text)
-    def flush(self):
-        pass
-    def getvalue(self):
-        return ''.join(self.output)
-
-__output__ = OutputCapture()
-__old_stdout__ = sys.stdout
-sys.stdout = __output__
-
-try:
-    exec("""${code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}""")
-finally:
-    sys.stdout = __old_stdout__
-    print(__output__.getvalue(), end='')
-`;
-
-            // Create script element
-            const script = document.createElement('script');
-            script.type = 'text/python';
-            script.id = scriptId;
-            script.textContent = wrappedCode;
-
-            // Capture console.log output
-            window.__brython_output__ = '';
-            const oldLog = console.log;
-            console.log = function(...args) {
-                window.__brython_output__ += args.join(' ') + '\n';
-                oldLog.apply(console, args);
-            };
-
-            document.body.appendChild(script);
-
-            // Run Brython on this specific script
-            if (window.brython) {
-                brython({debug: 1, ids: [scriptId]});
-            }
-
-            // Restore console.log immediately
-            console.log = oldLog;
-
-            // Wait for output capture
-            setTimeout(() => {
-                let output = window.__brython_output__;
-
-                // Remove trailing newline added by our capture
-                if (output && output.endsWith('\n')) {
-                    output = output.slice(0, -1);
-                }
-
-                outputDiv.textContent = output || '(no output)';
-
-                // Clean up
-                const scriptToRemove = document.getElementById(scriptId);
-                if (scriptToRemove) {
-                    scriptToRemove.remove();
-                }
-                delete window.__brython_output__;
-            }, 150);
-
-        } catch (error) {
-            // Display error
-            outputDiv.classList.add('error');
-            outputDiv.textContent = `Error: ${error.message}`;
-            console.error('Brython execution error:', error);
-        }
-    }, 10);
+    // Call the Python function to execute the code
+    // It will handle output capture and display
+    try {
+        window.pythonRunCode(code, outputDiv.id);
+    } catch (error) {
+        outputDiv.classList.add('error');
+        outputDiv.textContent = `Error: ${error.message}`;
+        console.error('Brython execution error:', error);
+    }
 }
 
 // Make runExample globally available
