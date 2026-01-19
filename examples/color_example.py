@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -29,35 +26,59 @@ from plotille import color
 
 
 def main():
-    print(color('Do not print colors, if `no_color` is set to True', fg='red', no_color=True))
-    print(color('You can set a foreground', fg='red'))
-    print(color('and a background.', bg='red'))
-    print(color('Or both.', fg='black', bg='cyan'))
+    print(
+        color(
+            "Do not print colors, if `no_color` is set to True", fg="red", no_color=True
+        )
+    )
+    print(color("You can set a foreground", fg="red"))
+    print(color("and a background.", bg="red"))
+    print(color("Or both.", fg="black", bg="cyan"))
 
-    print(color('Aside from 4-bit / name colors', fg='green', mode='names'))
-    print(color('you can also set 8-bit colors / 256-color lookup tables', fg=126, bg=87, mode='byte'))
-    print(color('or go with full 24-bit rgb colors', fg=(50, 50, 50), bg=(166, 237, 240), mode='rgb'))
+    print(color("Aside from 4-bit / name colors", fg="green", mode="names"))
+    print(
+        color(
+            "you can also set 8-bit colors / 256-color lookup tables",
+            fg=126,
+            bg=87,
+            mode="byte",
+        )
+    )
+    print(
+        color(
+            "or go with full 24-bit rgb colors",
+            fg=(50, 50, 50),
+            bg=(166, 237, 240),
+            mode="rgb",
+        )
+    )
 
-    no_color = os.environ.get('NO_COLOR')
-    os.environ['NO_COLOR'] = '1'
-    print(color('The Environment variable `NO_COLOR` will always strip colors.', fg='red'))
+    no_color = os.environ.get("NO_COLOR")
+    os.environ["NO_COLOR"] = "1"
+    print(
+        color("The Environment variable `NO_COLOR` will always strip colors.", fg="red")
+    )
     if no_color:
-        os.environ['NO_COLOR'] = no_color
+        os.environ["NO_COLOR"] = no_color
     else:
-        os.environ.pop('NO_COLOR')
+        os.environ.pop("NO_COLOR")
 
-    force_color = os.environ.get('FORCE_COLOR')
-    os.environ['FORCE_COLOR'] = '1'
-    print(color('The Environment variable `FORCE_COLOR` allows to toggle colors,', fg='blue'))
-    os.environ['FORCE_COLOR'] = '0'
-    print(color('setting it to 0, none or false, strips color codes', fg='magenta'))
-    os.environ['FORCE_COLOR'] = '1'
-    print(color('everything else forces color codes', fg='green'))
+    force_color = os.environ.get("FORCE_COLOR")
+    os.environ["FORCE_COLOR"] = "1"
+    print(
+        color(
+            "The Environment variable `FORCE_COLOR` allows to toggle colors,", fg="blue"
+        )
+    )
+    os.environ["FORCE_COLOR"] = "0"
+    print(color("setting it to 0, none or false, strips color codes", fg="magenta"))
+    os.environ["FORCE_COLOR"] = "1"
+    print(color("everything else forces color codes", fg="green"))
     if force_color:
-        os.environ['FORCE_COLOR'] = force_color
+        os.environ["FORCE_COLOR"] = force_color
     else:
-        os.environ.pop('FORCE_COLOR')
+        os.environ.pop("FORCE_COLOR")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

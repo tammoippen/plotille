@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -39,16 +36,32 @@ def main():
 
     y = 2 * x
     plot1 = plt.plot(
-        x, y,
-        lc='red', height=rows, width=columns, X_label='x', Y_label='T',
-        x_min=0, x_max=1, y_min=np.min(y), y_max=np.max(y),
+        x,
+        y,
+        lc="red",
+        height=rows,
+        width=columns,
+        X_label="x",
+        Y_label="T",
+        x_min=0,
+        x_max=1,
+        y_min=np.min(y),
+        y_max=np.max(y),
     )
 
     y = np.exp(-x)
     plot2 = plt.plot(
-        x, y,
-        lc='green', height=rows, width=columns, X_label='t', Y_label='T',
-        x_min=0, x_max=1, y_min=np.min(y), y_max=np.max(y),
+        x,
+        y,
+        lc="green",
+        height=rows,
+        width=columns,
+        X_label="t",
+        Y_label="T",
+        x_min=0,
+        x_max=1,
+        y_min=np.min(y),
+        y_max=np.max(y),
     )
 
     print(plot1)
@@ -60,21 +73,23 @@ def main():
     max_line = len(lines[-1])
 
     # Arrow up
-    lines[0] += ' ' * (max_line - len(lines[0])) + '| '
+    lines[0] += " " * (max_line - len(lines[0])) + "| "
     # max value line
-    lines[1] += ' ' * (max_line - len(lines[1])) + '| '
+    lines[1] += " " * (max_line - len(lines[1])) + "| "
     # canvas
     # y-axis takes up 13 characters
     for row_idx in range(rows):
-        lines[2 + row_idx] += ' ' * (max_line - 13 - columns) + '| '
+        lines[2 + row_idx] += " " * (max_line - 13 - columns) + "| "
     # x-axis
-    lines[-2] += ' ' * (max_line - len(lines[-2])) + '| '
-    lines[-1] += ' ' * (max_line - len(lines[-1])) + '| '
+    lines[-2] += " " * (max_line - len(lines[-2])) + "| "
+    lines[-1] += " " * (max_line - len(lines[-1])) + "| "
 
-    plot = (os.linesep).join(l1 + l2 for (l1, l2) in zip(lines, plot2.split(os.linesep)))
+    plot = (os.linesep).join(
+        l1 + l2 for (l1, l2) in zip(lines, plot2.split(os.linesep), strict=True)
+    )
 
     print(plot)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

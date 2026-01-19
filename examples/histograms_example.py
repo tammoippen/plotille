@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,12 +30,12 @@ import plotille
 
 
 def main():
-    print('Histogram left to right')
+    print("Histogram left to right")
     print(plotille.hist(np.random.normal(size=10000)))
 
-    print('Histogram rotated')
+    print("Histogram rotated")
     print(plotille.histogram(np.random.normal(size=10000)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

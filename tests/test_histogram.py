@@ -1,13 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
+from datetime import datetime
 
 from plotille import histogram
+from plotille._figure_data import Histogram
 
 
 def test_empty(cleandoc):
     x = histogram([])
-    assert x == cleandoc("""
+    assert (
+        x
+        == cleandoc("""
      (Counts)  ^
              1 |
     0.97500000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -52,11 +53,14 @@ def test_empty(cleandoc):
              0 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | 0         0.1250000 0.2500000 0.3750000 0.5000000 0.6250000 0.7500000 0.8750000 1        """)
+    )
 
 
 def test_single_value(cleandoc):
     x = histogram([0])
-    assert x == cleandoc("""
+    assert (
+        x
+        == cleandoc("""
      (Counts)  ^
     1.10000000 |
     1.07250000 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -101,3 +105,42 @@ def test_single_value(cleandoc):
              0 | ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     -----------|-|---------|---------|---------|---------|---------|---------|---------|---------|-> (X)
                | -0.500000 -0.375000 -0.250000 -0.125000 0         0.1250000 0.2500000 0.3750000 0.5000000""")
+    )
+
+
+def test_histogram_stores_normalized_data():
+    """Histogram should normalize X data to float."""
+    xs = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    bins = 5
+
+    hist = Histogram(xs, bins, lc=None)
+
+    # X should be normalized
+    assert all(isinstance(x, float | int) for x in hist.X)
+    assert not hist.X_metadata.is_datetime
+
+    # buckets should also be float
+    assert all(isinstance(b, float) for b in hist.buckets)
+
+
+def test_histogram_with_datetime_data():
+    """Histogram should handle datetime data."""
+
+    xs = [datetime(2024, 1, 1), datetime(2024, 1, 2), datetime(2024, 1, 3)]
+    bins = 2
+
+    hist = Histogram(xs, bins, lc=None)
+
+    assert all(isinstance(x, float) for x in hist.X)
+    assert hist.X_metadata.is_datetime
+    assert all(isinstance(b, float) for b in hist.buckets)
+
+
+def test_histogram_width_vals_returns_normalized():
+    """width_vals should return normalized data."""
+
+    xs = [1, 2, 3, 4, 5]
+    hist = Histogram(xs, bins=3, lc=None)
+
+    width = hist.width_vals()
+    assert all(isinstance(x, float | int) for x in width)

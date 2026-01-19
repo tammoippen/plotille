@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,17 +37,17 @@ def main():
     fig.set_y_limits(min_=0, max_=500)
 
     centers = []
-    centers.append([250, 200, 'blue'])
-    centers.append([375, 200, 'white'])
-    centers.append([500, 200, 'red'])
-    centers.append([310, 250, 'yellow'])
-    centers.append([435, 250, 'green'])
+    centers.append([250, 200, "blue"])
+    centers.append([375, 200, "white"])
+    centers.append([500, 200, "red"])
+    centers.append([310, 250, "yellow"])
+    centers.append([435, 250, "green"])
     for ring in centers:
-        X, Y = plt_data.circle(x_center=ring[0], y_center=500 - ring[1], radius=50)  # noqa: N806
+        X, Y = plt_data.circle(x_center=ring[0], y_center=500 - ring[1], radius=50)
         fig.plot(X, Y, lc=ring[2])
 
     print(fig.show(legend=False))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,63 +1,147 @@
-[tool.poetry]
-
+[project]
 name = "plotille"
-version = "5.1.0"
+version = "5.2.0"
 description = "Plot in the terminal using braille dots."
-authors = ["Tammo Ippen <tammo.ippen@posteo.de>"]
-license = "MIT"
-
+authors = [{ name = "Tammo Ippen", email = "tammo.ippen@posteo.de" }]
+requires-python = ">=3.10,<4"
 readme = "README.md"
-
-repository = "https://github.com/tammoippen/plotille"
-homepage = "https://github.com/tammoippen/plotille"
-
-keywords = ['plot', 'scatter', 'histogram', 'terminal', 'braille', 'unicode', 'timeseries']
-
+license = "MIT"
+keywords = [
+  "plot",
+  "scatter",
+  "histogram",
+  "terminal",
+  "braille",
+  "unicode",
+  "timeseries",
+]
 classifiers = [
-    # Trove classifiers
-    # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-    'Environment :: Console',
-    'License :: OSI Approved :: MIT License',
-    'Intended Audience :: Science/Research',
-    'Programming Language :: Python',
-    'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.8',
-    'Programming Language :: Python :: 3.9',
-    'Programming Language :: Python :: 3.10',
-    'Programming Language :: Python :: 3.11',
-    'Programming Language :: Python :: 3.12',
-    'Programming Language :: Python :: Implementation :: CPython',
-    'Programming Language :: Python :: Implementation :: PyPy',
-    'Topic :: Scientific/Engineering :: Visualization',
-    'Topic :: Terminals'
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Topic :: Terminals",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.8"
+[project.urls]
+Homepage = "https://github.com/tammoippen/plotille"
+Repository = "https://github.com/tammoippen/plotille"
 
-
-[tool.poetry.dev-dependencies]
-
-flake8 = "^5"
-flake8-bugbear = "^22"
-flake8-commas = "^2"
-flake8-comprehensions = "^3"
-flake8-import-order = "^0.18"
-flake8-pep3101 = "^1"
-flake8-polyfill = "^1"
-flake8-quotes = "^3"
-mock = "^3"
-numpy = [
-    { version = "1.24.4", python = "~3.8" },
-    { version = "^1", python = "^3.9" },
+[dependency-groups]
+dev = [
+  "mypy",
+  "numpy",
+  "Pillow",
+  "pytest",
+  "pytest-cov",
+  "pytest-mock",
+  "ruff",
+  "ty>=0.0.3",
 ]
-pendulum = [
-    { version = "^2", python = "<3.12" },
-    { version = "^3", python = "^3.12" },
+
+[tool.pytest.ini_options]
+addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html"
+
+
+[tool.ruff.lint]
+# select = ["B", "BLE", "C", "E", "F", "PL", "Q", "RUF", "T", "W", "I"]
+# pylint.max-args = 6
+select = [
+  # "A",
+  "B",
+  "BLE",
+  # "C4",
+  # "DTZ",
+  "E",
+  # "EM",
+  "F",
+  "FA",
+  # "FBT",
+  "I",
+  "PT",
+  "RSE",
+  "RUF",
+  "S",
+  "T20",
+  "TRY",
+  "UP",
+  "W605",
 ]
-pep8-naming = "^0.11"
-Pillow = "^9"
-pytest = "^6"
-pytest-cov = "^3"
-pytest-mock = "^2"
-pytest-pythonpath =  "^0.7.3"
+ignore = [
+  "E111",
+  "E114",
+  "E117",
+  "E501",
+  "PT011",
+  "PT013",
+  "S101",
+  "S110",
+  "S112",
+  "S311",
+  "TRY002",
+  "TRY003",
+  "UP007",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/examples/*" = ["T201"]
+"**/tests/*" = [
+  "E501",
+  "PLR2004",
+  "PLR0913",
+  "PLR0915",
+  "T201",
+] #["B011", "PLR2004"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["plotille"]
+split-on-trailing-comma = false
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.mypy]
+files = "plotille/"
+namespace_packages = true
+explicit_package_bases = true
+warn_unused_configs = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = false
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+no_implicit_reexport = true
+strict_equality = true
+allow_redefinition = true
+local_partial_types = true
+warn_unreachable = true
+disallow_any_unimported = true
+
+# [tools.mypy-tests.*]
+# disallow_untyped_calls = false
+# disallow_untyped_defs = false
+# disallow_incomplete_defs = false
+# warn_unreachable = false
+
+[build-system]
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "plotille"
+module-root = "."

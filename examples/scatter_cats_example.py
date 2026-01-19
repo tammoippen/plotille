@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -41,9 +38,9 @@ def draw_scene(mouse_list, cat_list):
     for idx, mouse in enumerate(mouse_list):
         listx.append(mouse[0])
         listy.append(mouse[1])
-        names.append('o MOUSE {}'.format(idx))
+        names.append(f"o MOUSE {idx}")
 
-    fig.text(listy, listx, names, lc='red')
+    fig.text(listy, listx, names, lc="red")
 
     listx = []
     listy = []
@@ -51,10 +48,10 @@ def draw_scene(mouse_list, cat_list):
         listx.append(cat[0])
         listy.append(cat[1])
 
-    fig.scatter(listy, listx, lc='green', label='Cat', marker='x')
+    fig.scatter(listy, listx, lc="green", label="Cat", marker="x")
 
     print(fig.show(legend=True))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

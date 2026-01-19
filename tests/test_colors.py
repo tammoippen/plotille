@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 from random import choice
 
@@ -10,81 +7,91 @@ import plotille._colors as clr
 
 
 def test_color_edges(mocker, tty):
-    assert '' == clr.color('')
-    assert '' == clr.color('', 'black', 'red', no_color=True)
+    assert "" == clr.color("")
+    assert "" == clr.color("", "black", "red", no_color=True)
 
     with pytest.raises(ValueError):
-        clr.color('', 'black', 'red', mode='NAME')  # wrong mode
+        clr.color("", "black", "red", mode="NAME")  # wrong mode
 
-    mocker.patch('plotille._colors._isatty', return_value=False)
-    assert '' == clr.color('', 'black', 'red')
+    mocker.patch("plotille._colors._isatty", return_value=False)
+    assert "" == clr.color("", "black", "red")
 
 
 def test_names(tty):
-    assert '' == clr._names(None, None)
-    assert '\x1b[30m' == clr._names('black', None)
-    assert '\x1b[30;40m' == clr._names('black', 'black')
+    assert "" == clr._names(None, None)
+    assert "\x1b[30m" == clr._names("black", None)
+    assert "\x1b[30;40m" == clr._names("black", "black")
 
-    names = ['black', 'red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+    names = ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white"]
 
     for i, fg in enumerate(names):
-        assert '\x1b[{}m'.format(30 + i) == clr._names(fg, None)
-        assert '\x1b[{}m'.format(90 + i) == clr._names('bright_' + fg, None)
-        assert '\x1b[1;{}m'.format(30 + i) == clr._names('bright_' + fg + '_old', None)
+        assert f"\x1b[{30 + i}m" == clr._names(fg, None)
+        assert f"\x1b[{90 + i}m" == clr._names("bright_" + fg, None)
+        assert f"\x1b[1;{30 + i}m" == clr._names("bright_" + fg + "_old", None)
 
-        assert '\x1b[{}m \x1b[0m'.format(30 + i) == clr.color(' ', fg, None)
-        assert '\x1b[{}m \x1b[0m'.format(90 + i) == clr.color(' ', 'bright_' + fg, None)
-        assert '\x1b[1;{}m \x1b[0m'.format(30 + i) == clr.color(' ', 'bright_' + fg + '_old', None)
+        assert f"\x1b[{30 + i}m \x1b[0m" == clr.color(" ", fg, None)
+        assert f"\x1b[{90 + i}m \x1b[0m" == clr.color(" ", "bright_" + fg, None)
+        assert f"\x1b[1;{30 + i}m \x1b[0m" == clr.color(
+            " ", "bright_" + fg + "_old", None
+        )
 
         for j, bg in enumerate(names):
-            assert '\x1b[{}m'.format(40 + j) == clr._names(None, bg)
-            assert '\x1b[{}m'.format(100 + j) == clr._names(None, 'bright_' + bg)
-            assert '\x1b[1;{}m'.format(40 + j) == clr._names(None, 'bright_' + bg + '_old')
+            assert f"\x1b[{40 + j}m" == clr._names(None, bg)
+            assert f"\x1b[{100 + j}m" == clr._names(None, "bright_" + bg)
+            assert f"\x1b[1;{40 + j}m" == clr._names(None, "bright_" + bg + "_old")
 
-            assert '\x1b[{}m \x1b[0m'.format(40 + j) == clr.color(' ', None, bg)
-            assert '\x1b[{}m \x1b[0m'.format(100 + j) == clr.color(' ', None, 'bright_' + bg)
-            assert '\x1b[1;{}m \x1b[0m'.format(40 + j) == clr.color(' ', None, 'bright_' + bg + '_old')
-
-            assert '\x1b[{};{}m'.format(30 + i, 40 + j) == clr._names(fg, bg)
-            assert '\x1b[{};{}m'.format(90 + i, 100 + j) == clr._names('bright_' + fg, 'bright_' + bg)
-            assert '\x1b[1;{};1;{}m'.format(30 + i, 40 + j) == clr._names(
-                'bright_' + fg + '_old', 'bright_' + bg + '_old',
+            assert f"\x1b[{40 + j}m \x1b[0m" == clr.color(" ", None, bg)
+            assert f"\x1b[{100 + j}m \x1b[0m" == clr.color(" ", None, "bright_" + bg)
+            assert f"\x1b[1;{40 + j}m \x1b[0m" == clr.color(
+                " ", None, "bright_" + bg + "_old"
             )
 
-            assert '\x1b[{};{}m \x1b[0m'.format(30 + i, 40 + j) == clr.color(' ', fg, bg)
-            assert '\x1b[{};{}m \x1b[0m'.format(90 + i, 100 + j) == clr.color(' ', 'bright_' + fg, 'bright_' + bg)
-            assert '\x1b[{};1;{}m \x1b[0m'.format(90 + i, 40 + j) == clr.color(
-                ' ', 'bright_' + fg, 'bright_' + bg + '_old',
+            assert f"\x1b[{30 + i};{40 + j}m" == clr._names(fg, bg)
+            assert f"\x1b[{90 + i};{100 + j}m" == clr._names(
+                "bright_" + fg, "bright_" + bg
             )
-            assert '\x1b[1;{};{}m \x1b[0m'.format(30 + i, 100 + j) == clr.color(
-                ' ', 'bright_' + fg + '_old', 'bright_' + bg,
+            assert f"\x1b[1;{30 + i};1;{40 + j}m" == clr._names(
+                "bright_" + fg + "_old", "bright_" + bg + "_old"
             )
-            assert '\x1b[1;{};1;{}m \x1b[0m'.format(30 + i, 40 + j) == clr.color(
-                ' ', 'bright_' + fg + '_old', 'bright_' + bg + '_old',
+
+            assert f"\x1b[{30 + i};{40 + j}m \x1b[0m" == clr.color(" ", fg, bg)
+            assert f"\x1b[{90 + i};{100 + j}m \x1b[0m" == clr.color(
+                " ", "bright_" + fg, "bright_" + bg
+            )
+            assert f"\x1b[{90 + i};1;{40 + j}m \x1b[0m" == clr.color(
+                " ", "bright_" + fg, "bright_" + bg + "_old"
+            )
+            assert f"\x1b[1;{30 + i};{100 + j}m \x1b[0m" == clr.color(
+                " ", "bright_" + fg + "_old", "bright_" + bg
+            )
+            assert f"\x1b[1;{30 + i};1;{40 + j}m \x1b[0m" == clr.color(
+                " ", "bright_" + fg + "_old", "bright_" + bg + "_old"
             )
 
     with pytest.raises(ValueError):
-        clr._names('olive', None)
+        clr._names("olive", None)
 
     with pytest.raises(ValueError):
-        clr._names(None, 'olive')
+        clr._names(None, "olive")
 
 
 def test_bytes(tty):
-    assert '' == clr._byte(None, None)
-    assert '\x1b[38;5;0m' == clr._byte(0, None)
-    assert '\x1b[38;5;0;48;5;0m' == clr._byte(0, 0)
+    assert "" == clr._byte(None, None)
+    assert "\x1b[38;5;0m" == clr._byte(0, None)
+    assert "\x1b[38;5;0;48;5;0m" == clr._byte(0, 0)
 
     for fg in range(0, 256):
-        assert '\x1b[38;5;{}m'.format(fg) == clr._byte(fg, None)
-        assert '\x1b[38;5;{}m \x1b[0m'.format(fg) == clr.color(' ', fg, None, mode='byte')
+        assert f"\x1b[38;5;{fg}m" == clr._byte(fg, None)
+        assert f"\x1b[38;5;{fg}m \x1b[0m" == clr.color(" ", fg, None, mode="byte")
 
         for bg in range(0, 256):
-            assert '\x1b[48;5;{}m'.format(bg) == clr._byte(None, bg)
-            assert '\x1b[48;5;{}m \x1b[0m'.format(bg) == clr.color(' ', None, bg, mode='byte')
+            assert f"\x1b[48;5;{bg}m" == clr._byte(None, bg)
+            assert f"\x1b[48;5;{bg}m \x1b[0m" == clr.color(" ", None, bg, mode="byte")
 
-            assert '\x1b[38;5;{};48;5;{}m'.format(fg, bg) == clr._byte(fg, bg)
-            assert '\x1b[38;5;{};48;5;{}m \x1b[0m'.format(fg, bg) == clr.color(' ', fg, bg, mode='byte')
+            assert f"\x1b[38;5;{fg};48;5;{bg}m" == clr._byte(fg, bg)
+            assert f"\x1b[38;5;{fg};48;5;{bg}m \x1b[0m" == clr.color(
+                " ", fg, bg, mode="byte"
+            )
 
     with pytest.raises(ValueError):
         clr._byte(-15, None)
@@ -93,7 +100,7 @@ def test_bytes(tty):
         clr._byte(256, None)
 
     with pytest.raises(ValueError):
-        clr._byte('25', None)
+        clr._byte("25", None)
 
     with pytest.raises(ValueError):
         clr._byte(None, -15)
@@ -102,7 +109,7 @@ def test_bytes(tty):
         clr._byte(None, 256)
 
     with pytest.raises(ValueError):
-        clr._byte(None, '25')
+        clr._byte(None, "25")
 
 
 def test_hex2rgb():
@@ -111,53 +118,64 @@ def test_hex2rgb():
     for _i in range(100):
         r, g, b = choice(good), choice(good), choice(good)
 
-        h = '{}{}{}'.format(
-            hex(r)[2:].rjust(2, str('0')),
-            hex(g)[2:].rjust(2, str('0')),
-            hex(b)[2:].rjust(2, str('0')),
+        h = "{}{}{}".format(
+            hex(r)[2:].rjust(2, "0"), hex(g)[2:].rjust(2, "0"), hex(b)[2:].rjust(2, "0")
         )
 
         assert (r, g, b) == clr._hex2rgb(h)
-        assert (r, g, b) == clr._hex2rgb('0x' + h)
+        assert (r, g, b) == clr._hex2rgb("0x" + h)
 
     for i in range(16):
         h = hex(i)[2:]
         c = int(h + h, base=16)
 
         assert (c, c, c) == clr._hex2rgb(h + h + h)
-        assert (c, c, c) == clr._hex2rgb('0x' + h + h + h)
+        assert (c, c, c) == clr._hex2rgb("0x" + h + h + h)
 
     with pytest.raises(ValueError):
-        clr._hex2rgb('absd')
+        clr._hex2rgb("absd")
 
 
 def test_rgb(tty):
-    assert '' == clr._rgb(None, None)
-    assert '\x1b[38;2;0;0;0m' == clr._rgb((0, 0, 0), None)
-    assert '\x1b[38;2;0;0;0;48;2;0;0;0m' == clr._rgb((0, 0, 0), (0, 0, 0))
+    assert "" == clr._rgb(None, None)
+    assert "\x1b[38;2;0;0;0m" == clr._rgb((0, 0, 0), None)
+    assert "\x1b[38;2;0;0;0;48;2;0;0;0m" == clr._rgb((0, 0, 0), (0, 0, 0))
 
     for fg in range(0, 256):
-        assert '\x1b[38;2;{};{};{}m'.format(fg, fg, fg) == clr._rgb((fg, fg, fg), None)
-        assert '\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) == clr.color(' ', (fg, fg, fg), None, mode='rgb')
+        assert f"\x1b[38;2;{fg};{fg};{fg}m" == clr._rgb((fg, fg, fg), None)
+        assert f"\x1b[38;2;{fg};{fg};{fg}m \x1b[0m" == clr.color(
+            " ", (fg, fg, fg), None, mode="rgb"
+        )
 
-        fgh = hex(fg)[2:].rjust(2, str('0'))
-        assert '\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg) == clr.color(' ', fgh + fgh + fgh, None, mode='rgb')
-        assert ('\x1b[38;2;{};{};{}m \x1b[0m'.format(fg, fg, fg)
-                == clr.color(' ', '0x' + fgh + fgh + fgh, None, mode='rgb'))
+        fgh = hex(fg)[2:].rjust(2, "0")
+        assert f"\x1b[38;2;{fg};{fg};{fg}m \x1b[0m" == clr.color(
+            " ", fgh + fgh + fgh, None, mode="rgb"
+        )
+        assert f"\x1b[38;2;{fg};{fg};{fg}m \x1b[0m" == clr.color(
+            " ", "0x" + fgh + fgh + fgh, None, mode="rgb"
+        )
 
         for bg in range(0, 256):
-            assert '\x1b[48;2;{};{};{}m'.format(bg, bg, bg) == clr._rgb(None, (bg, bg, bg))
-            assert '\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) == clr.color(' ', None, (bg, bg, bg), mode='rgb')
+            assert f"\x1b[48;2;{bg};{bg};{bg}m" == clr._rgb(None, (bg, bg, bg))
+            assert f"\x1b[48;2;{bg};{bg};{bg}m \x1b[0m" == clr.color(
+                " ", None, (bg, bg, bg), mode="rgb"
+            )
 
-            bgh = hex(bg)[2:].rjust(2, str('0'))
-            assert '\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg) == clr.color(' ', None, bgh + bgh + bgh, mode='rgb')
-            assert ('\x1b[48;2;{};{};{}m \x1b[0m'.format(bg, bg, bg)
-                    == clr.color(' ', None, '0x' + bgh + bgh + bgh, mode='rgb'))
+            bgh = hex(bg)[2:].rjust(2, "0")
+            assert f"\x1b[48;2;{bg};{bg};{bg}m \x1b[0m" == clr.color(
+                " ", None, bgh + bgh + bgh, mode="rgb"
+            )
+            assert f"\x1b[48;2;{bg};{bg};{bg}m \x1b[0m" == clr.color(
+                " ", None, "0x" + bgh + bgh + bgh, mode="rgb"
+            )
 
-            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m'.format(fg, fg, fg, bg, bg, bg)
-                    == clr._rgb((fg, fg, fg), (bg, bg, bg)))
-            assert ('\x1b[38;2;{};{};{};48;2;{};{};{}m \x1b[0m'.format(fg, fg, fg, bg, bg, bg)
-                    == clr.color(' ', (fg, fg, fg), (bg, bg, bg), mode='rgb'))
+            assert f"\x1b[38;2;{fg};{fg};{fg};48;2;{bg};{bg};{bg}m" == clr._rgb(
+                (fg, fg, fg), (bg, bg, bg)
+            )
+            assert (
+                f"\x1b[38;2;{fg};{fg};{fg};48;2;{bg};{bg};{bg}m \x1b[0m"
+                == clr.color(" ", (fg, fg, fg), (bg, bg, bg), mode="rgb")
+            )
 
     with pytest.raises(ValueError):
         clr._rgb(-15, None)
@@ -179,50 +197,50 @@ def test_rgb(tty):
 
 
 def test_no_color(tty, mocker):
-    mocker.patch.dict(os.environ, {'NO_COLOR': '1'})
+    mocker.patch.dict(os.environ, {"NO_COLOR": "1"})
 
-    assert '' == clr.color('', 'black', 'red')
+    assert "" == clr.color("", "black", "red")
 
 
 def test_no_color_before_force_color(tty, mocker):
-    mocker.patch.dict(os.environ, {'NO_COLOR': '1', 'FORCE_COLOR': '1'})
+    mocker.patch.dict(os.environ, {"NO_COLOR": "1", "FORCE_COLOR": "1"})
 
-    assert '' == clr.color('', 'black', 'red')
+    assert "" == clr.color("", "black", "red")
 
 
-@pytest.mark.parametrize('off', ['0', 'NONE', 'False', 'false'])
+@pytest.mark.parametrize("off", ["0", "NONE", "False", "false"])
 def test_force_color_off(tty, mocker, off):
-    mocker.patch.dict(os.environ, {'FORCE_COLOR': off})
+    mocker.patch.dict(os.environ, {"FORCE_COLOR": off})
 
-    assert '' == clr.color('', 'black', 'red')
+    assert "" == clr.color("", "black", "red")
 
 
-@pytest.mark.parametrize('on', ['1', 'true', 'yes'])
+@pytest.mark.parametrize("on", ["1", "true", "yes"])
 def test_force_color_not_tty(mocker, on):
-    mocker.patch.dict(os.environ, {'FORCE_COLOR': on})
+    mocker.patch.dict(os.environ, {"FORCE_COLOR": on})
 
-    assert '\x1b[30;41m\x1b[0m' == clr.color('', 'black', 'red')
+    assert "\x1b[30;41m\x1b[0m" == clr.color("", "black", "red")
 
 
 def test_force_color_no_color(mocker):
-    mocker.patch.dict(os.environ, {'FORCE_COLOR': '1'})
+    mocker.patch.dict(os.environ, {"FORCE_COLOR": "1"})
 
-    assert '' == clr.color('', 'black', 'red', no_color=True)
+    assert "" == clr.color("", "black", "red", no_color=True)
 
 
 def test_reset_color_codes(tty):
-    assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None)
-    assert '\x1b[31m \x1b[0m' == clr.color(' ', 'red', None, full_reset=True)
-    assert '\x1b[31m \x1b[39;49m' == clr.color(' ', 'red', None, full_reset=False)
+    assert "\x1b[31m \x1b[0m" == clr.color(" ", "red", None)
+    assert "\x1b[31m \x1b[0m" == clr.color(" ", "red", None, full_reset=True)
+    assert "\x1b[31m \x1b[39;49m" == clr.color(" ", "red", None, full_reset=False)
 
 
 def test_rgb2byte_gray(tty):
     # print()
     for v in range(0, 256):
-        res = clr.color(' ' * 20, bg=clr.rgb2byte(v, v, v), mode='byte')
+        res = clr.color(" " * 20, bg=clr.rgb2byte(v, v, v), mode="byte")
         assert str(clr.rgb2byte(v, v, v)) in res
         # print(res, end=' ')
-        res = clr.color(' ' * 20, bg=(v, v, v), mode='rgb')
+        res = clr.color(" " * 20, bg=(v, v, v), mode="rgb")
         assert str(v) in res
         # print(res)
 
@@ -232,10 +250,10 @@ def test_rgb2byte_color(tty):
     for r in range(0, 256, 16):
         for g in range(0, 256, 16):
             for b in range(0, 256, 16):
-                res = clr.color(' ' * 20, bg=clr.rgb2byte(r, g, b), mode='byte')
+                res = clr.color(" " * 20, bg=clr.rgb2byte(r, g, b), mode="byte")
                 assert str(clr.rgb2byte(r, g, b)) in res
                 # print(res, end=' ')
-                res = clr.color(' ' * 20, bg=(r, g, b), mode='rgb')
+                res = clr.color(" " * 20, bg=(r, g, b), mode="rgb")
                 assert str(r) in res
                 assert str(g) in res
                 assert str(b) in res

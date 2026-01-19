@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +21,31 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 # THE SOFTWARE.
 
 from math import cos, pi, sin
+from typing import Union
 
 
-def ellipse(x_center, y_center, angle=0,
-            x_amplitude=1, y_amplitude=1, n=20):
+def ellipse(
+    x_center: Union[float, int],
+    y_center: Union[float, int],
+    angle: Union[float, int] = 0,
+    x_amplitude: Union[float, int] = 1,
+    y_amplitude: Union[float, int] = 1,
+    n: int = 20,
+) -> tuple[list[float], list[float]]:
     r"""Create X and Y values for an ellipse.
 
-        Parameters:
-            x_center: float     X-coordinate of the center of the ellipse.
-            y_center: float     Y-coordinate of the center of the ellipse.
-            angle: float        Rotation angle of the ellipse \in [0 .. 2pi] .
-            x_amplitude: float  The radius in X-direction before rotation.
-            y_amplitude: float  The radius in Y-direction before rotation.
-            n: int              The number of points to return. The ellipse is
-                                closed, hence the function actually return n+1 points.
+    Parameters:
+        x_center: float     X-coordinate of the center of the ellipse.
+        y_center: float     Y-coordinate of the center of the ellipse.
+        angle: float        Rotation angle of the ellipse \in [0 .. 2pi] .
+        x_amplitude: float  The radius in X-direction before rotation.
+        y_amplitude: float  The radius in Y-direction before rotation.
+        n: int              The number of points to return. The ellipse is
+                            closed, hence the function actually return n+1 points.
 
-        Returns:
-            X, Y: Tuple[List[float], List[float]]
-                The X and Y values for the ellipse.
+    Returns:
+        X, Y: Tuple[List[float], List[float]]
+            The X and Y values for the ellipse.
     """
     # see https://en.wikipedia.org/wiki/Ellipse#Parametric_representation
     assert isinstance(n, int)
@@ -72,19 +76,24 @@ def ellipse(x_center, y_center, angle=0,
     return ell_x, ell_y
 
 
-def circle(x_center, y_center, radius, n=20):
+def circle(
+    x_center: Union[float, int],
+    y_center: Union[float, int],
+    radius: Union[float, int],
+    n: int = 20,
+) -> tuple[list[float], list[float]]:
     """Create X and Y values for a circle.
 
-       Parameters:
-           x_center: float     X-coordinate of the center of the circle.
-           y_center: float     Y-coordinate of the center of the circle.
-           radius: float       The radius of the circle.
-           n: int              The number of points to return. The circle is
-                               closed, hence the function actually return n+1 points.
+    Parameters:
+        x_center: float     X-coordinate of the center of the circle.
+        y_center: float     Y-coordinate of the center of the circle.
+        radius: float       The radius of the circle.
+        n: int              The number of points to return. The circle is
+                            closed, hence the function actually return n+1 points.
 
-       Returns:
-           X, Y: Tuple[List[float], List[float]]
-               The X and Y values for the circle.
+    Returns:
+        X, Y: Tuple[List[float], List[float]]
+            The X and Y values for the circle.
     """
     assert isinstance(radius, (int, float))
     assert radius > 0

@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -38,8 +35,8 @@ def main():
     t0 = time()
     for _ in range(100):
         plotille.plot(x, y, height=30, width=60)
-    print('Took {:.3f} sec'.format(time() - t0))
+    print(f"Took {time() - t0:.3f} sec")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

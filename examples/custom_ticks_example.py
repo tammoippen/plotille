@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -51,12 +48,12 @@ def mean_y_value(Y, min_, max_):
 
 
 def str_tick(min_, max_):
-    return '{:.3f}'.format(min_ + (max_ - min_) / 2)
+    return f"{min_ + (max_ - min_) / 2:.3f}"
 
 
 def main():
-    Y = [0, 10, 20, 20, 21, 25, 30, 32, 40, 44, 50] + [51.3] * 10  # noqa: N806
-    X = list(range(len(Y)))  # noqa: N806
+    Y = [0, 10, 20, 20, 21, 25, 30, 32, 40, 44, 50] + [51.3] * 10
+    X = list(range(len(Y)))
 
     fig = plt.Figure()
     fig.plot(X, Y)
@@ -82,5 +79,5 @@ def main():
     print(fig.show())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

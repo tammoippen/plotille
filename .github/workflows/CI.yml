@@ -14,27 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ['pypy-3.8', 3.8, 'pypy-3.9', 3.9, '3.10', 'pypy-3.10', '3.11', '3.12']
-        include:
-        - os: ubuntu-latest
-          path: ~/.cache/pip
-        - os: macos-latest
-          path: ~/Library/Caches/pip
-        - os: windows-latest
-          path: ~\AppData\Local\pip\Cache
+        python-version: ['3.10', 'pypy-3.11', '3.11', '3.12', '3.13', '3.14']
         exclude:
         - os: macos-latest
-          python-version: 'pypy-3.8'
-        - os: macos-latest
-          python-version: 'pypy-3.9'
-        - os: macos-latest
-          python-version: 'pypy-3.10'
+          python-version: 'pypy-3.11'
         - os: windows-latest
-          python-version: 'pypy-3.8'
-        - os: windows-latest
-          python-version: 'pypy-3.9'
-        - os: windows-latest
-          python-version: 'pypy-3.10'
+          python-version: 'pypy-3.11'
     defaults:
       run:
         shell: bash
@@ -42,39 +27,22 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PYTHONIOENCODING: UTF-8
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set Up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v7
 
-      - name: Cache Install
-        id: restore-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ matrix.path }}
-            poetry.lock
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('tests/requirements.txt') }}
+      - if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
+        run: make check
 
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: ${{ startsWith(matrix.python-version, 'pypy') && '1.2.2' || '1.7.0' }}
-          virtualenvs-create: false
-
-      - name: Install
-        run: poetry install
-
-      - name: Style
-        if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
-        run: poetry run flake8 tests/ plotille/ examples/
+      - if: ${{ ! startsWith(matrix.python-version, 'pypy-') }}
+        run: make typing
 
       - name: Tests
-        run: poetry run pytest -s -vvv
+        run: make tests
 
       - uses: codecov/codecov-action@v4
         with:

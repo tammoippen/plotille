@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # The MIT License
 
-# Copyright (c) 2017 - 2024 Tammo Ippen, tammo.ippen@posteo.de
+# Copyright (c) 2017 - 2025 Tammo Ippen, tammo.ippen@posteo.de
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -44,18 +41,15 @@ def main():
     canvas = plotille.Canvas(width=50, height=20, xmax=10, ymax=10)
 
     for node in nodes:
-        canvas.point(x=node[0], y=node[1], marker='x')
+        canvas.point(x=node[0], y=node[1], marker="x")
 
     for edge in edges:
         from_node = nodes[edge[0]]
         to_node = nodes[edge[1]]
-        canvas.line(
-            x0=from_node[0], y0=from_node[1],
-            x1=to_node[0], y1=to_node[1],
-        )
+        canvas.line(x0=from_node[0], y0=from_node[1], x1=to_node[0], y1=to_node[1])
 
     print(canvas.plot())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

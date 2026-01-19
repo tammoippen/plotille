@@ -1,10 +1,19 @@
 .PHONY: style tests install
 
-style:
-	poetry run flake8 tests/ plotille/ examples/
+fmt:
+	uv run --locked ruff format .
+	uv run --locked ruff check --fix .
+
+check:
+	uv run --locked ruff format --check .
+	uv run --locked ruff check .
+
+typing:
+	uv run --locked mypy ./plotille
+	# uv run --locked ty check ./plotille
 
 tests:
-	poetry run pytest -s -vvv
+	uv run --locked pytest -s -vvv
 
 install:
-	poetry install
+	uv install

@@ -1,23 +1,21 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import pytest
 
 import plotille
 
 try:
     import numpy as np
+
     have_numpy = True
 except ImportError:
     have_numpy = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def seed():
     np.random.seed(42)
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_plot(seed, cleandoc):
     x = sorted(np.random.normal(size=1000))
     expected = """
@@ -70,7 +68,7 @@ def test_plot(seed, cleandoc):
     assert cleandoc(expected) == plotille.plot(list(x), list(np.sin(x)))
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_np_scatter(seed, cleandoc):
     x = np.random.normal(size=1000)
     expected = """
@@ -123,7 +121,7 @@ def test_np_scatter(seed, cleandoc):
     assert cleandoc(expected) == plotille.scatter(list(x), list(np.sin(x)))
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_hist(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
@@ -174,7 +172,7 @@ def test_hist(seed, cleandoc):
     assert cleandoc(expected) == plotille.hist(list(x))
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_histogram(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
@@ -227,7 +225,7 @@ def test_histogram(seed, cleandoc):
     assert cleandoc(expected) == plotille.histogram(list(x))
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_hist_log(seed, cleandoc):
     x = np.random.normal(size=10000)
     expected = """
@@ -277,7 +275,7 @@ def test_hist_log(seed, cleandoc):
     assert cleandoc(expected) == plotille.hist(x, log_scale=True)
 
 
-@pytest.fixture()
+@pytest.fixture
 def empty(cleandoc):
     return cleandoc("""
     {}^
@@ -328,12 +326,12 @@ def empty(cleandoc):
 
 def test_empty_plot(empty):
     # print(plotille.plot([], []))
-    assert empty.format('   (Y)     ') == plotille.plot([], [])
+    assert empty.format("   (Y)     ") == plotille.plot([], [])
 
 
 def test_empty_scatter(empty):
     # print(plotille.scatter([], []))
-    assert empty.format('   (Y)     ') == plotille.scatter([], [])
+    assert empty.format("   (Y)     ") == plotille.scatter([], [])
 
 
 def test_empty_hist(cleandoc):

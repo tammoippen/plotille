@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
-import sys
 
 import pytest
 
@@ -10,18 +6,20 @@ from plotille import Canvas
 
 try:
     import numpy as np
+
     have_numpy = True
 except ImportError:
     have_numpy = False
 
 try:
     from PIL import Image
+
     have_pillow = True
 except ImportError:
     have_pillow = False
 
 
-@pytest.mark.skipif(not have_numpy, reason='No numpy installed.')
+@pytest.mark.skipif(not have_numpy, reason="No numpy installed.")
 def test_transform():
     c = Canvas(40, 20)
 
@@ -64,195 +62,173 @@ def test_invalids():
 
 def test_str():
     c = Canvas(40, 20)
-    assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == str(c)
-    assert 'Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)' == repr(c)
+    assert "Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)" == str(c)
+    assert "Canvas(width=40, height=20, xmin=0, ymin=0, xmax=1, ymax=1)" == repr(c)
 
 
 def test_set():
     c = Canvas(1, 1)
     c._set(0, 0)
-    assert '⡀' == str(c._canvas[0][0])
+    assert "⡀" == str(c._canvas[0][0])
     c._set(0, 0, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(0, 1)
-    assert '⠄' == str(c._canvas[0][0])
+    assert "⠄" == str(c._canvas[0][0])
     c._set(0, 1, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(0, 2)
-    assert '⠂' == str(c._canvas[0][0])
+    assert "⠂" == str(c._canvas[0][0])
     c._set(0, 2, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(0, 3)
-    assert '⠁' == str(c._canvas[0][0])
+    assert "⠁" == str(c._canvas[0][0])
     c._set(0, 3, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(1, 0)
-    assert '⢀' == str(c._canvas[0][0])
+    assert "⢀" == str(c._canvas[0][0])
     c._set(1, 0, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(1, 1)
-    assert '⠠' == str(c._canvas[0][0])
+    assert "⠠" == str(c._canvas[0][0])
     c._set(1, 1, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(1, 2)
-    assert '⠐' == str(c._canvas[0][0])
+    assert "⠐" == str(c._canvas[0][0])
     c._set(1, 2, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
     c._set(1, 3)
-    assert '⠈' == str(c._canvas[0][0])
+    assert "⠈" == str(c._canvas[0][0])
     c._set(1, 3, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
 
 def test_fill_char():
     c = Canvas(1, 1)
 
     c.fill_char(0.5, 0.5)
-    assert '⣿' == str(c._canvas[0][0])
+    assert "⣿" == str(c._canvas[0][0])
     c.fill_char(0.5, 0.5, False)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
 
-@pytest.mark.parametrize('color', [None, 'red'])
+@pytest.mark.parametrize("color", [None, "red"])
 def test_point(color, tty):
     c = Canvas(1, 1)
 
     c.point(0, 0, color=color)
-    prefix = ''
-    postfix = ''
+    prefix = ""
+    postfix = ""
     if color:
-        prefix = '\x1b[31m'
-        postfix = '\x1b[0m'
+        prefix = "\x1b[31m"
+        postfix = "\x1b[0m"
 
-    assert '{}⡀{}'.format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⡀{postfix}" == str(c._canvas[0][0])
     c.point(0, 0, set_=False, color=color)
-    assert '⠀' == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][0])
 
 
-@pytest.mark.parametrize('color', [None, 'red'])
+@pytest.mark.parametrize("color", [None, "red"])
 def test_set_text(color, tty):
     c = Canvas(2, 1)
 
-    c.text(0, 0, 'Hi', color=color)
-    prefix = ''
-    postfix = ''
+    c.text(0, 0, "Hi", color=color)
+    prefix = ""
+    postfix = ""
     if color:
-        prefix = '\x1b[31m'
-        postfix = '\x1b[0m'
+        prefix = "\x1b[31m"
+        postfix = "\x1b[0m"
 
-    assert '{}H{}'.format(prefix, postfix) == str(c._canvas[0][0])
-    assert '{}i{}'.format(prefix, postfix) == str(c._canvas[0][1])
-    c.text(0, 0, 'Hi', False, color=color)
-    assert '⠀' == str(c._canvas[0][0])
-    assert '⠀' == str(c._canvas[0][1])
+    assert f"{prefix}H{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}i{postfix}" == str(c._canvas[0][1])
+    c.text(0, 0, "Hi", False, color=color)
+    assert "⠀" == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][1])
 
 
 def test_set_text_keep_dots():
     c = Canvas(2, 1)
 
     c.fill_char(0, 0)
-    assert '⣿' == str(c._canvas[0][0])
+    assert "⣿" == str(c._canvas[0][0])
 
-    c.text(0, 0, 'Hi')
-    assert 'H' == str(c._canvas[0][0])
-    assert 'i' == str(c._canvas[0][1])
+    c.text(0, 0, "Hi")
+    assert "H" == str(c._canvas[0][0])
+    assert "i" == str(c._canvas[0][1])
     c.fill_char(0.5, 0.5, False)
-    c.text(0, 0, 'Hi', False)
-    assert '⣿' == str(c._canvas[0][0])
-    assert '⠀' == str(c._canvas[0][1])
+    c.text(0, 0, "Hi", False)
+    assert "⣿" == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][1])
 
 
 def test_set_text_to_long():
     c = Canvas(2, 1)
 
-    c.text(0, 0, 'Hello World')
-    assert 'H' == str(c._canvas[0][0])
-    assert 'e' == str(c._canvas[0][1])
+    c.text(0, 0, "Hello World")
+    assert "H" == str(c._canvas[0][0])
+    assert "e" == str(c._canvas[0][1])
     c.fill_char(0.5, 0.5, False)
-    c.text(0, 0, 'Hello World', False)
-    assert '⠀' == str(c._canvas[0][0])
-    assert '⠀' == str(c._canvas[0][1])
+    c.text(0, 0, "Hello World", False)
+    assert "⠀" == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][1])
 
 
-@pytest.mark.parametrize('empty', ['', None])
+@pytest.mark.parametrize("empty", ["", None])
 def test_set_text_empty(empty):
     c = Canvas(2, 1)
 
     c.text(0, 0, empty)
-    assert '⠀' == str(c._canvas[0][0])
-    assert '⠀' == str(c._canvas[0][1])
+    assert "⠀" == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][1])
     c.fill_char(0.5, 0.5, False)
     c.text(0, 0, empty, False)
-    assert '⠀' == str(c._canvas[0][0])
-    assert '⠀' == str(c._canvas[0][1])
+    assert "⠀" == str(c._canvas[0][0])
+    assert "⠀" == str(c._canvas[0][1])
 
 
-@pytest.mark.parametrize('other_color', [None, 'blue'])
+@pytest.mark.parametrize("other_color", [None, "blue"])
 def test_unset_keep_color_text(tty, other_color):
     c = Canvas(2, 1)
 
-    c.text(0, 0, 'Hi', color='red')
-    prefix = '\x1b[31m'
-    postfix = '\x1b[0m'
+    c.text(0, 0, "Hi", color="red")
+    prefix = "\x1b[31m"
+    postfix = "\x1b[0m"
 
-    assert '{}H{}'.format(prefix, postfix) == str(c._canvas[0][0])
-    assert '{}i{}'.format(prefix, postfix) == str(c._canvas[0][1])
-    c.text(0, 0, 'Hi', False, color=other_color)
-    assert '{}⠀{}'.format(prefix, postfix) == str(c._canvas[0][0])
-    assert '{}⠀{}'.format(prefix, postfix) == str(c._canvas[0][1])
+    assert f"{prefix}H{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}i{postfix}" == str(c._canvas[0][1])
+    c.text(0, 0, "Hi", False, color=other_color)
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][0])
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][1])
 
 
-@pytest.mark.parametrize('other_color', [None, 'blue'])
+@pytest.mark.parametrize("other_color", [None, "blue"])
 def test_unset_keep_color_dots(tty, other_color):
     c = Canvas(1, 1)
 
-    c.point(0, 0, color='red')
-    prefix = '\x1b[31m'
-    postfix = '\x1b[0m'
+    c.point(0, 0, color="red")
+    prefix = "\x1b[31m"
+    postfix = "\x1b[0m"
 
-    assert '{}⡀{}'.format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⡀{postfix}" == str(c._canvas[0][0])
     c.point(0, 0, set_=False, color=other_color)
-    assert '{}⠀{}'.format(prefix, postfix) == str(c._canvas[0][0])
+    assert f"{prefix}⠀{postfix}" == str(c._canvas[0][0])
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
 def test_braille_image(cleandoc):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('L')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("L")
     img = img.resize((80, 80))
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata())
 
-    expected_27 = """
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠛⠛⠙⢿⠿⢿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠛⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠈⣻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠛⠁⠀⠀⠀⠹⢻⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⠀⠀⠀⠀⠀⠀⢀⠀⠀⠀⠀⣀⣴⣶⣾⣶⣷⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠉⠀⠀⠀⠀⣠⣿⣿⣾⣿⣿⣷⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⡀⠀⠀⠀⢠⣿⢿⣿⣿⣿⣿⣿⡿⠿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠙
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⡴⣡⣶⣦⣉⣿⣿⡟⠋⢀⣤⠄⠀⡀⠉⠉⠙⠻⣿⣿⣿⣿⣿⣿⣿⣧
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠧⠀⠀⢠⣿⢃⡔⠚⣤⢌⣿⣷⣤⣿⠇⡀⠁⠀⠐⠀⠀⡀⠙⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡂⣄⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⠸⡦⠀⠁⠀⠀⣀⠀⠀⠁⠀⢹⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣧⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⡀⠈⠃⠈⠠⣤⡄⠤⠀⠀⠀⠈⣻⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣽⠆⠹⢿⣿⣿⣿⣇⢈⠉⢉⡑⣄⡀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠰⣾⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆⠀⠸⣿⠿⠉⢀⣨⣟⡁⠉⠃⠀⠀⠀⠀⠀⠀⠀⠀⢀⠀⠀⠈⠻⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⡏⢲⣚⣛⡛⠻⠿⣶⣀⠃⠀⠐⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⡻⣿⣿⣿⣿⣿⡷⣿⠰⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠠⠘⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣏⠀⠃⠀⠀⢻⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘
-    ⣿⣿⣿⣿⣿⣿⣿⠿⠛⣻⣿⣿⡟⠀⠀⠀⠠⣀⠈⠉⠁⡠⠂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⣿⣿⡿⠿⠛⠉⠀⠀⠀⠻⣿⣿⣳⡄⠀⠀⠀⠙⠿⠻⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠻⣿⣿⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
-
-    expected_3 = """
+    expected = """
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠛⠛⠙⠿⠿⣿⡿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠛⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -274,65 +250,40 @@ def test_braille_image(cleandoc):
     ⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⣿⣷⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠓⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"""
 
-    if sys.version_info[0] == 2:
-        assert cleandoc(expected_27) == cvs.plot()
-    else:
-        assert cleandoc(expected_3) == cvs.plot()
+    assert cleandoc(expected) == cvs.plot()
 
     cvs.braille_image(img.getdata(), set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-@pytest.mark.parametrize('threshold', range(20, 255, 10))
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
+@pytest.mark.parametrize("threshold", range(20, 255, 10))
 def test_braille_image_thresholds(threshold):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('L')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("L")
     img = img.resize((80, 80))
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), threshold=threshold)
 
-    assert os.linesep.join(['⠀' * 40] * 20) != cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) != cvs.plot()
     # print()
     # print(cvs.plot())
 
     cvs.braille_image(img.getdata(), threshold=threshold, set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
 def test_braille_image_inverse(cleandoc):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('L')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("L")
     img = img.resize((80, 80))
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), inverse=True)
 
-    expected_27 = """
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣦⡀⣀⡀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣴⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣤⣾⣿⣿⣿⣆⡄⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⡿⣿⣿⣿⣿⠿⠋⠉⠁⠉⠈⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣶⣿⣿⣿⣿⠟⠀⠀⠁⠀⠀⠈⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⢿⣿⣿⣿⡟⠀⡀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣦
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⢋⠞⠉⠙⠶⠀⠀⢠⣴⡿⠛⣻⣿⢿⣶⣶⣦⣄⠀⠀⠀⠀⠀⠀⠀⠘
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣘⣿⣿⡟⠀⡼⢫⣥⠛⡳⠀⠈⠛⠀⣸⢿⣾⣿⣯⣿⣿⢿⣦⠀⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢽⠻⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⣇⢙⣿⣾⣿⣿⠿⣿⣿⣾⣿⡆⠀⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠁⠘⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣷⣼⣷⣟⠛⢻⣛⣿⣿⣿⣷⠄⠀⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠂⣹⣆⡀⠀⠀⠀⠸⡷⣶⡶⢮⠻⢿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣏⠁⠀⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣇⠀⣀⣶⡿⠗⠠⢾⣶⣼⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣿⣷⣄⠀⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⢰⡍⠥⠤⢤⣄⣀⠉⠿⣼⣿⣯⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⢄⠀⠀⠀⠀⠀⢈⠀⣏⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⣧⠀
-    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⣿⣼⣿⣿⡄⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧
-    ⠀⠀⠀⠀⠀⠀⠀⣀⣤⠄⠀⠀⢠⣿⣿⣿⣟⠿⣷⣶⣾⢟⣽⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⠀⠀⢀⣀⣤⣶⣿⣿⣿⣄⠀⠀⠌⢻⣿⣿⣿⣦⣀⣄⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⣄⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
-
-    expected_3 = """
+    expected = """
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣤⣤⣤⣦⣀⣀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣴⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
     ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
@@ -354,78 +305,75 @@ def test_braille_image_inverse(cleandoc):
     ⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
     ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣬⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"""
 
-    if sys.version_info[0] == 2:
-        assert cleandoc(expected_27) == cvs.plot()
-    else:
-        assert cleandoc(expected_3) == cvs.plot()
+    assert cleandoc(expected) == cvs.plot()
 
     cvs.braille_image(img.getdata(), inverse=True, set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-@pytest.mark.parametrize('threshold', range(20, 255, 10))
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
+@pytest.mark.parametrize("threshold", range(20, 255, 10))
 def test_braille_image_inverse_thresholds(threshold):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('L')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("L")
     img = img.resize((80, 80))
     cvs = Canvas(40, 20)
     cvs.braille_image(img.getdata(), threshold=threshold, inverse=True)
 
-    assert os.linesep.join(['⠀' * 40] * 20) != cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) != cvs.plot()
 
     cvs.braille_image(img.getdata(), threshold=threshold, inverse=True, set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 20) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 20) == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
-@pytest.mark.parametrize('r', [0, 50, 100, 123, 255])
-@pytest.mark.parametrize('g', [0, 50, 100, 123, 255])
-@pytest.mark.parametrize('b', [0, 50, 100, 123, 255])
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
+@pytest.mark.parametrize("r", [0, 50, 100, 123, 255])
+@pytest.mark.parametrize("g", [0, 50, 100, 123, 255])
+@pytest.mark.parametrize("b", [0, 50, 100, 123, 255])
 def test_image_one_px(tty, r, g, b):
-    cvs = Canvas(1, 1, mode='rgb')
+    cvs = Canvas(1, 1, mode="rgb")
     cvs.image([(r, g, b)])
 
-    assert '\x1b[48;2;{};{};{}m⠀\x1b[0m'.format(r, g, b) == cvs.plot()
+    assert f"\x1b[48;2;{r};{g};{b}m⠀\x1b[0m" == cvs.plot()
 
     cvs.image([(r, g, b)], set_=False)
     # empty canvas
-    assert '⠀' == cvs.plot()
+    assert "⠀" == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
 def test_image_rgb(tty):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('RGB')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("RGB")
     img = img.resize((40, 40))
-    cvs = Canvas(40, 40, mode='rgb')
+    cvs = Canvas(40, 40, mode="rgb")
     cvs.image(img.getdata())
 
-    assert os.linesep.join(['⠀' * 40] * 40) != cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 40) != cvs.plot()
 
     # print()
     # print(cvs.plot())
 
     cvs.image(img.getdata(), set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 40) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 40) == cvs.plot()
 
 
-@pytest.mark.skipif(not have_pillow, reason='No pillow installed.')
+@pytest.mark.skipif(not have_pillow, reason="No pillow installed.")
 def test_image_byte(tty):
-    img = Image.open('imgs/ich.jpg')
-    img = img.convert('RGB')
+    img = Image.open("imgs/ich.jpg")
+    img = img.convert("RGB")
     img = img.resize((40, 40))
-    cvs = Canvas(40, 40, mode='byte')
+    cvs = Canvas(40, 40, mode="byte")
     cvs.image(img.getdata())
 
-    assert os.linesep.join(['⠀' * 40] * 40) != cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 40) != cvs.plot()
 
     # print()
     # print(cvs.plot())
 
     cvs.image(img.getdata(), set_=False)
     # empty canvas
-    assert os.linesep.join(['⠀' * 40] * 40) == cvs.plot()
+    assert os.linesep.join(["⠀" * 40] * 40) == cvs.plot()

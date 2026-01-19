@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 try:
     from math import inf, nan
 except ImportError:
-    inf = float('inf')
-    nan = float('nan')
+    inf = float("inf")
+    nan = float("nan")
 import os
 from random import random
 
@@ -16,8 +13,8 @@ from plotille._cmaps import cmaps
 from plotille._figure_data import Heat
 
 
-@pytest.mark.parametrize('mode', ['rgb', 'byte'])
-@pytest.mark.parametrize('name', cmaps.keys())
+@pytest.mark.parametrize("mode", ["rgb", "byte"])
+@pytest.mark.parametrize("name", cmaps.keys())
 def test_heat_by_name(tty, name, mode):
     width = 20
     height = 20
@@ -39,8 +36,8 @@ def test_heat_by_name(tty, name, mode):
     # print(cvs.plot())
 
 
-@pytest.mark.parametrize('mode', ['rgb', 'byte'])
-@pytest.mark.parametrize('name', cmaps.keys())
+@pytest.mark.parametrize("mode", ["rgb", "byte"])
+@pytest.mark.parametrize("name", cmaps.keys())
 def test_heat_by_cmap(tty, name, mode):
     width = 20
     height = 20
@@ -62,8 +59,8 @@ def test_heat_by_cmap(tty, name, mode):
     # print(cvs.plot())
 
 
-@pytest.mark.parametrize('mode', ['rgb', 'byte'])
-@pytest.mark.parametrize('normalized', [True, False])
+@pytest.mark.parametrize("mode", ["rgb", "byte"])
+@pytest.mark.parametrize("normalized", [True, False])
 def test_heat_of_image(tty, mode, normalized):
     width = 20
     height = 20
@@ -94,14 +91,14 @@ def test_heat_bad_values(tty):
     xs = [[nan, inf, None], [-1, 3.8, 1.1]]
 
     heat = Heat(xs)
-    cvs = Canvas(width, height, mode='rgb')
+    cvs = Canvas(width, height, mode="rgb")
 
     heat.write(cvs)
 
     res = cvs.plot()
     # print()
     # print(res)
-    assert res == '⠀⠀⠀{}⠀⠀⠀'.format(os.linesep)
+    assert res == f"⠀⠀⠀{os.linesep}⠀⠀⠀"
 
 
 def test_heat_bad_values_own_values(tty):
@@ -113,7 +110,7 @@ def test_heat_bad_values_own_values(tty):
     heat.cmap.bad = (0, 0, 0)
     heat.cmap.over = (255, 0, 0)
     heat.cmap.under = (0, 255, 0)
-    cvs = Canvas(width, height, mode='rgb')
+    cvs = Canvas(width, height, mode="rgb")
 
     heat.write(cvs)
 
@@ -121,6 +118,6 @@ def test_heat_bad_values_own_values(tty):
     # print()
     # print(res)
     assert res == (
-        '\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m{}'
-        '\x1b[48;2;0;255;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m'
-    ).format(os.linesep)
+        f"\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m\x1b[48;2;0;0;0m⠀\x1b[0m{os.linesep}"
+        "\x1b[48;2;0;255;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m\x1b[48;2;255;0;0m⠀\x1b[0m"
+    )
