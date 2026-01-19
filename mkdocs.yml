@@ -13,6 +13,11 @@ theme:
     - content.code.copy
     - navigation.sections
 
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/brython@3.12.0/brython.min.js
+  - https://cdn.jsdelivr.net/npm/brython@3.12.0/brython_stdlib.js
+  - javascripts/brython-setup.js
+
 extra_css:
   - stylesheets/terminal.css
 
@@ -39,3 +44,4 @@ nav:
   - Cookbook:
       - Basic Plots: cookbook/basic.md
       - Advanced Examples: cookbook/advanced.md
+  - Test: test-brython.md
