@@ -372,14 +372,14 @@ def generate_interactive_example_markdown(info: ExampleInfo) -> str:
 
 def generate_static_example_markdown(
     info: ExampleInfo,
-    output_path: Path,
+    output_path: Path | None,
 ) -> str:
     """
     Generate markdown for a static example with pre-rendered output.
 
     Args:
         info: ExampleInfo for the example
-        output_path: Path to pre-rendered output file
+        output_path: Path to pre-rendered output file, or None if not available
 
     Returns:
         Markdown string with code and output
@@ -390,10 +390,10 @@ def generate_static_example_markdown(
     source_code = strip_license_header(source_code)
 
     # Read pre-rendered output
-    if output_path.exists():
+    if output_path and output_path.is_file():
         output = output_path.read_text()
     else:
-        output = "Output not available"
+        output = "Output not available (dependencies not installed during build)"
 
     deps = ", ".join(sorted(info.imports - {"plotille"}))
 
@@ -472,7 +472,7 @@ def generate_category_page(
         if info.is_interactive:
             markdown = generate_interactive_example_markdown(info)
         else:
-            output_path = output_paths.get(info.name, Path())
+            output_path = output_paths.get(info.name)
             markdown = generate_static_example_markdown(info, output_path)
 
         content.append(markdown)
