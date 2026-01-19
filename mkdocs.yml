@@ -15,8 +15,8 @@ theme:
     - navigation.sections
 
 extra_javascript:
-  - https://cdn.jsdelivr.net/npm/brython@3.12.0/brython.min.js
-  - https://cdn.jsdelivr.net/npm/brython@3.12.0/brython_stdlib.js
+  - brython.js
+  - brython_stdlib.js
   - javascripts/codemirror-setup.js
   - javascripts/brython-setup.js
 

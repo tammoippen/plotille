@@ -1,4 +1,4 @@
-.PHONY: style tests install docs docs-serve
+.PHONY: style tests install docs docs-setup docs-serve
 
 fmt:
 	uv run --locked ruff format .
@@ -18,7 +18,14 @@ tests:
 install:
 	uv install
 
-docs:
+docs-setup:
+	@echo "Installing Brython runtime..."
+	@rm -f docs/brython.js docs/brython_stdlib.js docs/unicode.txt docs/demo.html docs/README.txt docs/index.html
+	@cd docs && echo "Y" | uv run python -m brython install
+	@rm -f docs/demo.html docs/README.txt docs/index.html
+	@echo "✓ Brython installed to docs/"
+
+docs: docs-setup
 	uv run python scripts/generate_docs.py
 
 docs-serve: docs
