@@ -52,3 +52,33 @@ def test_is_interactive_pillow() -> None:
     """Test interactive detection with PIL."""
     imports = {"PIL", "plotille"}
     assert generate_docs.is_interactive(imports) is False
+
+
+def test_categorize_basic() -> None:
+    """Test basic example categorization."""
+    from pathlib import Path
+
+    info = generate_docs.ExampleInfo(
+        Path("scatter.py"), "scatter", "", {"plotille"}, True
+    )
+    assert generate_docs.categorize_example(info) == "basic"
+
+
+def test_categorize_canvas() -> None:
+    """Test canvas example categorization."""
+    from pathlib import Path
+
+    info = generate_docs.ExampleInfo(
+        Path("canvas_test.py"), "canvas_test", "", {"plotille"}, True
+    )
+    assert generate_docs.categorize_example(info) == "canvas"
+
+
+def test_categorize_advanced() -> None:
+    """Test advanced example categorization."""
+    from pathlib import Path
+
+    info = generate_docs.ExampleInfo(
+        Path("image.py"), "image", "", {"PIL", "plotille"}, False
+    )
+    assert generate_docs.categorize_example(info) == "advanced"

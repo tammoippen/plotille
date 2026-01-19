@@ -132,6 +132,42 @@ def analyze_example(example_path: Path) -> ExampleInfo:
     )
 
 
+def categorize_example(info: ExampleInfo) -> str:
+    """
+    Categorize example into a section.
+
+    Args:
+        info: ExampleInfo to categorize
+
+    Returns:
+        Category name: 'basic', 'figures', 'canvas', or 'advanced'
+
+    >>> from pathlib import Path
+    >>> info = ExampleInfo(Path("scatter.py"), "scatter", "", {'plotille'}, True)
+    >>> categorize_example(info)
+    'basic'
+    >>> info = ExampleInfo(Path("img.py"), "img", "", {'PIL', 'plotille'}, False)
+    >>> categorize_example(info)
+    'advanced'
+    """
+    name_lower = info.name.lower()
+
+    # Canvas examples
+    if "canvas" in name_lower or "draw" in name_lower:
+        return "canvas"
+
+    # Figure examples (multi-plot)
+    if "figure" in name_lower or "subplot" in name_lower:
+        return "figures"
+
+    # Advanced (external deps or complex)
+    if not info.is_interactive or "image" in name_lower or "img" in name_lower:
+        return "advanced"
+
+    # Default to basic
+    return "basic"
+
+
 def main() -> int:
     """Main entry point for testing."""
     # Find examples directory
@@ -148,10 +184,17 @@ def main() -> int:
         info = analyze_example(example_file)
         examples.append(info)
 
+    # Categorize
+    categories: dict[str, list[ExampleInfo]] = {}
+    for info in examples:
+        category = categorize_example(info)
+        categories.setdefault(category, []).append(info)
+
     # Print summary
     print(f"Found {len(examples)} examples")
-    print(f"Interactive: {sum(1 for e in examples if e.is_interactive)}")
-    print(f"Static: {sum(1 for e in examples if not e.is_interactive)}")
+    for category, items in sorted(categories.items()):
+        interactive_count = sum(1 for e in items if e.is_interactive)
+        print(f"  {category}: {len(items)} examples ({interactive_count} interactive)")
 
     return 0
 
