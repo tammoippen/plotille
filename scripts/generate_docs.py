@@ -3,7 +3,9 @@
 # ABOUTME: Scans examples directory and classifies them by dependencies.
 
 import ast
+import subprocess
 import sys
+from dataclasses import dataclass
 from pathlib import Path
 from typing import NamedTuple
 
@@ -166,6 +168,85 @@ def categorize_example(info: ExampleInfo) -> str:
 
     # Default to basic
     return "basic"
+
+
+@dataclass
+class ExampleOutput:
+    """Captured output from running an example."""
+
+    stdout: str
+    stderr: str
+    returncode: int
+    success: bool
+
+
+def execute_example(example_path: Path, timeout: int = 30) -> ExampleOutput:
+    """
+    Execute an example and capture its output.
+
+    Args:
+        example_path: Path to example Python file
+        timeout: Maximum execution time in seconds
+
+    Returns:
+        ExampleOutput with captured stdout/stderr
+    """
+    try:
+        result = subprocess.run(
+            [sys.executable, str(example_path)],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=example_path.parent,
+        )
+
+        return ExampleOutput(
+            stdout=result.stdout,
+            stderr=result.stderr,
+            returncode=result.returncode,
+            success=result.returncode == 0,
+        )
+    except subprocess.TimeoutExpired:
+        return ExampleOutput(
+            stdout="",
+            stderr=f"Example timed out after {timeout} seconds",
+            returncode=-1,
+            success=False,
+        )
+    except Exception as e:
+        return ExampleOutput(
+            stdout="",
+            stderr=f"Error executing example: {e}",
+            returncode=-1,
+            success=False,
+        )
+
+
+def save_example_output(
+    info: ExampleInfo,
+    output: ExampleOutput,
+    output_dir: Path,
+) -> Path:
+    """
+    Save example output to a file.
+
+    Args:
+        info: ExampleInfo for the example
+        output: ExampleOutput to save
+        output_dir: Directory to save output files
+
+    Returns:
+        Path to saved output file
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"{info.name}.txt"
+
+    content = output.stdout
+    if not output.success and output.stderr:
+        content += f"\n\nErrors:\n{output.stderr}"
+
+    output_file.write_text(content)
+    return output_file
 
 
 def main() -> int:

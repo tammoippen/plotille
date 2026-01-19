@@ -82,3 +82,46 @@ def test_categorize_advanced() -> None:
         Path("image.py"), "image", "", {"PIL", "plotille"}, False
     )
     assert generate_docs.categorize_example(info) == "advanced"
+
+
+def test_execute_example(tmp_path):
+    """Test executing a simple example."""
+    # Create a simple test example
+    test_example = tmp_path / "test.py"
+    test_example.write_text('print("Hello from example")')
+
+    output = generate_docs.execute_example(test_example)
+
+    assert output.success is True
+    assert output.returncode == 0
+    assert "Hello from example" in output.stdout
+
+
+def test_execute_example_error(tmp_path):
+    """Test executing an example that fails."""
+    test_example = tmp_path / "test.py"
+    test_example.write_text('raise ValueError("test error")')
+
+    output = generate_docs.execute_example(test_example)
+
+    assert output.success is False
+    assert output.returncode != 0
+    assert "ValueError" in output.stderr
+
+
+def test_save_example_output(tmp_path):
+    """Test saving example output."""
+    from pathlib import Path
+
+    info = generate_docs.ExampleInfo(
+        Path("test.py"), "test", "desc", set(), True
+    )
+    output = generate_docs.ExampleOutput(
+        stdout="test output", stderr="", returncode=0, success=True
+    )
+
+    output_dir = tmp_path / "outputs"
+    saved_path = generate_docs.save_example_output(info, output, output_dir)
+
+    assert saved_path.exists()
+    assert saved_path.read_text() == "test output"
