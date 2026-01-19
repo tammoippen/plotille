@@ -377,12 +377,73 @@ def generate_static_example_markdown(
 """
 
 
+def generate_category_page(
+    category: str,
+    examples: list[ExampleInfo],
+    output_paths: dict[str, Path],
+    docs_dir: Path,
+) -> Path:
+    """
+    Generate a markdown page for a category of examples.
+
+    Args:
+        category: Category name
+        examples: List of examples in this category
+        output_paths: Dict of pre-rendered output paths
+        docs_dir: Documentation directory
+
+    Returns:
+        Path to generated markdown file
+    """
+    category_titles = {
+        "basic": "Basic Plots",
+        "figures": "Complex Figures",
+        "canvas": "Canvas Drawing",
+        "advanced": "Advanced Examples",
+    }
+
+    title = category_titles.get(category, category.title())
+
+    # Build page content
+    content = [f"# {title}\n"]
+
+    # Add description
+    descriptions = {
+        "basic": "Simple plotting examples to get started with plotille.",
+        "figures": "Multi-plot figures and complex visualizations.",
+        "canvas": "Direct canvas manipulation for custom drawings.",
+        "advanced": "Examples using external libraries like NumPy and Pillow.",
+    }
+
+    if category in descriptions:
+        content.append(f"{descriptions[category]}\n")
+
+    # Add each example
+    for info in examples:
+        if info.is_interactive:
+            markdown = generate_interactive_example_markdown(info)
+        else:
+            output_path = output_paths.get(info.name, Path())
+            markdown = generate_static_example_markdown(info, output_path)
+
+        content.append(markdown)
+
+    # Write file
+    category_dir = docs_dir / "cookbook"
+    category_dir.mkdir(parents=True, exist_ok=True)
+
+    output_file = category_dir / f"{category}.md"
+    output_file.write_text("\n".join(content))
+
+    return output_file
+
+
 def main() -> int:
     """Main entry point."""
-    # Find examples directory
     project_root = Path(__file__).parent.parent
     examples_dir = project_root / "examples"
     output_dir = project_root / "docs" / "assets" / "example-outputs"
+    docs_dir = project_root / "docs"
 
     if not examples_dir.exists():
         print(f"Error: {examples_dir} not found", file=sys.stderr)
@@ -407,9 +468,16 @@ def main() -> int:
         print(f"  {category}: {len(items)} examples ({interactive_count} interactive)")
 
     # Generate static outputs
-    outputs = generate_static_outputs(examples, output_dir)
-    print(f"\nGenerated {len(outputs)} static outputs")
+    output_paths = generate_static_outputs(examples, output_dir)
+    print(f"\nGenerated {len(output_paths)} static outputs")
 
+    # Generate category pages
+    print("\nGenerating category pages...")
+    for category, items in sorted(categories.items()):
+        page_path = generate_category_page(category, items, output_paths, docs_dir)
+        print(f"  {category}: {page_path}")
+
+    print("\n✓ Documentation generation complete")
     return 0
 
 
