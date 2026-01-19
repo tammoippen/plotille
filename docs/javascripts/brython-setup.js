@@ -54,6 +54,7 @@ function runExample(exampleName) {
             }
 
             // Wrap code with custom output capture (StringIO doesn't work in Brython)
+            // Use exec() to avoid breaking Brython's execution context with indentation
             const wrappedCode = `
 import sys
 
@@ -73,7 +74,7 @@ __old_stdout__ = sys.stdout
 sys.stdout = __output__
 
 try:
-${code.split('\n').map(line => '    ' + line).join('\n')}
+    exec("""${code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}""")
 finally:
     sys.stdout = __old_stdout__
     print(__output__.getvalue(), end='')
