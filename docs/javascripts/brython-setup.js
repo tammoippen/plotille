@@ -45,21 +45,30 @@ function runExample(exampleName) {
     // Use setTimeout to allow UI update
     setTimeout(() => {
         try {
-            // Create a new output buffer
-            let outputBuffer = [];
+            const scriptId = `brython-script-${exampleName}`;
 
-            // Monkey-patch print for output capture
-            const printFunc = function(...args) {
-                const line = args.join(' ');
-                outputBuffer.push(line);
-            };
+            // Remove any existing script with this ID
+            const existingScript = document.getElementById(scriptId);
+            if (existingScript) {
+                existingScript.remove();
+            }
 
-            // Inject print into the Python code
+            // Wrap code with custom output capture (StringIO doesn't work in Brython)
             const wrappedCode = `
 import sys
-from io import StringIO
 
-__output__ = StringIO()
+# Custom output capture class (Brython-compatible)
+class OutputCapture:
+    def __init__(self):
+        self.output = []
+    def write(self, text):
+        self.output.append(text)
+    def flush(self):
+        pass
+    def getvalue(self):
+        return ''.join(self.output)
+
+__output__ = OutputCapture()
 __old_stdout__ = sys.stdout
 sys.stdout = __output__
 
@@ -70,13 +79,13 @@ finally:
     print(__output__.getvalue(), end='')
 `;
 
-            // Execute with Brython
+            // Create script element
             const script = document.createElement('script');
             script.type = 'text/python';
-            script.id = `brython-script-${exampleName}`;
+            script.id = scriptId;
             script.textContent = wrappedCode;
 
-            // Add output capture
+            // Capture console.log output
             window.__brython_output__ = '';
             const oldLog = console.log;
             console.log = function(...args) {
@@ -86,23 +95,32 @@ finally:
 
             document.body.appendChild(script);
 
-            // Run Brython on this script
+            // Run Brython on this specific script
             if (window.brython) {
-                brython({debug: 1, ids: [script.id]});
+                brython({debug: 1, ids: [scriptId]});
             }
 
-            // Restore console.log
+            // Restore console.log immediately
             console.log = oldLog;
 
-            // Small delay to capture output
+            // Wait for output capture
             setTimeout(() => {
-                const output = window.__brython_output__ || '(no output)';
-                outputDiv.textContent = output;
+                let output = window.__brython_output__;
+
+                // Remove trailing newline added by our capture
+                if (output && output.endsWith('\n')) {
+                    output = output.slice(0, -1);
+                }
+
+                outputDiv.textContent = output || '(no output)';
 
                 // Clean up
-                script.remove();
+                const scriptToRemove = document.getElementById(scriptId);
+                if (scriptToRemove) {
+                    scriptToRemove.remove();
+                }
                 delete window.__brython_output__;
-            }, 100);
+            }, 150);
 
         } catch (error) {
             // Display error
