@@ -196,7 +196,7 @@ a:hover {
 .code-editor {
     font-family: 'IBM Plex Mono', monospace;
     background: var(--amber-dark);
-    color: #ffffff !important;  /* Match styled code - bright white */
+    color: #cccccc !important;  /* Match styled code - muted white */
     width: 100%;
     min-height: 300px;
     padding: 1rem;
@@ -255,11 +255,11 @@ a:hover {
 
 .md-nav__link {
     font-family: 'IBM Plex Mono', monospace;
-    color: var(--amber-base);
+    color: var(--amber-base) !important;
 }
 
 .md-nav__link--active {
-    color: var(--amber-bright);
+    color: var(--amber-bright) !important;
 }
 
 .md-nav__link::before {
@@ -274,6 +274,31 @@ a:hover {
     opacity: 1;
 }
 
+/* Navigation titles and labels */
+.md-nav__title {
+    color: var(--amber-bright) !important;
+    background: var(--amber-black) !important;
+}
+
+/* Table of contents (sidebar on right) */
+.md-sidebar--secondary {
+    background: var(--amber-black) !important;
+}
+
+.md-sidebar--secondary .md-nav__title {
+    color: var(--amber-bright) !important;
+    background: var(--amber-black) !important;
+}
+
+/* Navigation items in table of contents */
+.md-sidebar--secondary .md-nav__link {
+    color: var(--amber-base) !important;
+}
+
+.md-sidebar--secondary .md-nav__link--active {
+    color: var(--amber-bright) !important;
+}
+
 /* Code blocks */
 .highlight {
     background: var(--amber-dark) !important;
@@ -286,7 +311,7 @@ a:hover {
 
 /* Syntax highlighting overrides for better contrast */
 
-/* Base code color - bright for readability */
+/* Base code color - muted for readability */
 .highlight .n,  /* names */
 .highlight .nb, /* built-in names */
 .highlight .nf, /* function names */
@@ -296,7 +321,7 @@ a:hover {
 .highlight .no, /* constants */
 .highlight .bp, /* built-in pseudo */
 .highlight pre code {
-    color: #ffffff !important;  /* Bright white for main text */
+    color: #cccccc !important;  /* Muted white for main text */
 }
 
 /* Keywords - amber bright */
@@ -349,11 +374,11 @@ a:hover {
     font-style: italic;
 }
 
-/* Operators, punctuation - bright white */
+/* Operators, punctuation - muted white */
 .highlight .o,  /* operator */
 .highlight .ow, /* operator word */
 .highlight .p {  /* punctuation (braces, commas, etc) */
-    color: #ffffff !important;
+    color: #cccccc !important;
     opacity: 1 !important;
 }
 
@@ -472,6 +497,7 @@ a:hover {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    white-space: pre-wrap;
 }
 
 /* Highlighted search terms */
@@ -489,6 +515,27 @@ a:hover {
 /* Search result metadata */
 .md-search-result__meta {
     color: var(--amber-dim) !important;
+}
+
+/* Search result more items */
+.md-search-result__more summary {
+    color: var(--amber-base) !important;
+    background-color: var(--amber-dark) !important;
+}
+
+/* All text within search results should be amber */
+.md-search-result * {
+    color: var(--amber-base) !important;
+}
+
+/* Override for highlighted terms */
+.md-search-result mark {
+    color: var(--amber-black) !important;
+}
+
+/* Override for links */
+.md-search-result a {
+    color: var(--amber-bright) !important;
 }
 
 /* Admonitions (info boxes) */
