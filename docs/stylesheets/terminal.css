@@ -196,12 +196,30 @@ a:hover {
 .code-editor {
     font-family: 'IBM Plex Mono', monospace;
     background: var(--amber-dark);
-    color: var(--amber-base);
+    color: #ffffff !important;  /* Match styled code - bright white */
     width: 100%;
     min-height: 300px;
     padding: 1rem;
     border: none;
     resize: vertical;
+    line-height: 1.5;
+    tab-size: 4;
+
+    /* Better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Placeholder text if any */
+.code-editor::placeholder {
+    color: var(--amber-dim);
+    opacity: 0.6;
+}
+
+/* On focus, add subtle glow */
+.code-editor:focus {
+    outline: none;
+    box-shadow: 0 0 10px var(--amber-glow);
 }
 
 /* Static example output */
@@ -264,6 +282,213 @@ a:hover {
 
 .highlight pre {
     color: var(--amber-base);
+}
+
+/* Syntax highlighting overrides for better contrast */
+
+/* Base code color - bright for readability */
+.highlight .n,  /* names */
+.highlight .nb, /* built-in names */
+.highlight .nf, /* function names */
+.highlight .nc, /* class names */
+.highlight .nn, /* module names */
+.highlight .nv, /* variables */
+.highlight .no, /* constants */
+.highlight .bp, /* built-in pseudo */
+.highlight pre code {
+    color: #ffffff !important;  /* Bright white for main text */
+}
+
+/* Keywords - amber bright */
+.highlight .k,  /* keyword */
+.highlight .kn, /* keyword namespace */
+.highlight .kc, /* keyword constant */
+.highlight .kd, /* keyword declaration */
+.highlight .kp, /* keyword pseudo */
+.highlight .kr, /* keyword reserved */
+.highlight .kt { /* keyword type */
+    color: var(--amber-bright) !important;
+    font-weight: 500;
+}
+
+/* Strings - lighter amber/yellow */
+.highlight .s,  /* string */
+.highlight .s1, /* string single quote */
+.highlight .s2, /* string double quote */
+.highlight .sb, /* string backtick */
+.highlight .sc, /* string char */
+.highlight .sd, /* string doc */
+.highlight .se, /* string escape */
+.highlight .sh, /* string heredoc */
+.highlight .si, /* string interpol */
+.highlight .sx, /* string other */
+.highlight .sr, /* string regex */
+.highlight .ss { /* string symbol */
+    color: #ffd700 !important;  /* Gold */
+}
+
+/* Numbers - bright amber */
+.highlight .m,  /* number */
+.highlight .mf, /* number float */
+.highlight .mh, /* number hex */
+.highlight .mi, /* number integer */
+.highlight .il, /* number integer long */
+.highlight .mo, /* number octal */
+.highlight .mb { /* number bin */
+    color: var(--amber-bright) !important;
+}
+
+/* Comments - medium contrast, NOT transparent */
+.highlight .c,   /* comment */
+.highlight .c1,  /* comment single line */
+.highlight .cm,  /* comment multiline */
+.highlight .cp,  /* comment preproc */
+.highlight .cs { /* comment special */
+    color: #998877 !important;  /* Muted tan, not transparent */
+    opacity: 1 !important;
+    font-style: italic;
+}
+
+/* Operators, punctuation - bright white */
+.highlight .o,  /* operator */
+.highlight .ow, /* operator word */
+.highlight .p {  /* punctuation (braces, commas, etc) */
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Decorators - bright amber */
+.highlight .nd, /* decorator */
+.highlight .ni { /* name builtin pseudo */
+    color: var(--amber-bright) !important;
+}
+
+/* Function/method calls - bright */
+.highlight .nf {
+    color: #ffcc00 !important;
+}
+
+/* Class names - bright */
+.highlight .nc {
+    color: var(--amber-bright) !important;
+    font-weight: 500;
+}
+
+/* Imports - amber */
+.highlight .nn {
+    color: var(--amber-base) !important;
+}
+
+/* Error/warning highlighting */
+.highlight .err {
+    color: #ff6666 !important;
+    background: none !important;
+}
+
+/* Header fixes for readability */
+
+/* Top header bar - solid black background for contrast */
+.md-header {
+    background-color: var(--amber-black) !important;
+    box-shadow: 0 0 10px var(--amber-glow);
+}
+
+/* Header title and links - bright amber on black */
+.md-header__title,
+.md-header__button {
+    color: var(--amber-bright) !important;
+}
+
+/* Make header title clickable and obvious it's a link */
+.md-header__title {
+    cursor: pointer;
+}
+
+.md-header__title:hover {
+    text-shadow: 0 0 15px var(--amber-glow);
+}
+
+/* Header navigation (tabs if present) */
+.md-tabs {
+    background-color: var(--amber-dark) !important;
+}
+
+.md-tabs__link {
+    color: var(--amber-base) !important;
+}
+
+.md-tabs__link--active,
+.md-tabs__link:hover {
+    color: var(--amber-bright) !important;
+}
+
+/* Search button in header */
+.md-search__form {
+    background-color: var(--amber-dark) !important;
+}
+
+.md-search__input {
+    background-color: var(--amber-dark) !important;
+    color: var(--amber-base) !important;
+}
+
+.md-search__input::placeholder {
+    color: var(--amber-dim) !important;
+}
+
+/* Search results styling */
+
+/* Search results container */
+.md-search-result {
+    background-color: var(--amber-black) !important;
+}
+
+/* Individual search result */
+.md-search-result__item {
+    background-color: var(--amber-dark) !important;
+    border-bottom: 1px solid var(--amber-dim);
+}
+
+/* Search result title */
+.md-search-result__link {
+    color: var(--amber-bright) !important;
+}
+
+.md-search-result__link:hover {
+    background-color: var(--amber-dark) !important;
+    color: var(--amber-bright) !important;
+    text-shadow: 0 0 10px var(--amber-glow);
+}
+
+/* Search result excerpt/teaser */
+.md-search-result__teaser {
+    color: var(--amber-base) !important;
+    background-color: var(--amber-dark) !important;
+
+    /* Limit height to show only excerpt */
+    max-height: 4.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* Highlighted search terms */
+.md-search-result mark {
+    background-color: var(--amber-dim) !important;
+    color: var(--amber-black) !important;
+    font-weight: bold;
+}
+
+/* Search result article/page info */
+.md-search-result__article {
+    background-color: var(--amber-dark) !important;
+}
+
+/* Search result metadata */
+.md-search-result__meta {
+    color: var(--amber-dim) !important;
 }
 
 /* Admonitions (info boxes) */
