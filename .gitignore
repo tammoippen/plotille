@@ -19,6 +19,11 @@ docs/unicode.txt
 docs/README.txt
 docs/demo.html
 docs/ansi_up.js
+
+# Documentation build artifacts
+docs/Lib/
+docs/assets/example-outputs/
+
 *.pyc
 __pycache__/
 dist/
