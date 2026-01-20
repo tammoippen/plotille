@@ -24,6 +24,9 @@ docs-setup:
 	@cd docs && echo "Y" | uv run python -m brython install
 	@rm -f docs/demo.html docs/README.txt docs/index.html
 	@echo "✓ Brython installed to docs/"
+	@echo "Downloading AnsiUp library..."
+	@curl -sL -o docs/ansi_up.js https://unpkg.com/ansi_up@6.0.2/ansi_up.js
+	@echo "✓ AnsiUp downloaded to docs/"
 
 docs: docs-setup
 	uv run python scripts/generate_docs.py

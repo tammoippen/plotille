@@ -3,6 +3,15 @@
 {% block scripts %}
   {{ super() }}
 
+  <!-- AnsiUp for ANSI color code conversion -->
+  <script type="module">
+    // Load AnsiUp as ES6 module
+    import { AnsiUp } from '{{ "ansi_up.js" | url }}';
+
+    // Create instance and expose to global scope
+    window.ansiUpConverter = new AnsiUp();
+  </script>
+
   <!-- Brython Python executor - load after Brython is initialized -->
   <script type="text/python" src="{{ 'javascripts/brython-executor.py' | url }}"></script>
 {% endblock %}

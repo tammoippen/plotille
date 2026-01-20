@@ -18,6 +18,9 @@ class OutputCapture:
     def flush(self):
         pass
 
+    def isatty(self):
+        return True  # Pretend we're a TTY to enable colors
+
     def getvalue(self):
         return ''.join(self.output)
 
@@ -53,11 +56,15 @@ def run_code(code, output_element_id):
         exec(code, {'__name__': '__main__'})
 
         # Get captured output
-        output = capture.getvalue()
+        raw_output = capture.getvalue()
 
-        # Display output
-        if output:
-            output_elem.text = output
+        # Convert ANSI codes to HTML if AnsiUp is available
+        if raw_output:
+            if window.ansiUpConverter:
+                html_output = window.ansiUpConverter.ansi_to_html(raw_output)
+                output_elem.innerHTML = html_output
+            else:
+                output_elem.text = raw_output
         else:
             output_elem.text = '(no output)'
 
