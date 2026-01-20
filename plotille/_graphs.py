@@ -150,6 +150,23 @@ def hist(
 
     Returns:
         str: histogram over `X` from left to right.
+
+    Examples:
+        Simple histogram:
+
+        >>> import plotille
+        >>> X = [1, 2, 2, 3, 3, 3, 4, 4, 5]
+        >>> result = plotille.hist(X, bins=5, width=40)
+        >>> '⠀' in result  # Contains braille dots
+        True
+        >>> len(result) > 0
+        True
+
+        Histogram with log scale:
+
+        >>> result = plotille.hist([1, 10, 100, 1000], bins=4, width=40, log_scale=True)
+        >>> len(result) > 0
+        True
     """
     # Normalize data to float before computing histogram
     formatter = InputFormatter()
@@ -210,6 +227,24 @@ def histogram(
 
     Returns:
         str: histogram over `X`.
+
+    Examples:
+        Vertical histogram:
+
+        >>> import plotille
+        >>> X = [1, 2, 2, 3, 3, 3, 4, 4, 5]
+        >>> result = plotille.histogram(X, bins=5, width=40, height=10)
+        >>> '⠀' in result  # Contains braille dots
+        True
+        >>> 'Counts' in result  # Contains Y-axis label
+        True
+
+        Histogram with custom range:
+
+        >>> result = plotille.histogram([1, 2, 3, 4, 5], bins=5, width=30, height=8,
+        ...                             x_min=0, x_max=6)
+        >>> len(result) > 0
+        True
     """
     fig = Figure()
     fig.width = width
@@ -280,6 +315,24 @@ def scatter(
 
     Returns:
         str: scatter plot over `X`, `Y`.
+
+    Examples:
+        Simple scatter plot:
+
+        >>> import plotille
+        >>> X = [1, 2, 3, 4, 5]
+        >>> Y = [2, 3, 1, 4, 5]
+        >>> result = plotille.scatter(X, Y, width=40, height=10)
+        >>> '⠀' in result  # Contains braille dots
+        True
+        >>> 'X' in result  # Contains axis label
+        True
+
+        Scatter plot with custom marker:
+
+        >>> result = plotille.scatter([1, 2, 3], [1, 2, 3], width=20, height=5, marker='*')
+        >>> len(result) > 0
+        True
     """
     return plot(
         X,
