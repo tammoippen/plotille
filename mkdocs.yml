@@ -64,4 +64,11 @@ nav:
   - Home: index.md
   - Cookbook:
       - Basic Plots: cookbook/basic.md
+      - Complex Figures: cookbook/figures.md
+      - Canvas Drawing: cookbook/canvas.md
       - Advanced Examples: cookbook/advanced.md
+  - API Reference:
+      - Overview: api/index.md
+      - Plotting Functions: api/plotting.md
+      - Figure: api/figure.md
+      - Canvas: api/canvas.md
