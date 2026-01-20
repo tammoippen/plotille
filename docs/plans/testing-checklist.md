@@ -19,8 +19,8 @@
 - [ ] Links to cookbook work
 
 ## Cookbook Pages
-- [ ] All four category pages exist (basic, figures, canvas, advanced)
-- [ ] Examples are categorized correctly
+- [ ] Both cookbook pages exist (basic, advanced)
+- [ ] Examples are categorized correctly (basic for interactive, advanced for static)
 - [ ] Interactive examples have working editors
 - [ ] Run buttons work for interactive examples
 - [ ] Output displays correctly
