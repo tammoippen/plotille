@@ -19,10 +19,12 @@ docs/unicode.txt
 docs/README.txt
 docs/demo.html
 docs/ansi_up.js
-
 # Documentation build artifacts
 docs/Lib/
 docs/assets/example-outputs/
+docs/cookbook/
+docs/index.md
+
 
 *.pyc
 __pycache__/
