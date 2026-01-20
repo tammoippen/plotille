@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# ABOUTME: Generate documentation from examples.
-# ABOUTME: Scans examples directory and classifies them by dependencies.
-
 import ast
 import subprocess
 import sys
@@ -266,9 +262,7 @@ def execute_example(example_path: Path, timeout: int = 30) -> ExampleOutput:
 
 
 def save_example_output(
-    info: ExampleInfo,
-    output: ExampleOutput,
-    output_dir: Path,
+    info: ExampleInfo, output: ExampleOutput, output_dir: Path
 ) -> Path:
     """
     Save example output to a file.
@@ -293,8 +287,7 @@ def save_example_output(
 
 
 def generate_static_outputs(
-    examples: list[ExampleInfo],
-    output_dir: Path,
+    examples: list[ExampleInfo], output_dir: Path
 ) -> dict[str, Path]:
     """
     Execute static examples and save their outputs.
@@ -322,7 +315,7 @@ def generate_static_outputs(
             outputs[info.name] = output_path
             print("✓")
         else:
-            print(f"✗ (failed)")
+            print("✗ (failed)")
             if output.stderr:
                 print(f"    Error: {output.stderr[:100]}")
 
@@ -371,8 +364,7 @@ def generate_interactive_example_markdown(info: ExampleInfo) -> str:
 
 
 def generate_static_example_markdown(
-    info: ExampleInfo,
-    output_path: Path | None,
+    info: ExampleInfo, output_path: Path | None
 ) -> str:
     """
     Generate markdown for a static example with pre-rendered output.
@@ -502,14 +494,7 @@ def generate_hero_plot() -> str:
         X = [i / 10 for i in range(-31, 32)]
         Y = [math.sin(x) for x in X]
 
-        plot_output = plotille.plot(
-            X,
-            Y,
-            width=60,
-            height=10,
-            X_label="X",
-            Y_label="",
-        )
+        plot_output = plotille.plot(X, Y, width=60, height=10, X_label="X", Y_label="")
 
         return plot_output
     except Exception as e:
@@ -632,11 +617,6 @@ def main() -> int:
     print("\nGenerating home page...")
     index_path = generate_home_page(docs_dir)
     print(f"  index: {index_path}")
-
-    # Copy plotille for Brython
-    print("\nCopying plotille for Brython...")
-    copy_script = project_root / "scripts" / "copy_plotille_for_brython.py"
-    subprocess.run([sys.executable, str(copy_script)], check=True)
 
     print("\n✓ Documentation generation complete")
     return 0
