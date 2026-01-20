@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block site_name %}
+  <a href="{{ config.site_url | default(nav.homepage.url, true) | url }}" class="md-header__button md-logo">
+    {{ config.site_name }}
+  </a>
+{% endblock %}
+
 {% block scripts %}
   {{ super() }}
 
@@ -10,6 +16,16 @@
 
     // Create instance and expose to global scope
     window.ansiUpConverter = new AnsiUp();
+
+    // Process static example outputs with ANSI codes
+    document.addEventListener('DOMContentLoaded', function() {
+      const ansiOutputs = document.querySelectorAll('.ansi-output');
+      ansiOutputs.forEach(function(elem) {
+        const ansiText = elem.textContent;
+        const htmlOutput = window.ansiUpConverter.ansi_to_html(ansiText);
+        elem.innerHTML = htmlOutput;
+      });
+    });
   </script>
 
   <!-- Brython Python executor - load after Brython is initialized -->

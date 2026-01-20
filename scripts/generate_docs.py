@@ -419,7 +419,7 @@ def generate_static_example_markdown(
         <span class="terminal-title">[output: {info.name}.py]</span>
     </div>
     <div class="terminal-body">
-        <pre class="terminal-output">{output}</pre>
+        <pre class="terminal-output ansi-output">{output}</pre>
     </div>
 </div>
 
