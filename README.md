@@ -34,6 +34,13 @@ If you are still using python 2.7, please use plotille v4 or before. With v5 I a
 
 ## Documentation
 
+📚 **Full documentation available at [plotille.tammo.io](https://plotille.tammo.io)**
+
+Features:
+- **Interactive examples** - Edit and run code in your browser
+- **Complete API reference** - Auto-generated from source
+- **Cookbook** - Examples organized by complexity
+
 ```python
 In [1]: import plotille
 In [2]: import numpy as np
