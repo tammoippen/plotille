@@ -1,202 +1,71 @@
 /*
- * Plotille Documentation Theme
- * Amber Phosphor CRT Terminal Aesthetic
+ * ABOUTME: Terminal window styling for plotille interactive examples.
+ * ABOUTME: Uses standard Material theme for everything except terminal components.
  */
 
-/* Import retro terminal fonts */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=VT323&display=swap');
+/* Terminal window components only - no global overrides */
+/* Uses Material theme CSS variables for consistent theming */
 
-:root {
-    /* Amber phosphor color palette */
-    --amber-black: #0a0a0a;
-    --amber-dark: #1a1200;
-    --amber-dim: #cc8800;
-    --amber-base: #ffb000;
-    --amber-bright: #ffd000;
-    --amber-glow: rgba(255, 176, 0, 0.4);
-
-    /* Spacing */
-    --terminal-padding: 1rem;
-    --terminal-border: 2px;
-}
-
-/* Global overrides for Material theme */
-[data-md-color-scheme="plotille"] {
-    /* Keep amber for accents, but use proper backgrounds */
-    --md-primary-fg-color: var(--amber-base);
-    --md-primary-fg-color--light: var(--amber-bright);
-    --md-primary-fg-color--dark: var(--amber-dim);
-    --md-accent-fg-color: var(--amber-bright);
-
-    /* Force dark backgrounds with amber text */
-    --md-default-bg-color: var(--amber-black);
-    --md-default-fg-color: var(--amber-base);
-    --md-code-bg-color: var(--amber-dark);
-    --md-code-fg-color: var(--amber-base);
-
-    /* Add these to prevent light backgrounds */
-    --md-typeset-a-color: var(--amber-bright);
-    --md-typeset-color: var(--amber-base);
-}
-
-/* Typography */
-body {
-    font-family: 'IBM Plex Mono', monospace;
-    background: var(--amber-black);
-    color: var(--amber-base);
-}
-
-/* Ensure headers are always readable */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'VT323', monospace;
-    color: var(--amber-bright) !important;
-    background: transparent !important;
-    text-shadow: 0 0 8px var(--amber-glow);
-    letter-spacing: 0.05em;
-}
-
-/* CRT scanline effect */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        transparent 50%,
-        rgba(0, 0, 0, 0.1) 50%
-    );
-    background-size: 100% 4px;
-    pointer-events: none;
-    z-index: 9999;
-    animation: scanline 8s linear infinite;
-}
-
-@keyframes scanline {
-    0% {
-        transform: translateY(0);
-    }
-    100% {
-        transform: translateY(4px);
-    }
-}
-
-/* Phosphor glow on text */
-.md-content {
-    text-shadow: 0 0 2px var(--amber-glow);
-}
-
-/* Force main content area to be dark */
-.md-main,
-.md-content,
-.md-content__inner {
-    background-color: var(--amber-black) !important;
-    color: var(--amber-base) !important;
-}
-
-/* Ensure sidebar is dark */
-.md-sidebar {
-    background-color: var(--amber-black) !important;
-}
-
-/* Links should be bright amber and underlined for visibility */
-a {
-    color: var(--amber-bright) !important;
-    text-decoration: underline;
-}
-
-a:hover {
-    color: var(--amber-bright) !important;
-    text-shadow: 0 0 10px var(--amber-glow);
-}
-
-/* Terminal window styling */
+/* Terminal window structure */
 .terminal-window {
-    background: var(--amber-black);
-    border: var(--terminal-border) solid var(--amber-dim);
-    border-radius: 4px;
+    background: var(--md-code-bg-color);
+    border: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.95;
+    border-radius: 6px;
     margin: 1.5rem 0;
-    box-shadow: 0 0 20px var(--amber-glow);
     overflow: hidden;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
 }
 
 .terminal-header {
-    background: var(--amber-dark);
-    padding: 0.5rem var(--terminal-padding);
-    border-bottom: 1px solid var(--amber-dim);
+    background: var(--md-code-bg-color);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.8;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .terminal-title {
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--amber-base);
-    font-size: 0.9rem;
+    color: var(--md-code-fg-color);
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 .terminal-run-btn {
-    font-family: 'VT323', monospace;
-    background: var(--amber-dim);
-    color: var(--amber-black);
-    border: 1px solid var(--amber-base);
+    background: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color, #ffffff);
+    border: none;
     padding: 0.25rem 0.75rem;
+    border-radius: 3px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
 }
 
 .terminal-run-btn:hover {
-    background: var(--amber-base);
-    box-shadow: 0 0 10px var(--amber-glow);
+    opacity: 0.8;
 }
 
 .terminal-body {
-    padding: var(--terminal-padding);
-    background: var(--amber-black);
+    padding: 1rem;
+    background: var(--md-code-bg-color);
 }
 
-.terminal-output {
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--amber-base);
-    white-space: pre;
-    margin-top: 1rem;
-    line-height: 1.4;
-}
-
-.terminal-prompt {
-    color: var(--amber-bright);
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.terminal-prompt::after {
-    content: '';
-    display: inline-block;
-    width: 8px;
-    height: 14px;
-    background: var(--amber-base);
-    margin-left: 4px;
-    animation: blink 1s step-end infinite;
-}
-
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
-}
-
-/* Code editor styling */
+/* Code editor (textarea) */
 .code-editor-wrapper {
-    border: 1px solid var(--amber-dim);
-    border-radius: 2px;
+    border: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.8;
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .code-editor {
-    font-family: 'IBM Plex Mono', monospace;
-    background: var(--amber-dark);
-    color: #cccccc !important;  /* Match styled code - muted white */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background: var(--md-code-bg-color);
+    color: var(--md-code-fg-color);
     width: 100%;
     min-height: 300px;
     padding: 1rem;
@@ -204,343 +73,44 @@ a:hover {
     resize: vertical;
     line-height: 1.5;
     tab-size: 4;
-
-    /* Better text rendering */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
-/* Placeholder text if any */
-.code-editor::placeholder {
-    color: var(--amber-dim);
-    opacity: 0.6;
-}
-
-/* On focus, add subtle glow */
 .code-editor:focus {
     outline: none;
-    box-shadow: 0 0 10px var(--amber-glow);
+    box-shadow: 0 0 0 2px var(--md-accent-fg-color);
 }
 
-/* Static example output */
-.static-example .terminal-output {
+/* Terminal output */
+.terminal-output {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: var(--md-code-fg-color);
+    white-space: pre;
+    margin-top: 1rem;
+    line-height: 1.4;
     max-height: 600px;
+    overflow-x: auto;
     overflow-y: auto;
 }
 
-/* Hero terminal animation */
+.terminal-prompt {
+    color: var(--md-accent-fg-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.output-content {
+    margin-top: 0.5rem;
+}
+
+.output-content.error {
+    color: #f48771;
+}
+
+/* Hero terminal on home page */
 .hero-terminal {
     margin: 2rem 0;
-    font-size: 0.8rem;
 }
 
 .hero-plot {
-    min-height: 300px;
-    margin: 0;
-}
-
-/* Braille dot decorations */
-.braille-divider {
-    text-align: center;
-    color: var(--amber-dim);
-    font-size: 1.5rem;
-    margin: 2rem 0;
-    opacity: 0.3;
-}
-
-/* Navigation styled as terminal prompt */
-.md-sidebar--primary {
-    background: var(--amber-black);
-}
-
-.md-nav__link {
-    font-family: 'IBM Plex Mono', monospace;
-    color: var(--amber-base) !important;
-}
-
-.md-nav__link--active {
-    color: var(--amber-bright) !important;
-}
-
-.md-nav__link::before {
-    content: '> ';
-    color: var(--amber-dim);
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.md-nav__link--active::before,
-.md-nav__link:hover::before {
-    opacity: 1;
-}
-
-/* Navigation titles and labels */
-.md-nav__title {
-    color: var(--amber-bright) !important;
-    background: var(--amber-black) !important;
-}
-
-/* Table of contents (sidebar on right) */
-.md-sidebar--secondary {
-    background: var(--amber-black) !important;
-}
-
-.md-sidebar--secondary .md-nav__title {
-    color: var(--amber-bright) !important;
-    background: var(--amber-black) !important;
-}
-
-/* Navigation items in table of contents */
-.md-sidebar--secondary .md-nav__link {
-    color: var(--amber-base) !important;
-}
-
-.md-sidebar--secondary .md-nav__link--active {
-    color: var(--amber-bright) !important;
-}
-
-/* Code blocks */
-.highlight {
-    background: var(--amber-dark) !important;
-    border: 1px solid var(--amber-dim);
-}
-
-.highlight pre {
-    color: var(--amber-base);
-}
-
-/* Syntax highlighting overrides for better contrast */
-
-/* Base code color - muted for readability */
-.highlight .n,  /* names */
-.highlight .nb, /* built-in names */
-.highlight .nf, /* function names */
-.highlight .nc, /* class names */
-.highlight .nn, /* module names */
-.highlight .nv, /* variables */
-.highlight .no, /* constants */
-.highlight .bp, /* built-in pseudo */
-.highlight pre code {
-    color: #cccccc !important;  /* Muted white for main text */
-}
-
-/* Keywords - amber bright */
-.highlight .k,  /* keyword */
-.highlight .kn, /* keyword namespace */
-.highlight .kc, /* keyword constant */
-.highlight .kd, /* keyword declaration */
-.highlight .kp, /* keyword pseudo */
-.highlight .kr, /* keyword reserved */
-.highlight .kt { /* keyword type */
-    color: var(--amber-bright) !important;
-    font-weight: 500;
-}
-
-/* Strings - lighter amber/yellow */
-.highlight .s,  /* string */
-.highlight .s1, /* string single quote */
-.highlight .s2, /* string double quote */
-.highlight .sb, /* string backtick */
-.highlight .sc, /* string char */
-.highlight .sd, /* string doc */
-.highlight .se, /* string escape */
-.highlight .sh, /* string heredoc */
-.highlight .si, /* string interpol */
-.highlight .sx, /* string other */
-.highlight .sr, /* string regex */
-.highlight .ss { /* string symbol */
-    color: #ffd700 !important;  /* Gold */
-}
-
-/* Numbers - bright amber */
-.highlight .m,  /* number */
-.highlight .mf, /* number float */
-.highlight .mh, /* number hex */
-.highlight .mi, /* number integer */
-.highlight .il, /* number integer long */
-.highlight .mo, /* number octal */
-.highlight .mb { /* number bin */
-    color: var(--amber-bright) !important;
-}
-
-/* Comments - medium contrast, NOT transparent */
-.highlight .c,   /* comment */
-.highlight .c1,  /* comment single line */
-.highlight .cm,  /* comment multiline */
-.highlight .cp,  /* comment preproc */
-.highlight .cs { /* comment special */
-    color: #998877 !important;  /* Muted tan, not transparent */
-    opacity: 1 !important;
-    font-style: italic;
-}
-
-/* Operators, punctuation - muted white */
-.highlight .o,  /* operator */
-.highlight .ow, /* operator word */
-.highlight .p {  /* punctuation (braces, commas, etc) */
-    color: #cccccc !important;
-    opacity: 1 !important;
-}
-
-/* Decorators - bright amber */
-.highlight .nd, /* decorator */
-.highlight .ni { /* name builtin pseudo */
-    color: var(--amber-bright) !important;
-}
-
-/* Function/method calls - bright */
-.highlight .nf {
-    color: #ffcc00 !important;
-}
-
-/* Class names - bright */
-.highlight .nc {
-    color: var(--amber-bright) !important;
-    font-weight: 500;
-}
-
-/* Imports - amber */
-.highlight .nn {
-    color: var(--amber-base) !important;
-}
-
-/* Error/warning highlighting */
-.highlight .err {
-    color: #ff6666 !important;
-    background: none !important;
-}
-
-/* Header fixes for readability */
-
-/* Top header bar - solid black background for contrast */
-.md-header {
-    background-color: var(--amber-black) !important;
-    box-shadow: 0 0 10px var(--amber-glow);
-}
-
-/* Header title and links - bright amber on black */
-.md-header__title,
-.md-header__button {
-    color: var(--amber-bright) !important;
-}
-
-/* Make header title clickable and obvious it's a link */
-.md-header__title {
-    cursor: pointer;
-}
-
-.md-header__title:hover {
-    text-shadow: 0 0 15px var(--amber-glow);
-}
-
-/* Header navigation (tabs if present) */
-.md-tabs {
-    background-color: var(--amber-dark) !important;
-}
-
-.md-tabs__link {
-    color: var(--amber-base) !important;
-}
-
-.md-tabs__link--active,
-.md-tabs__link:hover {
-    color: var(--amber-bright) !important;
-}
-
-/* Search button in header */
-.md-search__form {
-    background-color: var(--amber-dark) !important;
-}
-
-.md-search__input {
-    background-color: var(--amber-dark) !important;
-    color: var(--amber-base) !important;
-}
-
-.md-search__input::placeholder {
-    color: var(--amber-dim) !important;
-}
-
-/* Search results styling */
-
-/* Search results container */
-.md-search-result {
-    background-color: var(--amber-black) !important;
-}
-
-/* Individual search result */
-.md-search-result__item {
-    background-color: var(--amber-dark) !important;
-    border-bottom: 1px solid var(--amber-dim);
-}
-
-/* Search result title */
-.md-search-result__link {
-    color: var(--amber-bright) !important;
-}
-
-.md-search-result__link:hover {
-    background-color: var(--amber-dark) !important;
-    color: var(--amber-bright) !important;
-    text-shadow: 0 0 10px var(--amber-glow);
-}
-
-/* Search result excerpt/teaser */
-.md-search-result__teaser {
-    color: var(--amber-base) !important;
-    background-color: var(--amber-dark) !important;
-
-    /* Limit height to show only excerpt */
-    max-height: 4.5em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    white-space: pre-wrap;
-}
-
-/* Highlighted search terms */
-.md-search-result mark {
-    background-color: var(--amber-dim) !important;
-    color: var(--amber-black) !important;
-    font-weight: bold;
-}
-
-/* Search result article/page info */
-.md-search-result__article {
-    background-color: var(--amber-dark) !important;
-}
-
-/* Search result metadata */
-.md-search-result__meta {
-    color: var(--amber-dim) !important;
-}
-
-/* Search result more items */
-.md-search-result__more summary {
-    color: var(--amber-base) !important;
-    background-color: var(--amber-dark) !important;
-}
-
-/* All text within search results should be amber */
-.md-search-result * {
-    color: var(--amber-base) !important;
-}
-
-/* Override for highlighted terms */
-.md-search-result mark {
-    color: var(--amber-black) !important;
-}
-
-/* Override for links */
-.md-search-result a {
-    color: var(--amber-bright) !important;
-}
-
-/* Admonitions (info boxes) */
-.admonition {
-    background: var(--amber-dark);
-    border-left: 4px solid var(--amber-base);
-    color: var(--amber-base);
+    font-size: 0.75rem;
 }
