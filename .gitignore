@@ -18,6 +18,7 @@ docs/brython_stdlib.js
 docs/unicode.txt
 docs/README.txt
 docs/demo.html
+docs/ansi_up.js
 *.pyc
 __pycache__/
 dist/
