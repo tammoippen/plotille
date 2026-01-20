@@ -49,6 +49,11 @@ plugins:
             show_root_full_path: false
             show_signature_annotations: true
             separate_signature: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            merge_init_into_class: true
+          paths: [plotille]
 
 markdown_extensions:
   - pymdownx.highlight
