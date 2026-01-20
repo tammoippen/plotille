@@ -346,6 +346,25 @@ def plot(
 
     Returns:
         str: plot over `X`, `Y`.
+
+    Examples:
+        Simple line plot:
+
+        >>> import plotille
+        >>> X = [1, 2, 3, 4, 5]
+        >>> Y = [1, 4, 2, 3, 5]
+        >>> result = plotille.plot(X, Y, width=40, height=10)
+        >>> '⠀' in result  # Contains braille dots
+        True
+        >>> 'X' in result  # Contains axis label
+        True
+
+        Plot with custom range:
+
+        >>> result = plotille.plot([0, 1], [0, 1], width=20, height=5,
+        ...                         x_min=0, x_max=1, y_min=0, y_max=1)
+        >>> len(result) > 0
+        True
     """
     fig = Figure()
     fig.width = width
