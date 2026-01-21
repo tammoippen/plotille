@@ -36,30 +36,30 @@ ColorMode = Literal["names", "byte", "rgb"]
 
 
 ColorNames = Literal[
-    "black"
-    "red"
-    "green"
-    "yellow"
-    "blue"
-    "magenta"
-    "cyan"
-    "white"
-    "bright_black"
-    "bright_red"
-    "bright_green"
-    "bright_yellow"
-    "bright_blue"
-    "bright_magenta"
-    "bright_cyan"
-    "bright_white"
-    "bright_black_old"
-    "bright_red_old"
-    "bright_green_old"
-    "bright_yellow_old"
-    "bright_blue_old"
-    "bright_magenta_old"
-    "bright_cyan_old"
-    "bright_white_old"
+    "black",
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan",
+    "white",
+    "bright_black",
+    "bright_red",
+    "bright_green",
+    "bright_yellow",
+    "bright_blue",
+    "bright_magenta",
+    "bright_cyan",
+    "bright_white",
+    "bright_black_old",
+    "bright_red_old",
+    "bright_green_old",
+    "bright_yellow_old",
+    "bright_blue_old",
+    "bright_magenta_old",
+    "bright_cyan_old",
+    "bright_white_old",
 ]
 
 

@@ -30,6 +30,7 @@ theme:
 
 extra_css:
   - stylesheets/terminal.css
+  - stylesheets/ansi-colors.css
 
 extra_javascript:
   - brython.js

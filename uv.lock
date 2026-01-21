@@ -8,6 +8,15 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "ansi2html"
+version = "1.9.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4b/d5/e3546dcd5e4a9566f4ed8708df5853e83ca627461a5b048a861c6f8e7a26/ansi2html-1.9.2.tar.gz", hash = "sha256:3453bf87535d37b827b05245faaa756dbab4ec3d69925e352b6319c3c955c0a5", size = 44300, upload-time = "2024-06-22T17:33:23.964Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bd/71/aee71b836e9ee2741d5694b80d74bfc7c8cd5dbdf7a9f3035fcf80d792b1/ansi2html-1.9.2-py3-none-any.whl", hash = "sha256:dccb75aa95fb018e5d299be2b45f802952377abfdce0504c17a6ee6ef0a420c5", size = 17614, upload-time = "2024-06-22T17:33:21.852Z" },
+]
+
+[[package]]
 name = "babel"
 version = "2.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1016,6 +1025,7 @@ source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "ansi2html" },
     { name = "brython", version = "3.11.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "brython", version = "3.11.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
     { name = "brython", version = "3.14.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
@@ -1039,6 +1049,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "ansi2html", specifier = ">=1.9.2" },
     { name = "brython", specifier = ">=3.11.1" },
     { name = "mkdocs", specifier = ">=1.5.0" },
     { name = "mkdocs-gen-files", specifier = ">=0.5.0" },

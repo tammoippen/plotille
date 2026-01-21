@@ -52,6 +52,7 @@ dev = [
   "pytest-mock",
   "ruff",
   "ty>=0.0.3",
+  "ansi2html>=1.9.2",
 ]
 
 [tool.pytest.ini_options]
