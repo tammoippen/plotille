@@ -3,6 +3,7 @@
 
 import sys
 import traceback
+
 from browser import document, window
 
 
@@ -22,7 +23,7 @@ class OutputCapture:
         return True  # Pretend we're a TTY to enable colors
 
     def getvalue(self):
-        return ''.join(self.output)
+        return "".join(self.output)
 
 
 def run_code(code, output_element_id):
@@ -40,11 +41,11 @@ def run_code(code, output_element_id):
         return
 
     # Clear previous output
-    output_elem.text = ''
-    output_elem.classList.remove('error')
+    output_elem.text = ""
+    output_elem.classList.remove("error")
 
     # Show running indicator
-    output_elem.text = 'Running...'
+    output_elem.text = "Running..."
 
     # Capture stdout
     capture = OutputCapture()
@@ -53,7 +54,7 @@ def run_code(code, output_element_id):
 
     try:
         # Execute the user's code
-        exec(code, {'__name__': '__main__'})
+        exec(code, {"__name__": "__main__"})
 
         # Get captured output
         raw_output = capture.getvalue()
@@ -66,11 +67,11 @@ def run_code(code, output_element_id):
             else:
                 output_elem.text = raw_output
         else:
-            output_elem.text = '(no output)'
+            output_elem.text = "(no output)"
 
     except Exception as e:
         # Display error
-        output_elem.classList.add('error')
+        output_elem.classList.add("error")
         error_msg = f"Error: {e}\n\n{traceback.format_exc()}"
         output_elem.text = error_msg
 

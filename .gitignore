@@ -24,6 +24,7 @@ docs/Lib/
 docs/assets/example-outputs/
 docs/cookbook/
 docs/index.md
+docs/stylesheets/ansi-colors.css
 
 
 *.pyc

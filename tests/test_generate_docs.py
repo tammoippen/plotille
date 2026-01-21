@@ -1,4 +1,5 @@
 """Tests for documentation generation script."""
+
 import sys
 from pathlib import Path
 
@@ -113,9 +114,7 @@ def test_save_example_output(tmp_path):
     """Test saving example output."""
     from pathlib import Path
 
-    info = generate_docs.ExampleInfo(
-        Path("test.py"), "test", "desc", set(), True
-    )
+    info = generate_docs.ExampleInfo(Path("test.py"), "test", "desc", set(), True)
     output = generate_docs.ExampleOutput(
         stdout="test output", stderr="", returncode=0, success=True
     )
@@ -129,7 +128,6 @@ def test_save_example_output(tmp_path):
 
 def test_generate_interactive_example_markdown(tmp_path):
     """Test generating markdown for interactive example."""
-    from pathlib import Path
 
     # Create actual test file
     test_py = tmp_path / "test.py"
@@ -153,8 +151,6 @@ def test_generate_interactive_example_markdown(tmp_path):
 
 def test_generate_static_example_markdown(tmp_path):
     """Test generating markdown for static example."""
-    from pathlib import Path
-    import unittest.mock as mock
 
     # Create actual test files
     test_py = tmp_path / "test.py"

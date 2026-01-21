@@ -1,9 +1,17 @@
 import ast
+import math
 import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import NamedTuple
+
+from ansi2html import Ansi2HTMLConverter
+from ansi2html.style import get_styles
+
+import plotille
+
+conv = Ansi2HTMLConverter()
 
 
 class ExampleInfo(NamedTuple):
@@ -237,11 +245,12 @@ def execute_example(example_path: Path, timeout: int = 30) -> ExampleOutput:
             text=True,
             timeout=timeout,
             cwd=example_path.parent,
+            env={"FORCE_COLOR": "1"},
         )
 
         return ExampleOutput(
-            stdout=result.stdout,
-            stderr=result.stderr,
+            stdout=conv.convert(result.stdout, full=False),
+            stderr=conv.convert(result.stderr, full=False),
             returncode=result.returncode,
             success=result.returncode == 0,
         )
@@ -487,16 +496,13 @@ def generate_hero_plot() -> str:
         String containing plotille plot output
     """
     try:
-        import math
-
-        import plotille
-
         X = [i / 10 for i in range(-31, 32)]
         Y = [math.sin(x) for x in X]
+        plot_output = plotille.plot(
+            X, Y, width=60, height=10, X_label="X", Y_label="", lc="red"
+        )
 
-        plot_output = plotille.plot(X, Y, width=60, height=10, X_label="X", Y_label="")
-
-        return plot_output
+        return conv.convert(plot_output, full=False)
     except Exception as e:
         # Fallback if generation fails
         return f"Error generating plot: {e}"
@@ -523,7 +529,7 @@ def generate_home_page(docs_dir: Path) -> Path:
         <span class="terminal-title">[root@plotille ~]$</span>
     </div>
     <div class="terminal-body">
-        <pre class="hero-plot" id="hero-animation">{hero_plot}</pre>
+        <pre class="hero-plot ansi2html-content ansi-output" id="hero-animation">{hero_plot}</pre>
     </div>
 </div>
 
@@ -567,6 +573,19 @@ Browse the [cookbook](cookbook/basic.md) to see interactive examples you can edi
     index_file = docs_dir / "index.md"
     index_file.write_text(content)
     return index_file
+
+
+def generate_color_styles(docs_dir: Path) -> Path:
+    css_file = docs_dir / "stylesheets" / "ansi-colors.css"
+    css_file.write_text(
+        "\n".join(
+            [
+                f".ansi-output {r}"
+                for r in get_styles(conv.dark_bg, conv.line_wrap, conv.scheme)
+            ]
+        )
+    )
+    return css_file
 
 
 def main() -> int:
@@ -617,6 +636,10 @@ def main() -> int:
     print("\nGenerating home page...")
     index_path = generate_home_page(docs_dir)
     print(f"  index: {index_path}")
+
+    print("\nGenerating color styles...")
+    css_path = generate_color_styles(docs_dir)
+    print(f"  olor-styles: {css_path}")
 
     print("\n✓ Documentation generation complete")
     return 0
