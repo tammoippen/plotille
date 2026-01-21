@@ -1,0 +1,649 @@
+import ast
+import math
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import NamedTuple
+
+from ansi2html import Ansi2HTMLConverter
+from ansi2html.style import get_styles
+
+import plotille
+
+conv = Ansi2HTMLConverter()
+
+
+class ExampleInfo(NamedTuple):
+    """Information about an example file."""
+
+    path: Path
+    name: str
+    description: str
+    imports: set[str]
+    is_interactive: bool
+
+
+def extract_imports(source_code: str) -> set[str]:
+    """
+    Extract all imported module names from Python source.
+
+    Args:
+        source_code: Python source code as string
+
+    Returns:
+        Set of top-level module names imported
+
+    >>> extract_imports("import numpy\\nfrom PIL import Image")
+    {'numpy', 'PIL'}
+    >>> extract_imports("import plotille\\nfrom plotille import Canvas")
+    {'plotille'}
+    """
+    try:
+        tree = ast.parse(source_code)
+    except SyntaxError:
+        return set()
+
+    imports = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                # Get top-level module name
+                imports.add(alias.name.split(".")[0])
+        elif isinstance(node, ast.ImportFrom):
+            if node.module:
+                imports.add(node.module.split(".")[0])
+
+    return imports
+
+
+def extract_description(source_code: str) -> str:
+    """
+    Extract description from module docstring or initial comments.
+
+    Args:
+        source_code: Python source code
+
+    Returns:
+        Description string or empty string
+
+    >>> extract_description('\"\"\"Test module\"\"\"\\nprint("hi")')
+    'Test module'
+    >>> extract_description('# A comment\\nprint("hi")')
+    'A comment'
+    """
+    try:
+        tree = ast.parse(source_code)
+        docstring = ast.get_docstring(tree)
+        if docstring:
+            return docstring.strip().split("\n")[0]  # First line only
+    except SyntaxError:
+        pass
+
+    # Fall back to first comment
+    lines = source_code.split("\n")
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("#"):
+            return stripped[1:].strip()
+
+    return ""
+
+
+def is_interactive(imports: set[str]) -> bool:
+    """
+    Determine if example can run in Brython (no external deps).
+
+    Args:
+        imports: Set of imported module names
+
+    Returns:
+        True if example is Brython-compatible
+
+    >>> is_interactive({'plotille', 'math', 'random'})
+    True
+    >>> is_interactive({'plotille', 'numpy'})
+    False
+    >>> is_interactive({'PIL', 'plotille'})
+    False
+    """
+    # These are NOT available in Brython
+    blocked_modules = {"numpy", "PIL", "pandas", "matplotlib", "scipy"}
+
+    # Check if any blocked modules are used
+    return not bool(imports & blocked_modules)
+
+
+def strip_license_header(source_code: str) -> str:
+    """
+    Remove MIT license header from source code.
+
+    Args:
+        source_code: Python source code possibly containing license header
+
+    Returns:
+        Source code with license header removed
+    """
+    lines = source_code.split("\n")
+
+    # Look for MIT license pattern
+    if "# The MIT License" in source_code:
+        # Find the end of the license block (first non-comment/non-blank line after license)
+        in_license = False
+        start_index = 0
+
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+
+            # Start of license
+            if "MIT License" in line:
+                in_license = True
+                start_index = i
+                continue
+
+            # End of license block (first non-comment, non-blank line)
+            if in_license and stripped and not stripped.startswith("#"):
+                # Remove everything from start_index to just before this line
+                return "\n".join(lines[i:])
+
+        # If we didn't find the end, remove first 23 lines (typical license length)
+        if in_license:
+            return "\n".join(lines[23:])
+
+    return source_code
+
+
+def analyze_example(example_path: Path) -> ExampleInfo:
+    """
+    Analyze a single example file.
+
+    Args:
+        example_path: Path to example .py file
+
+    Returns:
+        ExampleInfo with analysis results
+    """
+    source_code = example_path.read_text()
+
+    # Strip license header before analyzing
+    source_code_clean = strip_license_header(source_code)
+
+    imports = extract_imports(source_code_clean)
+    description = extract_description(source_code_clean)
+    name = example_path.stem
+
+    return ExampleInfo(
+        path=example_path,
+        name=name,
+        description=description or f"Example: {name}",
+        imports=imports,
+        is_interactive=is_interactive(imports),
+    )
+
+
+def categorize_example(info: ExampleInfo) -> str:
+    """
+    Categorize example into a section.
+
+    Args:
+        info: ExampleInfo to categorize
+
+    Returns:
+        Category name: 'basic', 'figures', 'canvas', or 'advanced'
+
+    >>> from pathlib import Path
+    >>> info = ExampleInfo(Path("scatter.py"), "scatter", "", {'plotille'}, True)
+    >>> categorize_example(info)
+    'basic'
+    >>> info = ExampleInfo(Path("img.py"), "img", "", {'PIL', 'plotille'}, False)
+    >>> categorize_example(info)
+    'advanced'
+    """
+    name_lower = info.name.lower()
+
+    # Canvas examples
+    if "canvas" in name_lower or "draw" in name_lower:
+        return "canvas"
+
+    # Figure examples (multi-plot)
+    if "figure" in name_lower or "subplot" in name_lower:
+        return "figures"
+
+    # Advanced (external deps or complex)
+    if not info.is_interactive or "image" in name_lower or "img" in name_lower:
+        return "advanced"
+
+    # Default to basic
+    return "basic"
+
+
+@dataclass
+class ExampleOutput:
+    """Captured output from running an example."""
+
+    stdout: str
+    stderr: str
+    returncode: int
+    success: bool
+
+
+def execute_example(example_path: Path, timeout: int = 30) -> ExampleOutput:
+    """
+    Execute an example and capture its output.
+
+    Args:
+        example_path: Path to example Python file
+        timeout: Maximum execution time in seconds
+
+    Returns:
+        ExampleOutput with captured stdout/stderr
+    """
+    try:
+        result = subprocess.run(
+            [sys.executable, str(example_path)],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=example_path.parent,
+            env={"FORCE_COLOR": "1"},
+        )
+
+        return ExampleOutput(
+            stdout=conv.convert(result.stdout, full=False),
+            stderr=conv.convert(result.stderr, full=False),
+            returncode=result.returncode,
+            success=result.returncode == 0,
+        )
+    except subprocess.TimeoutExpired:
+        return ExampleOutput(
+            stdout="",
+            stderr=f"Example timed out after {timeout} seconds",
+            returncode=-1,
+            success=False,
+        )
+    except Exception as e:
+        return ExampleOutput(
+            stdout="",
+            stderr=f"Error executing example: {e}",
+            returncode=-1,
+            success=False,
+        )
+
+
+def save_example_output(
+    info: ExampleInfo, output: ExampleOutput, output_dir: Path
+) -> Path:
+    """
+    Save example output to a file.
+
+    Args:
+        info: ExampleInfo for the example
+        output: ExampleOutput to save
+        output_dir: Directory to save output files
+
+    Returns:
+        Path to saved output file
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_file = output_dir / f"{info.name}.txt"
+
+    content = output.stdout
+    if not output.success and output.stderr:
+        content += f"\n\nErrors:\n{output.stderr}"
+
+    output_file.write_text(content)
+    return output_file
+
+
+def generate_static_outputs(
+    examples: list[ExampleInfo], output_dir: Path
+) -> dict[str, Path]:
+    """
+    Execute static examples and save their outputs.
+
+    Args:
+        examples: List of ExampleInfo to process
+        output_dir: Directory to save outputs
+
+    Returns:
+        Dict mapping example name to output file path
+    """
+    outputs = {}
+
+    static_examples = [e for e in examples if not e.is_interactive]
+
+    print(f"\nGenerating outputs for {len(static_examples)} static examples...")
+
+    for info in static_examples:
+        print(f"  Executing {info.name}...", end=" ")
+
+        output = execute_example(info.path)
+
+        if output.success:
+            output_path = save_example_output(info, output, output_dir)
+            outputs[info.name] = output_path
+            print("✓")
+        else:
+            print("✗ (failed)")
+            if output.stderr:
+                print(f"    Error: {output.stderr[:100]}")
+
+    return outputs
+
+
+def generate_interactive_example_markdown(info: ExampleInfo) -> str:
+    """
+    Generate markdown for an interactive example.
+
+    Args:
+        info: ExampleInfo for the example
+
+    Returns:
+        Markdown string with interactive code editor
+    """
+    source_code = info.path.read_text()
+
+    # Strip license header
+    source_code = strip_license_header(source_code)
+
+    # Escape backticks in code for markdown
+    escaped_code = source_code.replace("```", "\\`\\`\\`")
+
+    return f"""## {info.name}
+
+{info.description}
+
+<div class="terminal-window interactive-example" data-example="{info.name}">
+    <div class="terminal-header">
+        <span class="terminal-title">[python3 {info.name}.py]</span>
+        <button class="terminal-run-btn" onclick="runExample('{info.name}')">[EXEC]</button>
+    </div>
+    <div class="terminal-body">
+        <div class="code-editor-wrapper">
+            <textarea class="code-editor" id="editor-{info.name}">{escaped_code}</textarea>
+        </div>
+        <div class="terminal-output" id="output-{info.name}">
+            <span class="terminal-prompt">root@plotille:~$ python3 {info.name}.py</span>
+            <div class="output-content"></div>
+        </div>
+    </div>
+</div>
+
+"""
+
+
+def generate_static_example_markdown(
+    info: ExampleInfo, output_path: Path | None
+) -> str:
+    """
+    Generate markdown for a static example with pre-rendered output.
+
+    Args:
+        info: ExampleInfo for the example
+        output_path: Path to pre-rendered output file, or None if not available
+
+    Returns:
+        Markdown string with code and output
+    """
+    source_code = info.path.read_text()
+
+    # Strip license header
+    source_code = strip_license_header(source_code)
+
+    # Read pre-rendered output
+    if output_path and output_path.is_file():
+        output = output_path.read_text()
+    else:
+        output = "Output not available (dependencies not installed during build)"
+
+    deps = ", ".join(sorted(info.imports - {"plotille"}))
+
+    return f"""## {info.name}
+
+{info.description}
+
+!!! info "External Dependencies"
+    This example requires: **{deps}**
+
+    Output is pre-rendered below. To run interactively, install dependencies locally.
+
+**Code:**
+
+```python
+{source_code}
+```
+
+**Output:**
+
+<div class="terminal-window static-example">
+    <div class="terminal-header">
+        <span class="terminal-title">[output: {info.name}.py]</span>
+    </div>
+    <div class="terminal-body">
+        <pre class="terminal-output ansi-output">{output}</pre>
+    </div>
+</div>
+
+"""
+
+
+def generate_category_page(
+    category: str,
+    examples: list[ExampleInfo],
+    output_paths: dict[str, Path],
+    docs_dir: Path,
+) -> Path:
+    """
+    Generate a markdown page for a category of examples.
+
+    Args:
+        category: Category name
+        examples: List of examples in this category
+        output_paths: Dict of pre-rendered output paths
+        docs_dir: Documentation directory
+
+    Returns:
+        Path to generated markdown file
+    """
+    category_titles = {
+        "basic": "Basic Plots",
+        "figures": "Complex Figures",
+        "canvas": "Canvas Drawing",
+        "advanced": "Advanced Examples",
+    }
+
+    title = category_titles.get(category, category.title())
+
+    # Build page content
+    content = [f"# {title}\n"]
+
+    # Add description
+    descriptions = {
+        "basic": "Simple plotting examples to get started with plotille.",
+        "figures": "Multi-plot figures and complex visualizations.",
+        "canvas": "Direct canvas manipulation for custom drawings.",
+        "advanced": "Examples using external libraries like NumPy and Pillow.",
+    }
+
+    if category in descriptions:
+        content.append(f"{descriptions[category]}\n")
+
+    # Add each example
+    for info in examples:
+        if info.is_interactive:
+            markdown = generate_interactive_example_markdown(info)
+        else:
+            output_path = output_paths.get(info.name)
+            markdown = generate_static_example_markdown(info, output_path)
+
+        content.append(markdown)
+
+    # Write file
+    category_dir = docs_dir / "cookbook"
+    category_dir.mkdir(parents=True, exist_ok=True)
+
+    output_file = category_dir / f"{category}.md"
+    output_file.write_text("\n".join(content))
+
+    return output_file
+
+
+def generate_hero_plot() -> str:
+    """
+    Generate a sample plot for the hero animation.
+
+    Returns:
+        String containing plotille plot output
+    """
+    try:
+        X = [i / 10 for i in range(-31, 32)]
+        Y = [math.sin(x) for x in X]
+        plot_output = plotille.plot(
+            X, Y, width=60, height=10, X_label="X", Y_label="", lc="red"
+        )
+
+        return conv.convert(plot_output, full=False)
+    except Exception as e:
+        # Fallback if generation fails
+        return f"Error generating plot: {e}"
+
+
+def generate_home_page(docs_dir: Path) -> Path:
+    """
+    Generate the home/index page.
+
+    Args:
+        docs_dir: Documentation directory
+
+    Returns:
+        Path to generated index.md
+    """
+    # Generate the hero plot
+    hero_plot = generate_hero_plot()
+
+    # Change to f-string to include hero_plot
+    content = f"""# plotille
+
+<div class="hero-terminal">
+    <div class="terminal-header">
+        <span class="terminal-title">[root@plotille ~]$</span>
+    </div>
+    <div class="terminal-body">
+        <pre class="hero-plot ansi2html-content ansi-output" id="hero-animation">{hero_plot}</pre>
+    </div>
+</div>
+
+Plot in the terminal using braille dots, with no dependencies.
+
+## Features
+
+- **Scatter plots, line plots, histograms** - Basic plotting functions
+- **Complex figures** - Compose multiple plots with legends
+- **Canvas drawing** - Direct pixel manipulation for custom visualizations
+- **Image rendering** - Display images using braille dots or background colors
+- **Color support** - Multiple color modes: names, byte values, RGB
+- **No dependencies** - Pure Python with no external requirements
+
+## Quick Start
+
+Install plotille:
+
+```bash
+pip install plotille
+```
+
+Create your first plot:
+
+```python
+import plotille
+import math
+
+X = [i/10 for i in range(-30, 30)]
+Y = [math.sin(x) for x in X]
+
+print(plotille.plot(X, Y, height=20, width=60))
+```
+
+## Explore
+
+Browse the [cookbook](cookbook/basic.md) to see interactive examples you can edit and run in your browser.
+
+"""
+
+    index_file = docs_dir / "index.md"
+    index_file.write_text(content)
+    return index_file
+
+
+def generate_color_styles(docs_dir: Path) -> Path:
+    css_file = docs_dir / "stylesheets" / "ansi-colors.css"
+    css_file.write_text(
+        "\n".join(
+            [
+                f".ansi-output {r}"
+                for r in get_styles(conv.dark_bg, conv.line_wrap, conv.scheme)
+            ]
+        )
+    )
+    return css_file
+
+
+def main() -> int:
+    """Main entry point."""
+    project_root = Path(__file__).parent.parent
+    examples_dir = project_root / "examples"
+    output_dir = project_root / "docs" / "assets" / "example-outputs"
+    docs_dir = project_root / "docs"
+
+    if not examples_dir.exists():
+        print(f"Error: {examples_dir} not found", file=sys.stderr)
+        return 1
+
+    # Analyze all Python files
+    examples = []
+    SKIP_EXAMPLES = {"__init__.py", "performance_example.py"}
+
+    for example_file in sorted(examples_dir.glob("*.py")):
+        # Skip files that aren't user-facing examples
+        if example_file.name in SKIP_EXAMPLES:
+            continue
+        info = analyze_example(example_file)
+        examples.append(info)
+
+    # Categorize
+    categories: dict[str, list[ExampleInfo]] = {}
+    for info in examples:
+        category = categorize_example(info)
+        categories.setdefault(category, []).append(info)
+
+    # Print summary
+    print(f"Found {len(examples)} examples")
+    for category, items in sorted(categories.items()):
+        interactive_count = sum(1 for e in items if e.is_interactive)
+        print(f"  {category}: {len(items)} examples ({interactive_count} interactive)")
+
+    # Generate static outputs
+    output_paths = generate_static_outputs(examples, output_dir)
+    print(f"\nGenerated {len(output_paths)} static outputs")
+
+    # Generate category pages
+    print("\nGenerating category pages...")
+    for category, items in sorted(categories.items()):
+        page_path = generate_category_page(category, items, output_paths, docs_dir)
+        print(f"  {category}: {page_path}")
+
+    # Generate home page
+    print("\nGenerating home page...")
+    index_path = generate_home_page(docs_dir)
+    print(f"  index: {index_path}")
+
+    print("\nGenerating color styles...")
+    css_path = generate_color_styles(docs_dir)
+    print(f"  olor-styles: {css_path}")
+
+    print("\n✓ Documentation generation complete")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
