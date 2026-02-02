@@ -5,11 +5,12 @@
 [![CI](https://github.com/tammoippen/plotille/actions/workflows/CI.yml/badge.svg)](https://github.com/tammoippen/plotille/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/tammoippen/plotille/branch/master/graph/badge.svg?token=OGWI832JNM)](https://codecov.io/gh/tammoippen/plotille)
 [![Tested CPython Versions](https://img.shields.io/badge/cpython-3.10%2C%203.11%2C%203.12%2C%203.13%2C%203.14-brightgreen.svg)](https://img.shields.io/badge/cpython-3.10%2C%203.11%2C%203.12%2C%203.13%203.14-brightgreen.svg)
-[![Tested PyPy Versions](https://img.shields.io/badge/3.11-brightgreen.svg)](https://img.shields.io/badge/pypy-3.11-brightgreen.svg)
+[![Tested PyPy Versions](https://img.shields.io/badge/pypy-3.11-brightgreen.svg)](https://img.shields.io/badge/pypy-3.11-brightgreen.svg)
 [![PyPi version](https://img.shields.io/pypi/v/plotille.svg)](https://pypi.python.org/pypi/plotille)
 [![Downloads](https://pepy.tech/badge/plotille/month)](https://pepy.tech/project/plotille)
 [![PyPi license](https://img.shields.io/pypi/l/plotille.svg)](https://pypi.python.org/pypi/plotille)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 
 Plots, scatter plots, histograms and heatmaps in the terminal using braille dots, and foreground and background colors - with no dependencies. Make complex figures using the Figure class or make fast and simple plots using graphing function - similar to a very small sibling to matplotlib. Or use the canvas to plot dots, lines and images yourself.
 
