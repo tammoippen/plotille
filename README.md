@@ -45,8 +45,8 @@ In [3]: X = np.sort(np.random.normal(size=1000))
 To construct plots the recommended way is to use a `Figure`:
 
 ```python
-In [12]: plotille.Figure?
-Init signature: plotille.Figure()
+In [4]: plotille.Figure?
+Init signature: plotille.Figure() -> None
 Docstring:
 Figure class to compose multiple plots.
 
@@ -54,17 +54,16 @@ Within a Figure you can easily compose many plots, assign labels to plots
 and define the properties of the underlying Canvas. Possible properties that
 can be defined are:
 
-    width, height: int    Define the number of characters in X / Y direction
-                          which are used for plotting.
-    x_limits: float       Define the X limits of the reference coordinate system,
-                          that will be plottered.
-    y_limits: float       Define the Y limits of the reference coordinate system,
-                          that will be plottered.
-    color_mode: str       Define the used color mode. See `plotille.color()`.
-    with_colors: bool     Define, whether to use colors at all.
-    background: multiple  Define the background color.
-    x_label, y_label: str Define the X / Y axis label.
-```
+    width, height: int           Define the number of characters in X / Y direction
+                                 which are used for plotting.
+    x_limits: DataValue          Define the X limits of the reference coordinate system,
+                                 that will be plotted.
+    y_limits: DataValue          Define the Y limits of the reference coordinate system,
+                                 that will be plotted.
+    color_mode: str              Define the used color mode. See `plotille.color()`.
+    with_colors: bool            Define, whether to use colors at all.
+    background: ColorDefinition  Define the background color.
+    x_label, y_label: str        Define the X / Y axis label.```
 
 Basically, you create a `Figure`, define the properties and add your plots. Using the `show()` function, the `Figure` generates the plot using a new canvas:
 
@@ -131,44 +130,47 @@ There are some utility functions for fast graphing of single plots.
 In [4]: plotille.plot?
 Signature:
 plotille.plot(
-    X,
-    Y,
-    width=80,
-    height=40,
-    X_label='X',
-    Y_label='Y',
-    linesep=os.linesep,
-    interp='linear',
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode='names',
-    origin=True,
-    marker=None,
-)
+    X: Sequence[float | int] | Sequence[datetime.datetime],
+    Y: Sequence[float | int] | Sequence[datetime.datetime],
+    width: int = 80,
+    height: int = 40,
+    X_label: str = 'X',
+    Y_label: str = 'Y',
+    linesep: str = '\n',
+    interp: Optional[Literal['linear']] = 'linear',
+    x_min: float | int | datetime.datetime | None = None,
+    x_max: float | int | datetime.datetime | None = None,
+    y_min: float | int | datetime.datetime | None = None,
+    y_max: float | int | datetime.datetime | None = None,
+    lc: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    bg: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    color_mode: Literal['names', 'byte', 'rgb'] = 'names',
+    origin: bool = True,
+    marker: str | None = None,
+) -> str
 Docstring:
 Create plot with X , Y values and linear interpolation between points
 
 Parameters:
     X: List[float]         X values.
     Y: List[float]         Y values. X and Y must have the same number of entries.
-    width: int             The number of characters for the width (columns) of the canvas.
-    height: int             The number of characters for the height (rows) of the canvas.
+    width: int             The number of characters for the width (columns) of the
+                           canvas.
+    height: int            The number of characters for the hight (rows) of the
+                           canvas.
     X_label: str           Label for X-axis.
-    Y_label: str           Label for Y-axis. max 8 characters.
+    Y_label: str           Label for Y-axis. max 8 characters.    linesep: str           The requested line separator. default: os.linesep
     linesep: str           The requested line separator. default: os.linesep
     interp: Optional[str]  Specify interpolation; values None, 'linear'
     x_min, x_max: float    Limits for the displayed X values.
     y_min, y_max: float    Limits for the displayed Y values.
-    lc: multiple           Give the line color.
-    bg: multiple           Give the background color.
-    color_mode: str        Specify color input mode; 'names' (default), 'byte' or 'rgb'
-                           see plotille.color.__docs__
+    lc: ColorDefinition           Give the line color.
+    bg: ColorDefinition           Give the background color.
+    color_mode: ColorMode        Specify color input mode; 'names' (default), 'byte' or
+                           'rgb' see plotille.color.__docs__
     origin: bool           Whether to print the origin. default: True
-    marker: str            Instead of braille dots set a marker char for actual values.
+    marker: str            Instead of braille dots set a marker char for actual
+                           values.
 
 Returns:
     str: plot over `X`, `Y`.
@@ -184,23 +186,23 @@ In [5]: print(plotille.plot(X, np.sin(X), height=30, width=60))
 In [6]: plotille.scatter?
 Signature:
 plotille.scatter(
-    X,
-    Y,
-    width=80,
-    height=40,
-    X_label='X',
-    Y_label='Y',
-    linesep='\n',
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode='names',
-    origin=True,
-    marker=None,
-)
+    X: Sequence[float | int] | Sequence[datetime.datetime],
+    Y: Sequence[float | int] | Sequence[datetime.datetime],
+    width: int = 80,
+    height: int = 40,
+    X_label: str = 'X',
+    Y_label: str = 'Y',
+    linesep: str = '\n',
+    x_min: float | int | datetime.datetime | None = None,
+    x_max: float | int | datetime.datetime | None = None,
+    y_min: float | int | datetime.datetime | None = None,
+    y_max: float | int | datetime.datetime | None = None,
+    lc: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    bg: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    color_mode: Literal['names', 'byte', 'rgb'] = 'names',
+    origin: bool = True,
+    marker: str | None = None,
+) -> str
 Docstring:
 Create scatter plot with X , Y values
 
@@ -210,17 +212,19 @@ Basically plotting without interpolation:
 Parameters:
     X: List[float]       X values.
     Y: List[float]       Y values. X and Y must have the same number of entries.
-    width: int           The number of characters for the width (columns) of the canvas.
-    height: int           The number of characters for the height (rows) of the canvas.
+    width: int           The number of characters for the width (columns) of the
+                         canvas.
+    height: int          The number of characters for the hight (rows) of the
+                         canvas.    X_label: str         Label for X-axis.
     X_label: str         Label for X-axis.
     Y_label: str         Label for Y-axis. max 8 characters.
     linesep: str         The requested line separator. default: os.linesep
     x_min, x_max: float  Limits for the displayed X values.
     y_min, y_max: float  Limits for the displayed Y values.
-    lc: multiple         Give the line color.
-    bg: multiple         Give the background color.
-    color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
-                         see plotille.color.__docs__
+    lc: ColorDefinition         Give the line color.
+    bg: ColorDefinition         Give the background color.
+    color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
+                         'rgb' see plotille.color.__docs__
     origin: bool         Whether to print the origin. default: True
     marker: str          Instead of braille dots set a marker char.
 
@@ -240,15 +244,15 @@ Inspired by [crappyhist](http://kevinastraight.x10host.com/2013/12/28/python-his
 In [8]: plotille.hist?
 Signature:
 plotille.hist(
-    X,
-    bins=40,
-    width=80,
-    log_scale=False,
-    linesep='\n',
-    lc=None,
-    bg=None,
-    color_mode='names',
-)
+    X: Sequence[float | int] | Sequence[datetime.datetime],
+    bins: int = 40,
+    width: int = 80,
+    log_scale: bool = False,
+    linesep: str = '\n',
+    lc: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    bg: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    color_mode: Literal['names', 'byte', 'rgb'] = 'names',
+) -> str
 Docstring:
 Create histogram over `X` from left to right
 
@@ -261,10 +265,10 @@ Parameters:
     width: int           The number of characters for the width (columns).
     log_scale: bool      Scale the histogram with `log` function.
     linesep: str         The requested line separator. default: os.linesep
-    lc: multiple         Give the line color.
-    bg: multiple         Give the background color.
-    color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
-                         see plotille.color.__docs__
+    lc: ColorDefinition         Give the line color.
+    bg: ColorDefinition         Give the background color.
+    color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
+                         'rgb' see plotille.color.__docs__
 
 Returns:
     str: histogram over `X` from left to right.
@@ -286,30 +290,32 @@ only expose access to aggregated values (counts for each bin / bucket).
 In [8]: plotille.hist_aggregated?
 Signature:
 plotille.hist_aggregated(
-    counts,
-    bins,
-    width=80,
-    log_scale=False,
-    linesep='\n',
-    lc=None,
-    bg=None,
-    color_mode='names',
-)
+    counts: list[int],
+    bins: Sequence[float],
+    width: int = 80,
+    log_scale: bool = False,
+    linesep: str = '\n',
+    lc: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    bg: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    color_mode: Literal['names', 'byte', 'rgb'] = 'names',
+    meta: plotille._data_metadata.DataMetadata | None = None,
+) -> str
 Docstring:
 Create histogram for aggregated data.
 
 Parameters:
-    counts: List[int]    Counts for each bucket.
-    bins: List[float]    Limits for the bins for the provided counts: limits for
-                         bin `i` are `[bins[i], bins[i+1])`.
-                         Hence, `len(bins) == len(counts) + 1`.
-    width: int           The number of characters for the width (columns).
-    log_scale: bool      Scale the histogram with `log` function.
-    linesep: str         The requested line separator. default: os.linesep
-    lc: multiple         Give the line color.
-    bg: multiple         Give the background color.
-    color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
-                         see plotille.color.__docs__
+    counts: List[int]         Counts for each bucket.
+    bins: List[float]         Limits for the bins for the provided counts: limits for
+                              bin `i` are `[bins[i], bins[i+1])`.
+                              Hence, `len(bins) == len(counts) + 1`.
+    width: int                The number of characters for the width (columns).
+    log_scale: bool           Scale the histogram with `log` function.
+    linesep: str              The requested line separator. default: os.linesep
+    lc: ColorDefinition       Give the line color.
+    bg: ColorDefinition       Give the background color.
+    color_mode: ColorMode     Specify color input mode; 'names' (default), 'byte' or
+                              'rgb' see plotille.color.__docs__
+    meta: DataMetadata | None For conversion of datetime values.
 Returns:
     str: histogram over `X` from left to right.
 
@@ -332,21 +338,21 @@ There is also another more 'usual' histogram function available:
 In [10]: plotille.histogram?
 Signature:
 plotille.histogram(
-    X,
-    bins=160,
-    width=80,
-    height=40,
-    X_label='X',
-    Y_label='Counts',
-    linesep='\n',
-    x_min=None,
-    x_max=None,
-    y_min=None,
-    y_max=None,
-    lc=None,
-    bg=None,
-    color_mode='names',
-)
+    X: Sequence[float | int] | Sequence[datetime.datetime],
+    bins: int = 160,
+    width: int = 80,
+    height: int = 40,
+    X_label: str = 'X',
+    Y_label: str = 'Counts',
+    linesep: str = '\n',
+    x_min: float | int | datetime.datetime | None = None,
+    x_max: float | int | datetime.datetime | None = None,
+    y_min: float | int | datetime.datetime | None = None,
+    y_max: float | int | datetime.datetime | None = None,
+    lc: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    bg: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    color_mode: Literal['names', 'byte', 'rgb'] = 'names',
+) -> str
 Docstring:
 Create histogram over `X`
 
@@ -363,10 +369,10 @@ Parameters:
     linesep: str         The requested line separator. default: os.linesep
     x_min, x_max: float  Limits for the displayed X values.
     y_min, y_max: float  Limits for the displayed Y values.
-    lc: multiple         Give the line color.
-    bg: multiple         Give the background color.
-    color_mode: str      Specify color input mode; 'names' (default), 'byte' or 'rgb'
-                         see plotille.color.__docs__
+    lc: ColorDefinition         Give the line color.
+    bg: ColorDefinition         Give the background color.
+    color_mode: ColorMode      Specify color input mode; 'names' (default), 'byte' or
+                         'rgb' see plotille.color.__docs__
 
 Returns:
     str: histogram over `X`.
@@ -384,39 +390,42 @@ The underlying plotting area is modeled as the `Canvas` class:
 In [12]:  plotille.Canvas?
 Init signature:
 plotille.Canvas(
-    width,
-    height,
-    xmin=0,
-    ymin=0,
-    xmax=1,
-    ymax=1,
-    background=None,
-    **color_kwargs,
-)
+    width: int,
+    height: int,
+    xmin: Union[float, int] = 0,
+    ymin: Union[float, int] = 0,
+    xmax: Union[float, int] = 1,
+    ymax: Union[float, int] = 1,
+    background: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    **color_kwargs: Any,
+) -> None
 Docstring:
 A canvas object for plotting braille dots
 
 A Canvas object has a `width` x `height` characters large canvas, in which it
 can plot indivitual braille point, lines out of braille points, rectangles,...
-Since a full braille character has 2 x 4 dots (⣿), the canvas has `width` * 2, `height` * 4
-dots to plot into in total.
+Since a full braille character has 2 x 4 dots (⣿), the canvas has `width` * 2,
+`height` * 4 dots to plot into in total.
 
 It maintains two coordinate systems: a reference system with the limits (xmin, ymin)
 in the lower left corner to (xmax, ymax) in the upper right corner is transformed
-into the canvas discrete, i.e. dots, coordinate system (0, 0) to (`width` * 2, `height` * 4).
-It does so transparently to clients of the Canvas, i.e. all plotting functions
-only accept coordinates in the reference system. If the coordinates are outside
-the reference system, they are not plotted.
+into the canvas discrete, i.e. dots, coordinate system (0, 0) to (`width` * 2,
+`height` * 4). It does so transparently to clients of the Canvas, i.e. all plotting
+functions only accept coordinates in the reference system. If the coordinates are
+outside the reference system, they are not plotted.
 Init docstring:
 Initiate a Canvas object
 
 Parameters:
-    width: int            The number of characters for the width (columns) of the canvas.
-    height: int            The number of characters for the height (rows) of the canvas.
+    width: int            The number of characters for the width (columns) of
+                          the canvas.
+    height: int           The number of characters for the hight (rows) of the
+                          canvas.
     xmin, ymin: float     Lower left corner of reference system.
     xmax, ymax: float     Upper right corner of reference system.
     background: multiple  Background color of the canvas.
-    **color_kwargs:       More arguments to the color-function. See `plotille.color()`.
+    **color_kwargs:       More arguments to the color-function.
+                          See `plotille.color()`.
 
 Returns:
     Canvas object
@@ -428,7 +437,15 @@ _point:_
 
 ```python
 In [11]: plotille.Canvas.point?
-Signature: plotille.Canvas.point(self, x, y, set_=True, color=None, marker=None)
+Signature:
+plotille.Canvas.point(
+    self,
+    x: Union[float, int],
+    y: Union[float, int],
+    set_: bool = True,
+    color: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    marker: str | None = None,
+) -> None
 Docstring:
 Put a point into the canvas at (x, y) [reference coordinate system]
 
@@ -444,7 +461,16 @@ _line:_
 
 ```python
 In [14]: plotille.Canvas.line?
-Signature: plotille.Canvas.line(self, x0, y0, x1, y1, set_=True, color=None)
+Signature:
+plotille.Canvas.line(
+    self,
+    x0: Union[float, int],
+    y0: Union[float, int],
+    x1: Union[float, int],
+    y1: Union[float, int],
+    set_: bool = True,
+    color: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+) -> None
 Docstring:
 Plot line between point (x0, y0) and (x1, y1) [reference coordinate system].
 
@@ -459,9 +485,20 @@ _rect:_
 
 ```python
 In [15]: plotille.Canvas.rect?
-Signature: plotille.Canvas.rect(self, xmin, ymin, xmax, ymax, set_=True, color=None)
+Signature:
+plotille.Canvas.rect(
+    self,
+    xmin: Union[float, int],
+    ymin: Union[float, int],
+    xmax: Union[float, int],
+    ymax: Union[float, int],
+    set_: bool = True,
+    color: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+) -> None
 Docstring:
-Plot rectangle with bbox (xmin, ymin) and (xmax, ymax) [reference coordinate system].
+Plot rectangle with bbox (xmin, ymin) and (xmax, ymax).
+
+In the reference coordinate system.
 
 Parameters:
     xmin, ymin: float  Lower left corner of rectangle.
@@ -474,7 +511,15 @@ _text:_
 
 ```python
 In [16]: plotille.Canvas.text?
-Signature: plotille.Canvas.text(self, x, y, text, set_=True, color=None)
+Signature:
+plotille.Canvas.text(
+    self,
+    x: Union[float, int],
+    y: Union[float, int],
+    text: str,
+    set_: bool = True,
+    color: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+) -> None
 Docstring:
 Put some text into the canvas at (x, y) [reference coordinate system]
 
@@ -493,11 +538,12 @@ In [17]: plotille.Canvas.braille_image?
 Signature:
 plotille.Canvas.braille_image(
     self,
-    pixels,
-    threshold=127,
-    inverse=False,
-    set_=True,
-)
+    pixels: Sequence[int],
+    threshold: int = 127,
+    inverse: bool = False,
+    color: Union[str, int, ColorNames, tuple[int, int, int], Sequence[int], NoneType] = None,
+    set_: bool = True,
+) -> None
 Docstring:
 Print an image using braille dots into the canvas.
 
@@ -520,6 +566,7 @@ Parameters:
     threshold: float      All pixels above this threshold will be
                           drawn.
     inverse: bool         Whether to invert the image.
+    color: multiple       Color of the point.
     set_: bool            Whether to plot or remove the dots.
 ```
 
@@ -527,7 +574,12 @@ _image:_
 
 ```python
 In [18]: plotille.Canvas.image?
-Signature: plotille.Canvas.image(self, pixels, set_=True)
+Signature:
+plotille.Canvas.image(
+    self,
+    pixels: Sequence[tuple[int, int, int] | Sequence[int] | None],
+    set_: bool = True,
+) -> None
 Docstring:
 Print an image using background colors into the canvas.
 
@@ -555,7 +607,7 @@ _plot:_
 
 ```python
 In [16]: plotille.Canvas.plot?
-Signature: plotille.Canvas.plot(self, linesep='\n')
+Signature: plotille.Canvas.plot(self, linesep: str = '\n') -> str
 Docstring:
 Transform canvas into `print`-able string
 
@@ -610,8 +662,3 @@ In [29]: print(cvs.plot())
 
 [![Stargazers over time](https://starchart.cc/tammoippen/plotille.svg)](https://starchart.cc/tammoippen/plotille)
 
-## Sponsoring the project
-
-If you like the project and want to buy me a coffee, feel free to send some coins ;)
-
-[<img src="https://api.gitsponsors.com/api/badge/img?id=105019800" height="20">](https://api.gitsponsors.com/api/badge/link?p=gkBol1u2+g2pjgZGRaDLy4k0XbPDRXdPWJWnueCUGo/wcSsqyE8nr+n9nvqfeuqXee6JhLARGZS5bP0ZvorS7y6t4INyHLtTrprYh9c+MYkqAZeSqNIf7WL0ZRTI070RVQA3L9QW9IZNFlMbulW+BQ==)
