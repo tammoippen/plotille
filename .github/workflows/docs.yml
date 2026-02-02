@@ -1,0 +1,49 @@
+name: Build and Deploy Documentation
+
+on:
+  push:
+    branches:
+      - master  # Adjust if your main branch is named differently
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write  # Needed to push to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for proper git info
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests (including doctests)
+        run: |
+          pytest --doctest-modules plotille/ -v
+
+      - name: Generate documentation
+        run: |
+          python scripts/generate_docs.py
+
+      - name: Build MkDocs site
+        run: |
+          mkdocs build --strict
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          cname: plotille.tammo.io

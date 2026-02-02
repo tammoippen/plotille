@@ -38,6 +38,12 @@ Repository = "https://github.com/tammoippen/plotille"
 
 [dependency-groups]
 dev = [
+  "brython>=3.11.1",
+  "mkdocs>=1.5.0",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.24.0",
+  "mkdocs-gen-files>=0.5.0",
+  "mkdocs-literate-nav>=0.6.0",
   "mypy",
   "numpy",
   "Pillow",
@@ -46,10 +52,12 @@ dev = [
   "pytest-mock",
   "ruff",
   "ty>=0.0.3",
+  "ansi2html>=1.9.2",
 ]
 
 [tool.pytest.ini_options]
-addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html"
+addopts = "--cov=plotille --cov-branch --cov-report term-missing --cov-report xml --cov-report html:cov_html --doctest-modules --doctest-continue-on-failure"
+testpaths = ["tests", "plotille"]
 
 
 [tool.ruff.lint]

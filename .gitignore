@@ -10,6 +10,23 @@ build/
 *.so
 *.c
 *.html
+!docs/overrides/*.html
+
+# Brython runtime files (generated, should be installed via make docs-setup)
+docs/brython.js
+docs/brython_stdlib.js
+docs/unicode.txt
+docs/README.txt
+docs/demo.html
+docs/ansi_up.js
+# Documentation build artifacts
+docs/Lib/
+docs/assets/example-outputs/
+docs/cookbook/
+docs/index.md
+docs/stylesheets/ansi-colors.css
+
+
 *.pyc
 __pycache__/
 dist/
@@ -19,3 +36,7 @@ Pipfile.lock
 cov_html/
 coverage.xml
 pip-wheel-metadata/
+site/
+.mypy_cache/
+.ruff_cache/
+.uv/

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <!-- AnsiUp for ANSI color code conversion -->
+  <script type="module">
+    // Load AnsiUp as ES6 module
+    import { AnsiUp } from '{{ "ansi_up.js" | url }}';
+
+    // Create instance and expose to global scope
+    window.ansiUpConverter = new AnsiUp();
+
+    // Process static example outputs with ANSI codes
+    // document.addEventListener('DOMContentLoaded', function() {
+    //   const ansiOutputs = document.querySelectorAll('.ansi-output');
+    //   ansiOutputs.forEach(function(elem) {
+    //     const ansiText = elem.textContent;
+    //     const htmlOutput = window.ansiUpConverter.ansi_to_html(ansiText);
+    //     elem.innerHTML = htmlOutput;
+    //   });
+    // });
+  </script>
+
+  <!-- Brython Python executor - load after Brython is initialized -->
+  <script type="text/python" src="{{ 'javascripts/brython-executor.py' | url }}"></script>
+{% endblock %}

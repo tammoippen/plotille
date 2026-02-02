@@ -1,0 +1,135 @@
+/*
+ * ABOUTME: Terminal window styling for plotille interactive examples.
+ * ABOUTME: Uses standard Material theme for everything except terminal components.
+ */
+
+/* Terminal window components only - no global overrides */
+/* Uses Material theme CSS variables for consistent theming */
+
+/* Terminal window structure */
+.terminal-window {
+    background: var(--md-code-bg-color);
+    border: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.95;
+    border-radius: 6px;
+    margin: 1.5rem 0;
+    overflow: hidden;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.terminal-header {
+    background: var(--md-code-bg-color);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.terminal-title {
+    color: var(--md-code-fg-color);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.terminal-run-btn {
+    background: var(--md-primary-fg-color);
+    color: var(--md-primary-bg-color, #ffffff);
+    border: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.terminal-run-btn:hover {
+    opacity: 0.8;
+}
+
+.terminal-body {
+    padding: 1rem;
+    background: var(--md-code-bg-color);
+}
+
+/* Code editor (textarea) */
+.code-editor-wrapper {
+    border: 1px solid var(--md-default-fg-color, #3e3e3e);
+    opacity: 0.8;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.code-editor {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    background: var(--md-code-bg-color);
+    color: var(--md-code-fg-color);
+    width: 100%;
+    min-height: 300px;
+    padding: 1rem;
+    border: none;
+    resize: vertical;
+    line-height: 1.5;
+    tab-size: 4;
+}
+
+.code-editor:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--md-accent-fg-color);
+}
+
+/* Terminal output */
+.terminal-output {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    color: var(--md-code-fg-color);
+    white-space: pre;
+    margin-top: 1rem;
+    line-height: 1.4;
+    max-height: 600px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.terminal-prompt {
+    color: var(--md-accent-fg-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.output-content {
+    margin-top: 0.5rem;
+}
+
+/* Error output styling */
+.terminal-output .error {
+    color: #ff6b6b;
+    background: rgba(255, 0, 0, 0.1);
+    border-left: 3px solid #ff6b6b;
+    padding-left: 0.5rem;
+}
+
+.output-content.error {
+    color: #ff6b6b;
+}
+
+/* Loading state */
+.terminal-output .loading::after {
+    content: '...';
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Hero terminal on home page */
+.hero-terminal {
+    margin: 2rem 0;
+}
+
+.hero-plot {
+    font-size: 0.75rem;
+}
