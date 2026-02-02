@@ -115,6 +115,10 @@ class Figure:
         self.background: ColorDefinition = None
         self.x_label: str = "X"
         self.y_label: str = "Y"
+        self.with_x_axis: bool = True
+        "Show or hide the X axis"
+        self.with_y_axis: bool = True
+        "Show or hide the Y axis"
         # min, max -> value
         self.y_ticks_fkt: Callable[[DataValue, DataValue], DataValue | str] | None = (
             None
@@ -856,25 +860,31 @@ class Figure:
         res = canvas.plot(linesep=self.linesep)
 
         # add y axis
-        yaxis = self._y_axis(ymin, ymax, label=self.y_label)
-        res = (
-            yaxis[0]
-            + self.linesep  # up arrow
-            + yaxis[1]
-            + self.linesep  # maximum
-            + self.linesep.join(
-                lbl + line
-                for lbl, line in zip(yaxis[2:], res.split(self.linesep), strict=True)
+        if self.with_y_axis:
+            yaxis = self._y_axis(ymin, ymax, label=self.y_label)
+            res = (
+                yaxis[0]
+                + self.linesep  # up arrow
+                + yaxis[1]
+                + self.linesep  # maximum
+                + self.linesep.join(
+                    lbl + line
+                    for lbl, line in zip(
+                        yaxis[2:], res.split(self.linesep), strict=True
+                    )
+                )
             )
-        )
 
         # add x axis
-        xaxis = self._x_axis(xmin, xmax, label=self.x_label, with_y_axis=True)
-        res = (
-            res
-            + self.linesep  # plot
-            + self.linesep.join(xaxis)
-        )
+        if self.with_x_axis:
+            xaxis = self._x_axis(
+                xmin, xmax, label=self.x_label, with_y_axis=self.with_y_axis
+            )
+            res = (
+                res
+                + self.linesep  # plot
+                + self.linesep.join(xaxis)
+            )
 
         if legend:
             res += f"{self.linesep}{self.linesep}Legend:{self.linesep}-------{self.linesep}"
