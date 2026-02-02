@@ -1,6 +1,6 @@
 [project]
 name = "plotille"
-version = "6.0.1"
+version = "6.0.2"
 description = "Plot in the terminal using braille dots."
 authors = [{ name = "Tammo Ippen", email = "tammo.ippen@posteo.de" }]
 requires-python = ">=3.10,<4"
