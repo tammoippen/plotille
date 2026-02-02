@@ -36,7 +36,8 @@ from ._util import hist as compute_hist
 
 def hist_aggregated(
     counts: list[int],
-    bins: Sequence[float],
+    bins: Sequence[float] | None = None,
+    labels: Sequence[str] | None = None,
     width: int = 80,
     log_scale: bool = False,
     linesep: str = os.linesep,
@@ -48,11 +49,15 @@ def hist_aggregated(
     """
     Create histogram for aggregated data.
 
+    **Either provide bins xor labels.**
+
     Parameters:
         counts: List[int]         Counts for each bucket.
-        bins: List[float]         Limits for the bins for the provided counts: limits for
+        bins: List[float] | None  Limits for the bins for the provided counts: limits for
                                   bin `i` are `[bins[i], bins[i+1])`.
                                   Hence, `len(bins) == len(counts) + 1`.
+        labels: List[str] | None  Labels for the bins for the provided counts
+                                  Hence, `len(labels) == len(counts)`.
         width: int                The number of characters for the width (columns).
         log_scale: bool           Scale the histogram with `log` function.
         linesep: str              The requested line separator. default: os.linesep
@@ -73,37 +78,59 @@ def hist_aggregated(
     if meta is None:
         meta = DataMetadata(is_datetime=False)
 
-    h = counts
-    b = bins
+    assert not (bins is None and labels is None), (
+        "At least one of bins/labels has to be set"
+    )
+    assert not (bins is not None and labels is not None), (
+        "At most one of bins/labels has to be set"
+    )
 
     ipf = InputFormatter()
-    h_max = _scale(max(h)) or 1
-    max_ = b[-1]
-    min_ = b[0]
-    # bins are always normalized to float
-    delta = max_ - min_
-    delta_display = timedelta(seconds=delta) if meta.is_datetime else delta
+    h_max = _scale(max(counts)) or 1
+    delta_display = None
+    l_max = None
+    if bins:
+        max_ = bins[-1]
+        min_ = bins[0]
+        # bins are always normalized to float
+        delta = max_ - min_
+        delta_display = timedelta(seconds=delta) if meta.is_datetime else delta
+        canvas = ["        bucket       | {} {}".format("_" * width, "Total Counts")]
+    else:
+        assert labels
+        l_max = max(5, max(len(label) for label in labels))
+        canvas = [
+            "{}| {} {}".format("label".ljust(l_max + 1), "_" * width, "Total Counts")
+        ]
 
-    bins_count = len(h)
+    bins_count = len(counts)
 
-    canvas = ["        bucket       | {} {}".format("_" * width, "Total Counts")]
     lasts = ["", "⠂", "⠆", "⠇", "⡇", "⡗", "⡷", "⡿"]
     for i in range(bins_count):
-        height = int(width * 8 * _scale(h[i]) / h_max)
-        canvas += [
-            "[{}, {}) | {} {}".format(
+        height = int(width * 8 * _scale(counts[i]) / h_max)
+        if bins:
+            assert delta_display is not None
+            line_start = "[{}, {})".format(
                 ipf.fmt(
-                    meta.convert_for_display(b[i]),
+                    meta.convert_for_display(bins[i]),
                     delta=delta_display,
                     chars=8,
                     left=True,
                 ),
                 ipf.fmt(
-                    meta.convert_for_display(b[i + 1]),
+                    meta.convert_for_display(bins[i + 1]),
                     delta=delta_display,
                     chars=8,
                     left=False,
                 ),
+            )
+        else:
+            assert labels is not None
+            assert l_max is not None
+            line_start = ipf.fmt(labels[i], delta=None, chars=l_max, left=True)
+        canvas += [
+            "{} | {} {}".format(
+                line_start,
                 color(
                     "⣿" * (height // 8) + lasts[height % 8],
                     fg=lc,
@@ -115,10 +142,14 @@ def hist_aggregated(
                     bg=bg,
                     mode=color_mode,
                 ),
-                h[i],
+                counts[i],
             )
         ]
-    canvas += ["‾" * (2 * 8 + 2 + 3 + width + 12)]
+    if bins:
+        canvas += ["‾" * (2 * 8 + 2 + 3 + width + 12)]
+    else:
+        assert l_max is not None
+        canvas += ["‾" * (l_max + 3 + width + 12)]
     return linesep.join(canvas)
 
 
