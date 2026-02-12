@@ -500,7 +500,11 @@ class Figure:
             )
 
             if self.y_ticks_fkt:
-                value_display = self.y_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
+                next_value_float = (i + 1) * y_delta + ymin
+                next_value_display = self._y_display_metadata.convert_for_display(
+                    next_value_float, self._y_display_timezone_override
+                )
+                value_display = self.y_ticks_fkt(value_display, next_value_display)  # type: ignore[assignment]
 
             res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " | "]
 
@@ -511,7 +515,11 @@ class Figure:
         )
 
         if self.y_ticks_fkt:
-            value_display = self.y_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
+            next_value_float = (self.height + 1) * y_delta + ymin
+            next_value_display = self._y_display_metadata.convert_for_display(
+                next_value_float, self._y_display_timezone_override
+            )
+            value_display = self.y_ticks_fkt(value_display, next_value_display)  # type: ignore[assignment]
 
         res += [self._in_fmt.fmt(value_display, delta_display, chars=10) + " |"]
 
@@ -574,7 +582,12 @@ class Figure:
             )
 
             if self.x_ticks_fkt:
-                value_display = self.x_ticks_fkt(value_display, value_display)  # type: ignore[assignment]
+                next_value_float = (i + 1) * 10 * x_delta + xmin
+
+                next_value_display = meta.convert_for_display(
+                    next_value_float, self._x_display_timezone_override
+                )
+                value_display = self.x_ticks_fkt(value_display, next_value_display)  # type: ignore[assignment]
 
             bottom += [
                 self._in_fmt.fmt(value_display, delta_display, left=True, chars=9)

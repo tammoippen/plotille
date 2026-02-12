@@ -875,6 +875,54 @@ def test_float_converter(cleandoc):
     assert cleandoc(expected) == fig.show()
 
 
+def test_ticks_fkt(cleandoc):
+    fig = Figure()
+    fig.with_colors = False
+    fig.width = 30
+    fig.height = 15
+    fig.set_x_limits(-10, 110)
+    fig.set_y_limits(0, 20)
+
+    def _x_ticks(x_min, x_max):
+        assert x_min < x_max
+        assert x_max - x_min == pytest.approx(40)
+        return (x_min + x_max) / 2
+
+    def _y_ticks(y_min, y_max):
+        assert y_min < y_max
+        assert y_max - y_min == pytest.approx(1.333333)
+        return (y_min + y_max) / 2
+
+    fig.x_ticks_fkt = _x_ticks
+    fig.y_ticks_fkt = _y_ticks
+
+    fig.plot(list(range(100)), [i % 20 for i in range(100)])
+
+    # axis are at the wrong position
+    expected = """
+           (Y)     ^
+        20.6666667 |
+        19.3333333 | ⠀⠀⢸⠀⠀⠀⠀⡄⠀⠀⠀⠀⡄⠀⠀⠀⠀⡄⠀⠀⠀⠀⡄⠀⠀⠀⠀⡄⠀⠀
+                18 | ⠀⠀⢸⠀⠀⠀⠀⡇⠀⠀⠀⠀⡇⠀⠀⠀⠀⡇⠀⠀⠀⠀⡇⠀⠀⠀⠀⡇⠀⠀
+        16.6666667 | ⠀⠀⢸⠀⠀⠀⢠⡇⠀⠀⠀⢠⡇⠀⠀⠀⢠⡇⠀⠀⠀⢠⡇⠀⠀⠀⢠⠃⠀⠀
+        15.3333333 | ⠀⠀⢸⠀⠀⠀⡎⡇⠀⠀⠀⡎⡇⠀⠀⠀⡎⡇⠀⠀⠀⡎⡇⠀⠀⠀⡎⠀⠀⠀
+                14 | ⠀⠀⢸⠀⠀⠀⡇⡇⠀⠀⠀⡇⡇⠀⠀⠀⡇⡇⠀⠀⠀⡇⡇⠀⠀⠀⡇⠀⠀⠀
+        12.6666667 | ⠀⠀⢸⠀⠀⢠⠃⡇⠀⠀⢠⠃⡇⠀⠀⢠⠃⡇⠀⠀⢠⠃⡇⠀⠀⢠⠃⠀⠀⠀
+        11.3333333 | ⠀⠀⢸⠀⠀⡎⠀⡇⠀⠀⡎⠀⡇⠀⠀⡎⠀⡇⠀⠀⡎⠀⡇⠀⠀⡎⠀⠀⠀⠀
+                10 | ⠀⠀⢸⠀⠀⡇⠀⢇⠀⠀⡇⠀⢇⠀⠀⡇⠀⢇⠀⠀⡇⠀⢇⠀⠀⡇⠀⠀⠀⠀
+        8.66666667 | ⠀⠀⢸⠀⢠⠃⠀⢸⠀⢠⠃⠀⢸⠀⢠⠃⠀⢸⠀⢠⠃⠀⢸⠀⢠⠃⠀⠀⠀⠀
+        7.33333333 | ⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⢸⠀⡎⠀⠀⠀⠀⠀
+                 6 | ⠀⠀⢸⠀⡇⠀⠀⢸⠀⡇⠀⠀⢸⠀⡇⠀⠀⢸⠀⡇⠀⠀⢸⠀⡇⠀⠀⠀⠀⠀
+        4.66666667 | ⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⢸⢠⠃⠀⠀⠀⠀⠀
+        3.33333333 | ⠀⠀⢸⡎⠀⠀⠀⢸⡎⠀⠀⠀⢸⡎⠀⠀⠀⢸⡎⠀⠀⠀⢸⡎⠀⠀⠀⠀⠀⠀
+                 2 | ⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀
+        0.66666667 | ⣀⣀⣸⣃⣀⣀⣀⣸⣃⣀⣀⣀⣸⣃⣀⣀⣀⣸⣃⣀⣀⣀⣸⣃⣀⣀⣀⣀⣀⣀
+        -----------|-|---------|---------|---------|-> (X)
+                   | 10        50        90        130      """
+    print(fig.show())
+    assert cleandoc(expected) == fig.show()
+
+
 def test_axvline_center(cleandoc):
     fig = Figure()
     fig.with_colors = False
