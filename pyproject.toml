@@ -1,6 +1,6 @@
 [project]
 name = "plotille"
-version = "6.0.4"
+version = "6.0.5"
 description = "Plot in the terminal using braille dots."
 authors = [{ name = "Tammo Ippen", email = "tammo.ippen@posteo.de" }]
 requires-python = ">=3.10,<4"
@@ -17,7 +17,6 @@ keywords = [
 ]
 classifiers = [
   "Environment :: Console",
-  "License :: OSI Approved :: MIT License",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
@@ -139,8 +138,8 @@ disallow_any_unimported = true
 # warn_unreachable = false
 
 [build-system]
-requires = ["uv_build>=0.7.19,<0.8.0"]
-build-backend = "uv_build"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 [tool.uv.build-backend]
 module-name = "plotille"
